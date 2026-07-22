@@ -1,0 +1,64 @@
+# ============================================
+# Textile Waste Intelligence Platform
+# ============================================
+
+# Python virtual environment
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment variables / secrets
+.env
+*.env
+
+# IDE / Editor
+.vscode/
+.idea/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Test / coverage cache
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Type checker / linter cache
+.mypy_cache/
+.ruff_cache/
+
+# Uploaded textile images
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Generated reports
+backend/generated_reports/*
+!backend/generated_reports/.gitkeep
+
+# ML datasets
+ml_training/datasets/*
+!ml_training/datasets/.gitkeep
+
+# ML experiments
+ml_training/experiments/*
+!ml_training/experiments/.gitkeep
+
+# Trained model files
+*.pth
+*.pt
+*.onnx
+*.h5
+
+# Temporary files
+*.tmp
+*.temp

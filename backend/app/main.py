@@ -7,6 +7,8 @@ from app.database import engine
 
 from app.routers.auth import router as auth_router
 # from app.routers.rbac_test import router as rbac_test_router
+from app.routers.organizations import router as organizations_router
+from app.routers.facilities import router as facilities_router
 
 app = FastAPI(
     title=f"{settings.app_name} API",
@@ -19,6 +21,8 @@ app = FastAPI(
 
 app.include_router(auth_router)
 # app.include_router(rbac_test_router)
+app.include_router(organizations_router)
+app.include_router(facilities_router)
 
 @app.get("/")
 def root():

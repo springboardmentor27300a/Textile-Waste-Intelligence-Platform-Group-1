@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply font-poppins;
+  }
+}
+
+@layer utilities {
+
+  /* Dribbble Inspired Glassmorphism Styles */
+  .glass-card {
+    @apply backdrop-blur-md bg-white/80 dark:bg-[#111815]/90 border border-slate-200 dark:border-[#1C2621] shadow-soft dark:shadow-glass;
+  }
+
+  .glass-nav {
+    @apply backdrop-blur-md bg-slate-50/80 dark:bg-[#080C0A]/90 border-b border-slate-200 dark:border-[#1C2621];
+  }
+
+  .glass-sidebar {
+    @apply backdrop-blur-md bg-white/40 dark:bg-[#111815]/40 border-r border-slate-200 dark:border-[#1C2621];
+  }
+
+  /* Neon Glowing Shadows */
+  .shadow-neon-glow {
+    box-shadow: 0 0 15px rgba(0, 245, 160, 0.2);
+  }
+
+  .shadow-cyan-glow {
+    box-shadow: 0 0 15px rgba(0, 217, 245, 0.2);
+  }
+
+  .hover-scale {
+    @apply transition-all duration-300 hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  .hover-glow-green {
+    @apply transition-all duration-300 hover:border-[#43A047];
+  }
+  .hover-glow-green:hover {
+    box-shadow: 0 0 20px rgba(0, 245, 160, 0.25);
+  }
+
+  .hover-glow-cyan {
+    @apply transition-all duration-300 hover:border-blue-400;
+  }
+  .hover-glow-cyan:hover {
+    box-shadow: 0 0 20px rgba(0, 217, 245, 0.25);
+  }
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-primary-200 dark:bg-emerald-950/60 rounded-full hover:bg-primary-300 dark:hover:bg-emerald-900/80;
+}
+
+/* Subtle page fade animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Circular Gauge Animation */
+@keyframes strokeProgress {
+  from {
+    stroke-dashoffset: 283;
+  }
+
+  to {
+    stroke-dashoffset: var(--dashoffset);
+  }
+}
+
+.circular-gauge-path {
+  stroke-dasharray: 283;
+  animation: strokeProgress 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* ─── Print Styles ─────────────────────────────────────────────────────────── */
+@media print {
+  /* Hide the screen layout and any other non-printable components */
+  body > :not(#print-portal-root) {
+    display: none !important;
+  }
+  
+  #print-portal-root {
+    display: block !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    background: white !important;
+    color: black !important;
+    padding: 0 !important;
+  }
+
+  /* Force background colors and borders to print properly */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Prevent page breaks inside key sections */
+  .print-section {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  @page {
+    size: A4;
+    margin: 1.5cm;
+  }
+}

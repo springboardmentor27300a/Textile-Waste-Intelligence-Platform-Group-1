@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — Textile Waste Intelligence Platform</title>
+  <meta name="description" content="Sign in to the Textile Waste Intelligence Platform to track, analyze, and manage textile waste data." />
+  <link rel="stylesheet" href="css/main.css" />
+  <style>
+    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+
+    .login-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 100vh;
+      width: 100%;
+    }
+
+    /* Left hero panel */
+    .login-hero {
+      background:
+        linear-gradient(160deg, rgba(5,150,105,0.25) 0%, rgba(14,165,233,0.15) 100%),
+        radial-gradient(ellipse at 30% 50%, rgba(52,211,153,0.2) 0%, transparent 60%);
+      border-right: 1px solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-hero::before {
+      content: '';
+      position: absolute;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      border: 1px solid rgba(52,211,153,0.1);
+      top: -100px; left: -100px;
+      animation: breathe 6s ease-in-out infinite;
+    }
+
+    .login-hero::after {
+      content: '';
+      position: absolute;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      border: 1px solid rgba(14,165,233,0.1);
+      bottom: -60px; right: -60px;
+      animation: breathe 8s ease-in-out infinite reverse;
+    }
+
+    @keyframes breathe {
+      0%,100% { transform: scale(1); opacity: 0.5; }
+      50%      { transform: scale(1.08); opacity: 1; }
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(52,211,153,0.1);
+      border: 1px solid rgba(52,211,153,0.25);
+      border-radius: 999px;
+      padding: 0.35rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--color-primary);
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.04em;
+    }
+
+    .hero-badge .dot {
+      width: 6px; height: 6px;
+      background: var(--color-primary);
+      border-radius: 50%;
+      animation: pulse 2s ease infinite;
+    }
+
+    @keyframes pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: 0.5; transform: scale(1.4); }
+    }
+
+    .hero-title {
+      font-size: 2.8rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1.2rem;
+      background: linear-gradient(135deg, #f0fdf4 30%, var(--color-primary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-desc {
+      font-size: 1rem;
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+      max-width: 400px;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-stat { text-align: left; }
+
+    .hero-stat-value {
+      font-family: var(--font-heading);
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--color-primary);
+      line-height: 1;
+    }
+
+    .hero-stat-label {
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+      margin-top: 3px;
+    }
+
+    /* Floating cards */
+    .hero-card {
+      position: absolute;
+      background: rgba(12,28,38,0.85);
+      border: 1px solid var(--color-border);
+      border-radius: 14px;
+      padding: 1rem 1.2rem;
+      backdrop-filter: blur(20px);
+      font-size: 0.8rem;
+    }
+
+    .hero-card-1 { top: 15%; right: 6%; animation: float 5s ease-in-out infinite; }
+    .hero-card-2 { bottom: 20%; right: 10%; animation: float 7s ease-in-out infinite reverse; }
+
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-10px); }
+    }
+
+    .hero-card-label { color: var(--color-text-muted); font-size: 0.7rem; margin-bottom: 4px; }
+    .hero-card-value { font-weight: 700; color: var(--color-text-primary); font-size: 1rem; }
+    .hero-card-sub   { color: var(--color-primary); font-size: 0.7rem; margin-top: 2px; }
+
+    /* Right login panel */
+    .login-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 3rem 2rem;
+      background: rgba(5, 13, 18, 0.8);
+    }
+
+    .login-box {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .login-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 2rem;
+    }
+
+    .login-logo-icon {
+      width: 44px; height: 44px;
+      background: var(--gradient-brand);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      box-shadow: var(--shadow-glow);
+    }
+
+    .login-logo-text { font-family: var(--font-heading); font-weight: 700; font-size: 1rem; line-height: 1.2; }
+    .login-logo-text span { display: block; font-size: 0.7rem; font-weight: 400; color: var(--color-text-secondary); }
+
+    .login-heading { font-size: 1.7rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .login-subheading { font-size: 0.875rem; color: var(--color-text-secondary); margin-bottom: 2rem; }
+
+    .role-demo {
+      background: rgba(52,211,153,0.05);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .role-demo-title { font-size: 0.7rem; font-weight: 600; color: var(--color-text-muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.75rem; }
+
+    .role-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    .role-pill {
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+
+    .role-pill:hover { transform: scale(1.05); }
+    .role-pill[data-role="admin"]    { background: rgba(168,85,247,0.15); color: #c084fc; border-color: rgba(168,85,247,0.25); }
+    .role-pill[data-role="analyst"]  { background: rgba(14,165,233,0.15); color: #38bdf8; border-color: rgba(14,165,233,0.25); }
+    .role-pill[data-role="supplier"] { background: rgba(245,158,11,0.15); color: #fbbf24; border-color: rgba(245,158,11,0.25); }
+    .role-pill[data-role="auditor"]  { background: rgba(148,163,184,0.15); color: #94a3b8; border-color: rgba(148,163,184,0.25); }
+
+    .form-error {
+      color: var(--color-danger);
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+
+    .forgot-link { float: right; font-size: 0.78rem; color: var(--color-text-muted); }
+    .forgot-link:hover { color: var(--color-primary); }
+
+    .divider-text {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      color: var(--color-text-muted);
+      font-size: 0.78rem;
+      margin: 1.5rem 0;
+    }
+    .divider-text::before,
+    .divider-text::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--color-border);
+    }
+
+    .password-wrap { position: relative; }
+    .password-wrap .form-control { padding-right: 2.5rem; }
+    .toggle-pw {
+      position: absolute;
+      right: 0.75rem; top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: var(--color-text-muted);
+      font-size: 0.9rem;
+      user-select: none;
+      transition: color 0.2s;
+    }
+    .toggle-pw:hover { color: var(--color-primary); }
+
+    @media (max-width: 900px) {
+      .login-wrapper { grid-template-columns: 1fr; }
+      .login-hero { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-wrapper">
+
+    <!-- ── Hero Panel ── -->
+    <div class="login-hero">
+      <div class="hero-badge"><div class="dot"></div> Textile Intelligence v1.0</div>
+      <h1 class="hero-title">Smarter Textile<br>Waste Management</h1>
+      <p class="hero-desc">
+        AI-powered platform to track, analyze, and reduce textile waste across your supply chain. 
+        Real-time insights. Full audit trails.
+      </p>
+    </div>
+
+    <!-- ── Login Panel ── -->
+    <div class="login-panel">
+      <div class="login-box">
+
+        <div class="login-logo">
+          <div class="login-logo-icon">🌿</div>
+          <div class="login-logo-text">
+            TexWaste Intel
+            <span>Textile Waste Intelligence Platform</span>
+          </div>
+        </div>
+
+        <h2 class="login-heading">Welcome back</h2>
+        <p class="login-subheading">Sign in to your account to continue</p>
+
+
+
+        <form id="login-form" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="email">Email address</label>
+            <input id="email" type="email" class="form-control" placeholder="you@example.com" required autocomplete="email" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="password">
+              Password
+              <a href="#" class="forgot-link">Forgot password?</a>
+            </label>
+            <div class="password-wrap">
+              <input id="password" type="password" class="form-control" placeholder="••••••••" required autocomplete="current-password" />
+              <span class="toggle-pw" id="toggle-pw">👁</span>
+            </div>
+          </div>
+
+          <div class="form-error" id="form-error">Invalid email or password. Please try again.</div>
+
+          <button type="submit" class="btn btn-primary full-width" id="login-btn" style="margin-top:1rem; padding:0.8rem; font-size:0.95rem;">
+            <span id="login-btn-text">Sign In</span>
+            <div class="spinner hidden" id="login-spinner"></div>
+          </button>
+        </form>
+
+        <p style="text-align:center; margin-top:1.5rem; font-size:0.84rem; color:var(--color-text-muted);">
+          New user? <a href="register.html" style="color:var(--color-primary); font-weight:600; text-decoration:none;">Create an account →</a>
+        </p>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    // Toggle password visibility
+    document.getElementById('toggle-pw').addEventListener('click', () => {
+      const pw = document.getElementById('password');
+      pw.type = pw.type === 'password' ? 'text' : 'password';
+    });
+
+    // Login form submit
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email    = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const errEl    = document.getElementById('form-error');
+      const btnText  = document.getElementById('login-btn-text');
+      const spinner  = document.getElementById('login-spinner');
+
+      errEl.style.display = 'none';
+      btnText.textContent = 'Signing in…';
+      spinner.classList.remove('hidden');
+
+      try {
+        const res = await api.login({ email, password });
+        saveAuth(res.access_token, res.user);
+        window.location.href = 'dashboard.html';
+      } catch (err) {
+        errEl.textContent    = err.message || 'Invalid credentials. Please try again.';
+        errEl.style.display  = 'block';
+        btnText.textContent  = 'Sign In';
+        spinner.classList.add('hidden');
+      }
+    });
+
+    // Redirect if already logged in
+    if (localStorage.getItem('twi_token')) {
+      window.location.href = 'dashboard.html';
+    }
+  </script>
+</body>
+</html>

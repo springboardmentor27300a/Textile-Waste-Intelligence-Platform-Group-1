@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Account — Textile Waste Intelligence Platform</title>
+  <meta name="description" content="Register for a new account on the Textile Waste Intelligence Platform." />
+  <link rel="stylesheet" href="css/main.css" />
+  <style>
+    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+    .register-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 100vh;
+      width: 100%;
+    }
+    .register-hero {
+      background:
+        linear-gradient(160deg, rgba(14,165,233,0.2) 0%, rgba(52,211,153,0.12) 100%),
+        radial-gradient(ellipse at 70% 40%, rgba(14,165,233,0.18) 0%, transparent 60%);
+      border-right: 1px solid var(--color-border);
+      display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+      padding: 4rem; position: relative; overflow: hidden;
+    }
+    .register-hero::before {
+      content:''; position:absolute; width:450px; height:450px; border-radius:50%;
+      border:1px solid rgba(14,165,233,0.1); top:-80px; right:-80px;
+      animation: breathe 7s ease-in-out infinite;
+    }
+    .register-hero::after {
+      content:''; position:absolute; width:280px; height:280px; border-radius:50%;
+      border:1px solid rgba(52,211,153,0.08); bottom:-50px; left:-50px;
+      animation: breathe 9s ease-in-out infinite reverse;
+    }
+    @keyframes breathe { 0%,100%{transform:scale(1);opacity:0.5} 50%{transform:scale(1.08);opacity:1} }
+    .hero-badge {
+      display:inline-flex; align-items:center; gap:8px;
+      background:rgba(14,165,233,0.1); border:1px solid rgba(14,165,233,0.25);
+      border-radius:999px; padding:0.35rem 1rem; font-size:0.75rem;
+      font-weight:600; color:#38bdf8; margin-bottom:1.5rem; letter-spacing:0.04em;
+    }
+    .hero-badge .dot {
+      width:6px; height:6px; background:#38bdf8; border-radius:50%;
+      animation: pulse 2s ease infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.4)} }
+    .hero-title {
+      font-size:2.6rem; font-weight:800; line-height:1.1; margin-bottom:1.2rem;
+      background:linear-gradient(135deg,#f0fdf4 30%,#38bdf8 100%);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+    .hero-desc { font-size:1rem; color:var(--color-text-secondary); line-height:1.7; max-width:380px; margin-bottom:2.5rem; }
+    .benefit-list { list-style:none; padding:0; margin:0; }
+    .benefit-list li {
+      display:flex; align-items:center; gap:0.75rem;
+      font-size:0.88rem; color:var(--color-text-secondary);
+      padding:0.5rem 0; border-bottom:1px solid rgba(52,211,153,0.06);
+    }
+    .benefit-list li:last-child { border-bottom:none; }
+    .benefit-icon {
+      width:28px; height:28px; border-radius:8px;
+      background:rgba(52,211,153,0.1); display:flex;
+      align-items:center; justify-content:center; font-size:0.9rem; flex-shrink:0;
+    }
+    .register-panel {
+      display:flex; flex-direction:column; justify-content:center;
+      align-items:center; padding:3rem 2rem;
+      background:rgba(5,13,18,0.8); overflow-y:auto;
+    }
+    .register-box { width:100%; max-width:440px; }
+    .register-logo { display:flex; align-items:center; gap:12px; margin-bottom:2rem; }
+    .register-logo-icon {
+      width:44px; height:44px; background:var(--gradient-brand);
+      border-radius:12px; display:flex; align-items:center; justify-content:center;
+      font-size:1.3rem; box-shadow:var(--shadow-glow);
+    }
+    .register-logo-text { font-family:var(--font-heading); font-weight:700; font-size:1rem; line-height:1.2; }
+    .register-logo-text span { display:block; font-size:0.7rem; font-weight:400; color:var(--color-text-secondary); }
+    .register-heading { font-size:1.6rem; font-weight:800; margin-bottom:0.4rem; }
+    .register-subheading { font-size:0.875rem; color:var(--color-text-secondary); margin-bottom:2rem; }
+    .form-error { color:var(--color-danger); font-size:0.8rem; margin-top:0.5rem; display:none; }
+    .form-success {
+      background:rgba(52,211,153,0.08); border:1px solid rgba(52,211,153,0.25);
+      border-radius:var(--radius-md); color:var(--color-primary); font-size:0.85rem;
+      padding:0.75rem 1rem; margin-bottom:1rem; display:none;
+    }
+    .password-wrap { position:relative; }
+    .password-wrap .form-control { padding-right:2.5rem; }
+    .toggle-pw {
+      position:absolute; right:0.75rem; top:50%; transform:translateY(-50%);
+      cursor:pointer; color:var(--color-text-muted); font-size:0.9rem;
+      user-select:none; transition:color 0.2s;
+    }
+    .toggle-pw:hover { color:var(--color-primary); }
+    .strength-bar-wrap { margin-top:6px; height:4px; background:rgba(255,255,255,0.06); border-radius:2px; overflow:hidden; }
+    .strength-bar { height:100%; border-radius:2px; width:0%; transition:width 0.4s ease,background 0.4s ease; }
+    .strength-label { font-size:0.7rem; color:var(--color-text-muted); margin-top:3px; }
+    @media (max-width:900px) { .register-wrapper{grid-template-columns:1fr} .register-hero{display:none} }
+  </style>
+</head>
+<body>
+  <div class="register-wrapper">
+
+    <!-- Hero Panel -->
+    <div class="register-hero">
+      <div class="hero-badge"><div class="dot"></div> Join the Platform</div>
+      <h1 class="hero-title">Start Tracking<br>Smarter Today</h1>
+      <p class="hero-desc">
+        Create your personal account to upload, analyze, and track your textile records.
+        Your data is completely private and only visible to you.
+      </p>
+      <ul class="benefit-list">
+        <li><div class="benefit-icon">🖼️</div> Upload and AI-analyze your textile images</li>
+        <li><div class="benefit-icon">🧵</div> Get accurate material, color, and pattern reports</li>
+        <li><div class="benefit-icon">🔒</div> Your records are private — only visible to you</li>
+        <li><div class="benefit-icon">♻️</div> Track waste categories and recyclability scores</li>
+        <li><div class="benefit-icon">📥</div> Download professional AI-generated PDF reports</li>
+      </ul>
+    </div>
+
+    <!-- Registration Panel -->
+    <div class="register-panel">
+      <div class="register-box">
+
+        <div class="register-logo">
+          <div class="register-logo-icon">🌿</div>
+          <div class="register-logo-text">
+            TexWaste Intel
+            <span>Textile Waste Intelligence Platform</span>
+          </div>
+        </div>
+
+        <h2 class="register-heading">Create your account</h2>
+        <p class="register-subheading">Fill in your details to get started</p>
+
+        <div class="form-success" id="form-success">✅ Account created! Redirecting to login…</div>
+
+        <form id="register-form" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="full-name">Full Name</label>
+            <input id="full-name" type="text" class="form-control" placeholder="Your full name" required autocomplete="name" />
+            <div class="form-error" id="err-name"></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="email">Email Address</label>
+            <input id="email" type="email" class="form-control" placeholder="you@example.com" required autocomplete="email" />
+            <div class="form-error" id="err-email"></div>
+          </div>
+
+
+
+          <div class="form-group">
+            <label class="form-label" for="password">Password</label>
+            <div class="password-wrap">
+              <input id="password" type="password" class="form-control" placeholder="Minimum 8 characters" required autocomplete="new-password" />
+              <span class="toggle-pw" id="toggle-pw1">👁</span>
+            </div>
+            <div class="strength-bar-wrap"><div class="strength-bar" id="strength-bar"></div></div>
+            <div class="strength-label" id="strength-label"></div>
+            <div class="form-error" id="err-password"></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="confirm-password">Confirm Password</label>
+            <div class="password-wrap">
+              <input id="confirm-password" type="password" class="form-control" placeholder="Repeat your password" required autocomplete="new-password" />
+              <span class="toggle-pw" id="toggle-pw2">👁</span>
+            </div>
+            <div class="form-error" id="err-confirm"></div>
+          </div>
+
+          <div class="form-error" id="form-error"></div>
+
+          <button type="submit" class="btn btn-primary full-width" id="register-btn"
+                  style="margin-top:1.2rem;padding:0.8rem;font-size:0.95rem;">
+            <span id="register-btn-text">Create Account</span>
+            <div class="spinner hidden" id="register-spinner"></div>
+          </button>
+        </form>
+
+        <p style="text-align:center;margin-top:1.5rem;font-size:0.84rem;color:var(--color-text-muted);">
+          Already have an account?
+          <a href="index.html" style="color:var(--color-primary);font-weight:600;text-decoration:none;">Sign in &rarr;</a>
+        </p>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    if (localStorage.getItem('twi_token')) {
+      window.location.href = 'dashboard.html';
+    }
+
+    document.getElementById('toggle-pw1').addEventListener('click', () => {
+      const pw = document.getElementById('password');
+      pw.type = pw.type === 'password' ? 'text' : 'password';
+    });
+    document.getElementById('toggle-pw2').addEventListener('click', () => {
+      const pw = document.getElementById('confirm-password');
+      pw.type = pw.type === 'password' ? 'text' : 'password';
+    });
+
+    document.getElementById('password').addEventListener('input', function() {
+      const val = this.value;
+      const bar = document.getElementById('strength-bar');
+      const lbl = document.getElementById('strength-label');
+      let s = 0;
+      if (val.length >= 8)        s++;
+      if (/[A-Z]/.test(val))      s++;
+      if (/[0-9]/.test(val))      s++;
+      if (/[^A-Za-z0-9]/.test(val)) s++;
+      const widths  = ['0%','30%','55%','80%','100%'];
+      const colors  = ['','#ef4444','#f97316','#eab308','#34d399'];
+      const labels  = ['','Weak','Fair','Good','Strong'];
+      bar.style.width      = widths[s];
+      bar.style.background = colors[s];
+      lbl.textContent      = val.length ? labels[s] : '';
+    });
+
+    function clearErrors() {
+      ['err-name','err-email','err-password','err-confirm','form-error'].forEach(id => {
+        const el = document.getElementById(id);
+        el.textContent   = '';
+        el.style.display = 'none';
+      });
+    }
+    function showFieldError(id, msg) {
+      const el = document.getElementById(id);
+      el.textContent   = msg;
+      el.style.display = 'block';
+    }
+
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearErrors();
+
+      const fullName = document.getElementById('full-name').value.trim();
+      const email    = document.getElementById('email').value.trim();
+      const role     = 'admin'; // default role
+      const password = document.getElementById('password').value;
+      const confirm  = document.getElementById('confirm-password').value;
+      const btnText  = document.getElementById('register-btn-text');
+      const spinner  = document.getElementById('register-spinner');
+
+      let hasError = false;
+      if (!fullName) { showFieldError('err-name', 'Full name is required.'); hasError = true; }
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showFieldError('err-email', 'Please enter a valid email address.'); hasError = true; }
+      if (password.length < 8) { showFieldError('err-password', 'Password must be at least 8 characters.'); hasError = true; }
+      if (password !== confirm) { showFieldError('err-confirm', 'Passwords do not match.'); hasError = true; }
+      if (hasError) return;
+
+      btnText.textContent = 'Creating account…';
+      spinner.classList.remove('hidden');
+      document.getElementById('register-btn').disabled = true;
+
+      try {
+        await api.register({ email, password, full_name: fullName, role });
+        const res = await api.login({ email, password });
+        saveAuth(res.access_token, res.user);
+        window.location.href = 'dashboard.html';
+      } catch (err) {
+        const errEl = document.getElementById('form-error');
+        errEl.textContent   = err.message || 'Registration failed. Please try again.';
+        errEl.style.display = 'block';
+        btnText.textContent = 'Create Account';
+        spinner.classList.add('hidden');
+        document.getElementById('register-btn').disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

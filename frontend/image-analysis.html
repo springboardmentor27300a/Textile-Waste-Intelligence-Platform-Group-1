@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Analysis — Textile Waste Intelligence Platform</title>
+  <link rel="stylesheet" href="css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <style>
+    /* Specific styles for Image Analysis wizard */
+    .upload-zone {
+      border: 2px dashed rgba(52,211,153,0.3); border-radius: var(--radius-lg);
+      padding: var(--space-2xl) var(--space-xl); text-align: center;
+      transition: all var(--transition-base); cursor: pointer;
+      background: rgba(5,13,18,0.4); margin-bottom: var(--space-xl);
+    }
+    .upload-zone:hover, .upload-zone.dragover {
+      border-color: var(--color-primary); background: rgba(52,211,153,0.05);
+    }
+    .upload-icon { font-size: 3rem; margin-bottom: var(--space-md); opacity: 0.8; }
+    
+    .preview-card {
+      position: relative; border-radius: var(--radius-md);
+      overflow: hidden; box-shadow: var(--shadow-card);
+      aspect-ratio: 4/3; background: #000;
+    }
+    .preview-card img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .preview-card::after {
+      content:''; position: absolute; inset:0;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.5); pointer-events:none;
+    }
+
+    /* Analysis Grid */
+    .analysis-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xl);
+    }
+    
+    /* Result styling */
+    .result-value {
+      font-size: 1.8rem; font-weight: 800; color: var(--color-text-primary);
+      margin-bottom: var(--space-xs); font-family: var(--font-heading);
+    }
+    .conf-bar-wrapper {
+      height: 6px; background: rgba(255,255,255,0.06);
+      border-radius: 3px; overflow: hidden; margin-top: 8px; margin-bottom: 4px;
+    }
+    .conf-bar {
+      height: 100%; border-radius: 3px; background: var(--color-primary);
+      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .conf-high { background: var(--color-primary); }
+    .conf-med  { background: var(--color-warning); }
+    .conf-low  { background: var(--color-danger); }
+    
+    .status-highly { color: var(--color-primary); background: rgba(52,211,153,0.1); }
+    .status-moderately { color: var(--color-warning); background: rgba(251,146,60,0.1); }
+    .status-poorly { color: var(--color-danger); background: rgba(244,63,94,0.1); }
+    
+    .info-card {
+      background: var(--color-bg-input); padding: var(--space-lg);
+      border-radius: var(--radius-md); border: 1px solid var(--color-border);
+    }
+
+    @media (max-width: 768px) {
+      .analysis-grid { grid-template-columns: 1fr; }
+    }
+
+    /* AI UX Polish Styles */
+    .fade-slide-up {
+      animation: fadeSlideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      opacity: 0;
+    }
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .pipeline-layout {
+      display: block;
+    }
+
+    /* Success Panel */
+    #success-panel {
+      background: rgba(52,211,153,0.05);
+      border-color: rgba(52,211,153,0.2);
+      text-align: center;
+    }
+
+    /* Final Report Section Adjustments */
+    .report-section {
+      margin-bottom: var(--space-xl);
+    }
+    .report-section h3 {
+      color: var(--color-accent); font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding-bottom: 8px; margin-bottom: var(--space-md);
+    }
+    
+    /* Elegant Loading Text */
+    .ai-loading-text {
+      font-size: 1.1rem; color: var(--color-primary); font-weight: 500;
+      display: flex; flex-direction: column; align-items: center; gap: var(--space-md);
+      padding: var(--space-2xl) 0;
+    }
+
+    /* AI UX Polish Styles for Upload Setup */
+    .upload-card-modern {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px dashed rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-xl);
+      padding: var(--space-2xl) var(--space-xl);
+      text-align: center;
+      transition: all var(--transition-base);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .upload-card-modern:hover, .upload-card-modern.dragover {
+      background: rgba(52, 211, 153, 0.05);
+      border-color: rgba(52, 211, 153, 0.4);
+      box-shadow: 0 0 30px rgba(52, 211, 153, 0.1);
+    }
+    .upload-card-modern.dragover {
+      transform: scale(1.02);
+    }
+    .upload-illustration {
+      font-size: 4rem;
+      margin-bottom: var(--space-md);
+      transition: transform var(--transition-base);
+      opacity: 0.9;
+    }
+    .upload-card-modern.dragover .upload-illustration {
+      transform: scale(1.1);
+      text-shadow: 0 0 20px rgba(52, 211, 153, 0.5);
+    }
+    .upload-badges {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-sm);
+      margin-top: var(--space-lg);
+    }
+    .upload-badge {
+      font-size: 0.75rem;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      color: var(--color-text-secondary);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .btn-glow {
+      background: var(--gradient-brand);
+      border: none;
+      color: white;
+      box-shadow: var(--shadow-btn);
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+      transition: all var(--transition-base);
+    }
+    .btn-glow::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, #0ea5e9 0%, #059669 100%);
+      opacity: 0;
+      z-index: -1;
+      transition: opacity var(--transition-base);
+    }
+    .btn-glow:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(52,211,153,0.4);
+    }
+    .btn-glow:hover::before {
+      opacity: 1;
+    }
+    .preview-card-modern {
+      display: flex;
+      align-items: center;
+      gap: var(--space-lg);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(52, 211, 153, 0.2);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .preview-thumb {
+      width: 120px;
+      height: 90px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .preview-details {
+      flex: 1;
+    }
+    .preview-actions {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+    
+    /* Custom Inventory Select */
+    .custom-select-wrapper {
+      position: relative;
+      max-width: 400px;
+      margin-bottom: var(--space-xl);
+    }
+    .custom-select-trigger {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: var(--space-md);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-base);
+    }
+    .custom-select-trigger:hover {
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+    .custom-select-options {
+      position: absolute;
+      top: 100%; left: 0; right: 0;
+      background: #0a1922;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-md);
+      margin-top: 8px;
+      z-index: 100;
+      max-height: 250px;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+      display: none;
+      flex-direction: column;
+    }
+    .custom-select-options.open {
+      display: flex;
+      animation: fadeSlideUp 0.2s ease forwards;
+    }
+    .custom-option {
+      padding: var(--space-md);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      cursor: pointer;
+      transition: background var(--transition-base);
+    }
+    .custom-option:last-child { border-bottom: none; }
+    .custom-option:hover { background: rgba(255,255,255,0.05); }
+    .custom-option-batch { font-weight: 600; color: var(--color-primary-light); margin-bottom: 4px; display: block; }
+    .custom-option-details { font-size: 0.8rem; color: var(--color-text-secondary); display: flex; gap: var(--space-md); }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- ── Sidebar (Updated 4-item structure) ─────────────────── -->
+  <aside class="sidebar no-print" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">🌿</div>
+      <div class="logo-text">TexWaste Intel <span>Textile Waste Intelligence</span></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Main</div>
+      <a href="dashboard.html"      class="nav-item">
+        <span class="nav-icon">📊</span> Dashboard
+      </a>
+      <a href="inventory.html"      class="nav-item">
+        <span class="nav-icon">📦</span> Inventory
+      </a>
+      <a href="waste-records.html"  class="nav-item">
+        <span class="nav-icon">♻️</span> Waste Records
+      </a>
+      <a href="image-analysis.html" class="nav-item active">
+        <span class="nav-icon">🔬</span> Image Analysis
+      </a>
+      <a href="reports.html"        class="nav-item">
+        <span class="nav-icon">📈</span> Reports
+      </a>
+
+      <div class="nav-section-title" style="margin-top:1rem;">Account</div>
+      <a href="#" class="nav-item" id="logout-btn">
+        <span class="nav-icon">🚪</span> Sign Out
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-pill">
+        <div class="user-avatar" id="sidebar-avatar">A</div>
+        <div class="user-info">
+          <div class="user-name" id="sidebar-user-name">Loading…</div>
+          <div class="user-role" id="sidebar-user-role">role</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main Content ───────────────────────────────────────── -->
+  <main class="main-content" style="max-width:1200px; margin-left:var(--sidebar-width);">
+    
+    <div class="topbar no-print">
+      <div>
+        <h1 class="page-title">Image Analysis Pipeline</h1>
+        <p class="page-subtitle">End-to-end AI classification and sustainability reporting</p>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-secondary" onclick="resetPipeline()">🔄 New Analysis</button>
+      </div>
+    </div>
+
+    <!-- ── Pipeline Layout Container ─────────────────────────────────── -->
+    <div class="pipeline-layout">
+      
+      <!-- Pipeline Container -->
+      <div id="pipeline-container">
+      
+      <!-- STEP 1: UPLOAD -->
+      <section class="step-panel active" id="step-1">
+        <div class="glass-card card-padding">
+          <h2 class="mb-lg">1. Upload & Setup</h2>
+          
+          <div class="upload-card-modern" id="upload-zone" onclick="document.getElementById('file-input').click()">
+            <div class="upload-illustration">📸</div>
+            <h3 style="margin-bottom:8px;">Upload Textile Image</h3>
+            <p class="text-secondary mb-lg">Upload a textile image to identify the material, classify the waste, and generate sustainability insights.</p>
+            <button type="button" class="btn btn-primary btn-glow" style="font-size:1.1rem; padding: 0.8rem 2rem; margin-bottom: 1rem;" onclick="event.stopPropagation(); document.getElementById('file-input').click()">
+              📁 Browse Image
+            </button>
+            <p class="text-secondary" style="font-size:0.85rem;">or drag & drop your image here</p>
+            
+            <div class="upload-badges">
+              <span class="upload-badge">✓ JPG</span>
+              <span class="upload-badge">✓ PNG</span>
+              <span class="upload-badge">✓ WEBP</span>
+              <span class="upload-badge">✓ Maximum 10 MB</span>
+            </div>
+            
+            <div id="upload-loading" class="hidden mt-md">
+              <div class="spinner" style="margin: 0 auto;"></div>
+              <p class="mt-sm text-primary fw-medium" style="font-size:0.85rem;">Uploading image...</p>
+            </div>
+          </div>
+          <input type="file" id="file-input" style="display: none;" accept="image/*" />
+          
+          <div id="preview-container" class="hidden mt-md">
+            <div class="preview-card-modern">
+              <img id="preview-thumb" class="preview-thumb" src="" alt="Thumbnail" />
+              <div class="preview-details">
+                <div class="flex items-center gap-sm mb-sm">
+                  <span class="text-success" style="font-size:1.2rem;">✔</span>
+                  <div class="fw-bold" id="preview-filename" style="font-size:1.1rem;">filename.jpg</div>
+                </div>
+                <div class="text-secondary mb-sm" style="font-size:0.85rem;">
+                  <span id="preview-filesize">2.4 MB</span> • <span id="preview-resolution">1024 × 768</span>
+                </div>
+                <div class="text-primary-light" style="font-size:0.9rem; font-weight:500;">Ready for AI Analysis</div>
+              </div>
+              <div class="preview-actions">
+                <button type="button" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size:0.85rem;" onclick="document.getElementById('file-input').click()">Replace Image</button>
+                <button type="button" class="btn" style="padding: 0.5rem 1rem; font-size:0.85rem; background: rgba(244,63,94,0.1); color: var(--color-danger); border: 1px solid rgba(244,63,94,0.2);" onclick="removeImage()">Remove Image</button>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="mt-xl mb-md">Link to Inventory Item (Optional)</h3>
+          <p class="text-secondary mb-sm" style="font-size:0.85rem;">Required to pull accurate historical footprint data.</p>
+          
+          <div class="custom-select-wrapper" id="inventory-dropdown-wrapper">
+            <div class="custom-select-trigger" id="custom-select-trigger" onclick="toggleDropdown()">
+              <span id="custom-select-placeholder">No inventory selected</span>
+              <span style="opacity: 0.5;">▼</span>
+            </div>
+            <div class="custom-select-options" id="custom-select-options">
+              <!-- Options injected via JS -->
+            </div>
+            <select id="inv-link-select" class="form-control" style="display:none;">
+              <option value="">-- No inventory item linked --</option>
+            </select>
+          </div>
+
+          <div id="analyze-action" class="hidden mt-lg" style="text-align:center; padding: 2rem; border-top: 1px solid rgba(255,255,255,0.05);">
+            <button type="button" class="btn btn-primary btn-glow" style="font-size:1.2rem; padding: 1.2rem 3rem; border-radius: var(--radius-full);" onclick="runFullPipeline()" id="btn-analyze-master">
+              ✨ Analyze Image
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 2: PROCESSING -->
+      <section class="step-panel" id="step-processing">
+        <div class="glass-card card-padding hidden" id="processing-panel" style="text-align:center;">
+          <h2 class="mb-lg">2. AI Processing</h2>
+          <div class="spinner" style="margin: 0 auto; width: 40px; height: 40px; border-width: 4px;"></div>
+          <div class="mt-lg text-primary fw-medium" id="processing-status-text" style="font-size:1.2rem;">Starting analysis...</div>
+          <div class="conf-bar-wrapper mt-md" style="width: 60%; margin: 1rem auto; height: 8px;">
+            <div class="conf-bar" id="processing-progress-bar" style="width:0%"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 3: RESULTS -->
+      <section class="step-panel" id="step-results">
+        <div class="glass-card card-padding hidden" id="success-panel" style="text-align:center;">
+          <h2 class="text-primary mb-sm" style="font-size:1.8rem;">🎉 Analysis Complete</h2>
+          <p class="text-secondary mb-lg">Your textile waste has been fully analyzed. Scroll below to review the complete AI Sustainability Report.</p>
+          <div class="flex gap-md justify-center">
+            <button class="btn btn-primary" onclick="window.print()">📄 Download Report</button>
+            <button class="btn btn-secondary" onclick="resetPipeline()">🔄 Analyze Another Image</button>
+            <button class="btn btn-secondary" onclick="window.print()">🖨️ Print Report</button>
+          </div>
+        </div>
+
+        <div class="glass-card card-padding hidden" id="print-area" style="background:#0a1922;">
+          
+          <div id="api-error-banner"></div>
+
+          <!-- Report Header -->
+          <div style="border-bottom: 2px solid rgba(52,211,153,0.2); padding-bottom: 1rem; margin-bottom: 2rem;">
+            <div class="flex justify-between">
+              <div>
+                <h1 style="font-size:2rem; margin-bottom:8px; color:var(--color-primary);">Textile Waste Intelligence</h1>
+                <p style="color:var(--color-text-secondary);">Comprehensive AI Sustainability Report</p>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-weight:600; font-size:1.1rem;" id="rep-date"></div>
+                <div class="text-secondary" style="font-size:0.85rem;">Generated by AI Pipeline</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 1: Image Summary -->
+          <div class="report-section">
+            <h3>1. Image Summary</h3>
+            <div class="grid-2">
+              <div>
+                <img id="rep-img" src="" alt="Analyzed Textile" style="width:100%; max-width:300px; border-radius:var(--radius-md); box-shadow:var(--shadow-card);" />
+              </div>
+              <div>
+                <div class="mb-sm"><span class="text-secondary">Image ID:</span> <span id="rep-img-id" class="fw-bold"></span></div>
+                <div class="mb-sm"><span class="text-secondary">Inventory Link:</span> <span id="rep-inv-id" class="fw-bold">—</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: Material Analysis -->
+          <div class="report-section">
+            <h3>2. Material Analysis</h3>
+            <div class="grid-2">
+              <div class="info-card">
+                <div class="text-secondary mb-sm" style="font-size:0.8rem;text-transform:uppercase;">Primary Material</div>
+                <div class="result-value text-primary" id="rep-mat">—</div>
+                <div class="text-secondary" id="rep-mat-desc">Identified base fibre composition of the textile.</div>
+              </div>
+              <div class="info-card">
+                <div class="text-secondary mb-sm" style="font-size:0.8rem;text-transform:uppercase;">AI Confidence</div>
+                <div class="result-value" id="rep-mat-conf">—</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 3: Waste Assessment -->
+          <div class="report-section">
+            <h3>3. Waste Assessment</h3>
+            <div class="grid-3">
+              <div class="info-card">
+                <div class="text-secondary mb-sm" style="font-size:0.8rem;text-transform:uppercase;">Waste Category</div>
+                <div class="result-value text-accent" id="rep-waste">—</div>
+              </div>
+              <div class="info-card">
+                <div class="text-secondary mb-sm" style="font-size:0.8rem;text-transform:uppercase;">Recyclability Rating</div>
+                <div class="result-value" id="rep-waste-conf">—</div>
+              </div>
+              <div class="info-card">
+                <div class="text-secondary mb-sm" style="font-size:0.8rem;text-transform:uppercase;">Handling Directives</div>
+                <div class="text-primary-light" id="rep-handling">—</div>
+                <div class="text-danger mt-sm" id="rep-urgency">—</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 4: Recycling Recommendation -->
+          <div class="report-section">
+            <h3>4. Recycling Recommendation</h3>
+            <div id="rep-recs" class="grid-2"></div>
+          </div>
+
+          <!-- Section 5: Environmental Impact -->
+          <div class="report-section">
+            <h3>5. Environmental Impact</h3>
+            <div class="kpi-grid" id="rep-env"></div>
+          </div>
+
+          <!-- Section 6: Sustainability Analysis -->
+          <div class="report-section">
+            <h3>6. Sustainability Analysis</h3>
+            <div class="kpi-grid" id="rep-sus"></div>
+          </div>
+
+          <!-- Section 6b: Sustainability Benchmark -->
+          <div class="report-section">
+            <h3>6b. Sustainability Benchmark</h3>
+            <p class="text-secondary mb-sm" style="font-size:0.85rem;">How this inventory item compares to platform-wide averages.</p>
+            <div class="kpi-grid" id="rep-bench"></div>
+          </div>
+
+          <!-- Section 7: Circular Economy Insights -->
+          <div class="report-section">
+            <h3>7. Circular Economy Insights</h3>
+            <div id="rep-circ" class="info-card">
+              <p class="text-secondary">Platform circularity averages applied to this item's specific waste category.</p>
+              <div class="grid-3 mt-md" id="rep-circ-grid"></div>
+            </div>
+          </div>
+
+          <!-- Section 8: Footer -->
+          <div class="report-section text-center text-secondary" style="font-size:0.85rem; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1.5rem;">
+            <div class="mb-sm">Textile Waste Intelligence Platform © 2026</div>
+            <div>Generated Date: <span id="rep-footer-date"></span></div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/shared-data.js"></script>
+<script>
+  requireAuth();
+
+  // ── Single canonical state object ─────────────────────────────────────────
+  const state = {
+    imageId:          null,   // string – image record PK
+    imageUrl:         null,   // full URL to the uploaded image
+    inventoryId:      null,   // integer or null
+    // Material classification response (MaterialClassifyResponse)
+    materialData:     null,   // { material, confidence, fabric_type, fiber_composition, … }
+    // Waste classification response (WasteClassifyResponse)
+    wasteData:        null,   // { material, category, confidence, handling, disposal, recyclability_assessment, … }
+    // Recommendations response (RecommendationResponse from /classification/recommendations)
+    recsData:         null,   // { material, waste_category, recyclability, reuse_potential, recommendations: [str] }
+    // Sustainability metric response (SustainabilityMetricOut)
+    susData:          null,   // { co2_saved, water_saved, landfill_diverted, resource_recovery, circularity, sustainability_score, … }
+    // Benchmark response (BenchmarkReportOut)
+    benchData:        null,   // { available, overall_rating, co2: {current,average,difference,status}, … }
+    // Environmental report response (SustainabilityReportOut)
+    envData:          null,   // { co2_saved, water_saved, environmental_rating, insights, summary, co2_benefit, … }
+    // Circular analytics response (CircularAnalyticsGenerateResponse)
+    circData:         null,   // { statistics: { total_items, average_circularity_score, … }, overall_rating, generated_insights, … }
+  };
+
+  // ── Inventory dropdown ────────────────────────────────────────────────────
+  async function loadInventoryOptions() {
+    try {
+      const inv = await api.getInventory();
+      if (inv && inv.length > 0) {
+        const select      = document.getElementById('inv-link-select');
+        const customOpts  = document.getElementById('custom-select-options');
+        inv.forEach(item => {
+          const opt       = document.createElement('option');
+          opt.value       = item.id;
+          opt.textContent = `Batch ${item.batch_code} - ${item.material_type} (${item.quantity_kg}kg)`;
+          select.appendChild(opt);
+
+          const customOpt       = document.createElement('div');
+          customOpt.className   = 'custom-option';
+          customOpt.onclick     = () => selectInventory(item.id, `Batch ${item.batch_code}`, item.material_type, item.warehouse || 'Central Warehouse', item.quantity_kg);
+          customOpt.innerHTML   = `
+            <span class="custom-option-batch">📦 ${item.batch_code}</span>
+            <div class="custom-option-details">
+              <span>${item.material_type}</span> •
+              <span>${item.warehouse || 'Central Warehouse'}</span> •
+              <span>${item.quantity_kg} kg</span>
+            </div>
+          `;
+          customOpts.appendChild(customOpt);
+        });
+      }
+    } catch(e) {
+      console.warn("Failed to load inventory options", e);
+    }
+  }
+
+  function toggleDropdown() {
+    document.getElementById('custom-select-options').classList.toggle('open');
+  }
+
+  function selectInventory(id, batch, material, warehouse, qty) {
+    document.getElementById('inv-link-select').value = id;
+    document.getElementById('custom-select-placeholder').innerHTML = `
+      <div style="display:flex; flex-direction:column; align-items:flex-start;">
+        <span class="fw-bold" style="color:var(--color-primary-light); font-size:0.9rem;">${batch}</span>
+        <span style="font-size:0.75rem; color:var(--color-text-secondary);">${material} • ${warehouse} • ${qty} kg</span>
+      </div>
+    `;
+    document.getElementById('custom-select-options').classList.remove('open');
+  }
+
+  document.addEventListener('click', (e) => {
+    const wrapper = document.getElementById('inventory-dropdown-wrapper');
+    const opts    = document.getElementById('custom-select-options');
+    if (wrapper && !wrapper.contains(e.target) && opts && opts.classList.contains('open')) {
+      opts.classList.remove('open');
+    }
+  });
+
+  // ── DOMContentLoaded ──────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    loadInventoryOptions();
+
+    const zone = document.getElementById('upload-zone');
+    const inp  = document.getElementById('file-input');
+
+    zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', ()  => zone.classList.remove('dragover'));
+    zone.addEventListener('drop',      e => {
+      e.preventDefault(); zone.classList.remove('dragover');
+      if (e.dataTransfer.files.length) handleUpload(e.dataTransfer.files[0]);
+    });
+    inp.addEventListener('change', async e => {
+      if (e.target.files.length) {
+        await handleUpload(e.target.files[0]);
+        e.target.value = '';
+      }
+    });
+  });
+
+  // ── UI helpers ────────────────────────────────────────────────────────────
+  function setProcessingStatus(progressPct, statusText) {
+    const bar = document.getElementById('processing-progress-bar');
+    const st  = document.getElementById('processing-status-text');
+    if (bar && progressPct !== undefined) bar.style.width = progressPct + '%';
+    if (st  && statusText)               st.textContent   = statusText;
+  }
+
+  function resetPipeline() {
+    window.location.reload();
+  }
+
+  // ── Step 1: Upload ────────────────────────────────────────────────────────
+  async function handleUpload(file) {
+    console.log('[Upload] handleUpload called', file.name);
+    const loadingDiv = document.getElementById('upload-loading');
+    loadingDiv.classList.remove('hidden');
+    loadingDiv.innerHTML = `
+      <div class="spinner" style="margin: 0 auto;"></div>
+      <p class="mt-sm text-primary fw-medium" style="font-size:0.85rem;">Uploading image...</p>
+    `;
+
+    try {
+      const data = await api.uploadImage(file);
+      console.log('[Upload] success', data);
+      selectImage(data.id, data.file_url, file);
+      loadingDiv.classList.add('hidden');
+    } catch (e) {
+      console.error('[Upload] Failed:', e);
+      loadingDiv.innerHTML = `
+        <div class="text-danger" style="margin-top:1rem; padding:1rem; background:rgba(244,63,94,0.1); border-radius:var(--radius-sm); border:1px solid rgba(244,63,94,0.3);">
+          <div style="font-weight:bold; font-size:1.1rem; margin-bottom:0.5rem;">⚠️ Upload Failed</div>
+          <p style="font-size:0.9rem; margin-bottom:0;">${e.message}</p>
+        </div>
+      `;
+    }
+  }
+
+  function selectImage(id, url, file = null) {
+    console.log('[Upload] selectImage', { id, url });
+    if (!url) throw new Error("Invalid response from server (missing file URL).");
+
+    state.imageId  = id;
+    state.imageUrl = url.startsWith('http') ? url : `http://localhost:8000${url}`;
+
+    document.getElementById('upload-zone').classList.add('hidden');
+    const previewContainer = document.getElementById('preview-container');
+    previewContainer.classList.remove('hidden');
+    previewContainer.classList.add('fade-slide-up');
+
+    document.getElementById('preview-thumb').src = state.imageUrl;
+
+    if (file) {
+      document.getElementById('preview-filename').textContent = file.name;
+      document.getElementById('preview-filesize').textContent = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+      const img = new Image();
+      img.onload = function() {
+        document.getElementById('preview-resolution').textContent = `${this.width} × ${this.height}`;
+      };
+      img.src = URL.createObjectURL(file);
+    } else {
+      document.getElementById('preview-filename').textContent = 'Uploaded Image';
+      document.getElementById('preview-filesize').textContent = 'Unknown Size';
+      document.getElementById('preview-resolution').textContent = 'Unknown Resolution';
+    }
+
+    const analyzeAction = document.getElementById('analyze-action');
+    analyzeAction.classList.remove('hidden');
+    analyzeAction.classList.add('fade-slide-up');
+    document.getElementById('step-1').scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }
+
+  function removeImage() {
+    state.imageId  = null;
+    state.imageUrl = null;
+    document.getElementById('file-input').value = '';
+    document.getElementById('preview-container').classList.add('hidden');
+    document.getElementById('preview-container').classList.remove('fade-slide-up');
+    document.getElementById('analyze-action').classList.add('hidden');
+    document.getElementById('analyze-action').classList.remove('fade-slide-up');
+    document.getElementById('upload-zone').classList.remove('hidden');
+  }
+
+  // ── Master Pipeline ───────────────────────────────────────────────────────
+  async function runFullPipeline() {
+    if (!state.imageId) {
+      showToast('Please upload an image first.', 'error');
+      return;
+    }
+
+    const btn     = document.getElementById('btn-analyze-master');
+    btn.innerHTML = '<span class="spinner" style="display:inline-block;width:14px;height:14px;margin-right:6px;"></span> Processing...';
+    btn.disabled  = true;
+
+    // Read inventory (may be empty string → null)
+    const rawInvId    = document.getElementById('inv-link-select').value;
+    state.inventoryId = rawInvId ? parseInt(rawInvId, 10) : null;
+
+    // Show processing panel, hide step-1
+    document.getElementById('step-1').style.display = 'none';
+    const processingPanel = document.getElementById('processing-panel');
+    processingPanel.classList.remove('hidden');
+    processingPanel.classList.add('fade-slide-up');
+    processingPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    const apiErrors = [];
+
+    try {
+      // ── Step A: Material Classification (REQUIRED) ─────────────────────────
+      setProcessingStatus(8, '🧵 Analyzing textile material...');
+      try {
+        const matRes      = await api.classifyMaterial(state.imageId);
+        state.materialData = matRes;
+        console.log('[Pipeline] material OK', matRes);
+      } catch (e) {
+        throw new Error(`Material Classification failed: ${e.message}`);
+      }
+
+      // ── Step B: Waste Classification (REQUIRED) ────────────────────────────
+      setProcessingStatus(20, '♻️ Determining waste category...');
+      try {
+        const wasteRes   = await api.classifyWaste(state.materialData.material);
+        state.wasteData  = wasteRes;
+        console.log('[Pipeline] waste OK', wasteRes);
+      } catch (e) {
+        throw new Error(`Waste Classification failed: ${e.message}`);
+      }
+
+      // ── Step C: Recycling Recommendations ─────────────────────────────────
+      setProcessingStatus(35, '🔄 Finding recycling strategies...');
+      try {
+        const recsRes   = await api.getRecommendations(
+          state.materialData.material,
+          state.wasteData.category,
+          state.imageId
+        );
+        state.recsData  = recsRes;
+        console.log('[Pipeline] recommendations OK', recsRes);
+      } catch (e) {
+        apiErrors.push(`Recommendations failed: ${e.message}`);
+        state.recsData = null;
+      }
+
+      // ── Steps D–H: Sustainability chain (requires inventory) ───────────────
+      if (state.inventoryId) {
+        const invId = state.inventoryId;
+
+        // D: Calculate sustainability metrics (POST — creates the record)
+        setProcessingStatus(48, '🌱 Calculating sustainability metrics...');
+        try {
+          await api.calculateSustainability(invId);
+          console.log('[Pipeline] sustainability calculated');
+        } catch (e) {
+          apiErrors.push(`Sustainability calculation failed: ${e.message}`);
+        }
+
+        // E: Generate inventory-specific recycling recommendations (POST)
+        setProcessingStatus(56, '📋 Generating recycling recommendations...');
+        try {
+          await api.generateRecommendationsForInventory(invId);
+          console.log('[Pipeline] inventory recommendations generated');
+        } catch (e) {
+          apiErrors.push(`Inventory recommendations failed: ${e.message}`);
+        }
+
+        // F: Generate environmental report (POST — requires sustainability + recs to exist)
+        setProcessingStatus(64, '🌍 Calculating environmental impact...');
+        try {
+          const envRes   = await api.generateEnvironmentalReport(invId);
+          state.envData  = envRes;
+          console.log('[Pipeline] environmental report generated', envRes);
+        } catch (e) {
+          apiErrors.push(`Environmental report failed: ${e.message}`);
+          state.envData = null;
+        }
+
+        // G: Fetch sustainability metrics (GET — now exists after step D)
+        setProcessingStatus(72, '📊 Fetching sustainability metrics...');
+        try {
+          const susRes   = await api.fetchSustainabilityMetric(invId);
+          state.susData  = susRes;
+          console.log('[Pipeline] sustainability metrics fetched', susRes);
+        } catch (e) {
+          apiErrors.push(`Sustainability fetch failed: ${e.message}`);
+          state.susData = null;
+        }
+
+        // H: Fetch benchmark (GET — now possible after step D)
+        setProcessingStatus(80, '📈 Comparing sustainability benchmarks...');
+        try {
+          const benchRes  = await api.fetchBenchmark(invId);
+          state.benchData = benchRes;
+          console.log('[Pipeline] benchmark fetched', benchRes);
+        } catch (e) {
+          apiErrors.push(`Benchmark fetch failed: ${e.message}`);
+          state.benchData = null;
+        }
+
+      } else {
+        // No inventory selected — skip all inventory-dependent steps
+        apiErrors.push('No inventory item linked — sustainability, environmental, and benchmark data unavailable.');
+        console.warn('[Pipeline] No inventory ID — skipping D–H');
+      }
+
+      // ── Step I: Circular Economy Analytics (no inventory required) ─────────
+      setProcessingStatus(88, '🔁 Preparing circular economy insights...');
+      try {
+        const circRes   = await api.generateCircularAnalytics();
+        state.circData  = circRes;
+        console.log('[Pipeline] circular analytics generated', circRes);
+      } catch (e) {
+        apiErrors.push(`Circular analytics failed: ${e.message}`);
+        state.circData = null;
+      }
+
+      // ── Step J: Build final report ─────────────────────────────────────────
+      setProcessingStatus(95, '📄 Preparing final AI Sustainability Report...');
+      generateReport(apiErrors);
+
+      setProcessingStatus(100, '✅ Analysis Complete');
+
+      // Show results
+      processingPanel.classList.add('hidden');
+
+      const successPanel = document.getElementById('success-panel');
+      successPanel.classList.remove('hidden');
+      successPanel.classList.add('fade-slide-up');
+
+      const printArea = document.getElementById('print-area');
+      printArea.classList.remove('hidden');
+      printArea.classList.add('fade-slide-up');
+      printArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      showToast(apiErrors.length === 0 ? 'Analysis completed successfully!' : 'Analysis completed with some warnings.', apiErrors.length === 0 ? 'success' : 'warning');
+
+      btn.innerHTML = '✨ Analyze Image';
+      btn.disabled  = false;
+
+    } catch (e) {
+      // Fatal error (material or waste step failed)
+      console.error('[Pipeline] Fatal error:', e);
+      showToast(e.message, 'error');
+
+      processingPanel.classList.remove('hidden');
+      processingPanel.innerHTML = `
+        <h2 class="mb-lg text-danger">⚠️ Analysis Failed</h2>
+        <div class="mt-lg text-secondary" style="font-size:1.1rem;">${e.message}</div>
+        <button type="button" class="btn btn-secondary mt-xl" onclick="window.location.reload()">🔄 Start Over</button>
+      `;
+
+      btn.innerHTML = '⚠️ Retry Analysis';
+      btn.disabled  = false;
+    }
+  }
+
+  // ── Report Renderer ───────────────────────────────────────────────────────
+  function generateReport(apiErrors = []) {
+    // Error banner
+    const errorBanner = document.getElementById('api-error-banner');
+    if (errorBanner) {
+      if (apiErrors.length > 0) {
+        errorBanner.innerHTML = `
+          <div style="background:rgba(244,63,94,0.1); border:1px solid rgba(244,63,94,0.3); padding:1rem; border-radius:8px; margin-bottom:1rem;">
+            <div style="color:var(--color-danger); font-weight:bold; margin-bottom:0.5rem;">⚠️ Some data could not be loaded:</div>
+            ${apiErrors.map(err => `<div style="font-size:0.85rem; color:var(--color-text-secondary);">${err}</div>`).join('')}
+          </div>`;
+      } else {
+        errorBanner.innerHTML = '';
+      }
+    }
+
+    const d = new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'long', year:'numeric' });
+    const repDate = document.getElementById('rep-date');
+    const repFooterDate = document.getElementById('rep-footer-date');
+    if (repDate)       repDate.textContent       = d;
+    if (repFooterDate) repFooterDate.textContent = d;
+
+    // 1. Image Summary
+    const repImg   = document.getElementById('rep-img');
+    const repImgId = document.getElementById('rep-img-id');
+    const repInvId = document.getElementById('rep-inv-id');
+    if (repImg)   repImg.src          = state.imageUrl || '';
+    if (repImgId) repImgId.textContent = state.imageId ? `#${state.imageId}` : 'Unknown';
+    if (repInvId) repInvId.textContent = state.inventoryId ? `Inventory #${state.inventoryId}` : '— (no linked inventory)';
+
+    // 2. Material Analysis
+    //    Fields from MaterialClassifyResponse: material, confidence, fabric_type, fiber_composition, blend_identification, material_quality, fabric_category
+    const mat  = state.materialData;
+    const repMat     = document.getElementById('rep-mat');
+    const repMatConf = document.getElementById('rep-mat-conf');
+    const repMatDesc = document.getElementById('rep-mat-desc');
+    if (repMat)     repMat.textContent     = mat ? mat.material : '—';
+    if (repMatConf) repMatConf.textContent = mat ? `${mat.confidence.toFixed(1)}% confidence` : '—';
+    if (repMatDesc) {
+      if (mat) {
+        repMatDesc.innerHTML = `
+          <div style="font-size:0.85rem; color:var(--color-text-secondary); margin-top:8px;">
+            <div>Fabric Type: <span style="color:var(--color-text-primary);">${mat.fabric_type || '—'}</span></div>
+            <div>Fiber Composition: <span style="color:var(--color-text-primary);">${mat.fiber_composition || '—'}</span></div>
+            <div>Quality: <span style="color:var(--color-text-primary);">${mat.material_quality || '—'}</span></div>
+          </div>`;
+      } else {
+        repMatDesc.textContent = 'No material data available.';
+      }
+    }
+
+    // 3. Waste Assessment
+    //    Fields from WasteClassifyResponse: material, category, confidence, handling, disposal, recyclability_assessment, reuse_potential
+    const waste       = state.wasteData;
+    const catMeta     = waste ? getCatMeta(waste.category) : {};
+    const repWaste    = document.getElementById('rep-waste');
+    const repWasteConf = document.getElementById('rep-waste-conf');
+    const repHandling = document.getElementById('rep-handling');
+    const repUrgency  = document.getElementById('rep-urgency');
+    if (repWaste)     repWaste.textContent     = waste ? waste.category : '—';
+    if (repWasteConf) repWasteConf.textContent = waste ? (waste.recyclability_assessment || catMeta.handling || '—') : '—';
+    if (repHandling)  repHandling.textContent  = waste ? (waste.handling || catMeta.handling || '—') : '—';
+    if (repUrgency)   repUrgency.textContent   = waste ? (waste.disposal || catMeta.disposal || '—') : '—';
+
+    // 4. Recycling Recommendations
+    //    Fields from RecommendationResponse (classification endpoint): recommendations: [str]
+    const repRecs = document.getElementById('rep-recs');
+    if (repRecs) {
+      const recs = state.recsData && state.recsData.recommendations && state.recsData.recommendations.length > 0
+        ? state.recsData.recommendations
+        : [];
+      if (recs.length > 0) {
+        repRecs.innerHTML = recs.map((r, i) => `
+          <div class="info-card" style="background:rgba(255,255,255,0.02);">
+            <div class="fw-bold text-primary mb-sm">${i + 1}. Recommendation</div>
+            <div class="text-secondary" style="font-size:0.85rem;">${r}</div>
+          </div>`).join('');
+      } else {
+        repRecs.innerHTML = '<div class="text-secondary">No recommendations available.</div>';
+      }
+    }
+
+    // 5. Environmental Impact
+    //    Fields from SustainabilityReportOut: co2_saved, water_saved, landfill_diversion, resource_recovery,
+    //    environmental_rating, co2_benefit, water_benefit, landfill_benefit, recovery_benefit, insights, summary
+    const repEnv = document.getElementById('rep-env');
+    if (repEnv) {
+      if (state.envData) {
+        const e = state.envData;
+        repEnv.innerHTML = `
+          <div class="info-card">
+            <div class="kpi-label">CO₂ Saved</div>
+            <div class="result-value text-primary">${e.co2_saved !== undefined ? e.co2_saved.toFixed(2) : 'N/A'} <small style="font-size:1rem;">kg</small></div>
+            <div class="text-secondary" style="font-size:0.8rem; margin-top:4px;">${e.co2_benefit || ''}</div>
+          </div>
+          <div class="info-card">
+            <div class="kpi-label">Water Saved</div>
+            <div class="result-value text-accent">${e.water_saved !== undefined ? e.water_saved.toFixed(1) : 'N/A'} <small style="font-size:1rem;">L</small></div>
+            <div class="text-secondary" style="font-size:0.8rem; margin-top:4px;">${e.water_benefit || ''}</div>
+          </div>
+          <div class="info-card">
+            <div class="kpi-label">Landfill Diversion</div>
+            <div class="result-value">${e.landfill_diversion !== undefined ? e.landfill_diversion.toFixed(1) : 'N/A'}<small style="font-size:1rem;">%</small></div>
+            <div class="text-secondary" style="font-size:0.8rem; margin-top:4px;">${e.landfill_benefit || ''}</div>
+          </div>
+          <div class="info-card">
+            <div class="kpi-label">Resource Recovery</div>
+            <div class="result-value">${e.resource_recovery !== undefined ? e.resource_recovery.toFixed(2) : 'N/A'} <small style="font-size:1rem;">kg</small></div>
+            <div class="text-secondary" style="font-size:0.8rem; margin-top:4px;">${e.recovery_benefit || ''}</div>
+          </div>
+          ${e.environmental_rating ? `<div class="info-card" style="grid-column:1/-1;">
+            <div class="kpi-label">Environmental Rating</div>
+            <div class="result-value text-primary">${e.environmental_rating}</div>
+          </div>` : ''}
+          ${e.summary ? `<div class="info-card" style="grid-column:1/-1;">
+            <div class="kpi-label">Summary</div>
+            <div class="text-secondary" style="font-size:0.9rem; line-height:1.6;">${e.summary}</div>
+          </div>` : ''}
+          ${e.insights && e.insights.length > 0 ? `<div class="info-card" style="grid-column:1/-1;">
+            <div class="kpi-label mb-sm">AI Insights</div>
+            ${e.insights.map(ins => `<div class="text-secondary" style="font-size:0.85rem; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.04);">• ${ins}</div>`).join('')}
+          </div>` : ''}`;
+      } else {
+        repEnv.innerHTML = '<div class="text-secondary">No Environmental Impact data available. Link an inventory item and ensure sustainability metrics exist.</div>';
+      }
+    }
+
+    // 6. Sustainability Analysis
+    //    Fields from SustainabilityMetricOut: co2_saved, water_saved, landfill_diverted, resource_recovery, circularity, sustainability_score
+    const repSus = document.getElementById('rep-sus');
+    if (repSus) {
+      if (state.susData) {
+        const s = state.susData;
+        repSus.innerHTML = `
+          <div class="info-card">
+            <div class="kpi-label">Sustainability Score</div>
+            <div class="result-value text-primary">${s.sustainability_score !== undefined ? s.sustainability_score.toFixed(1) : 'N/A'}<small style="font-size:1rem;">/100</small></div>
+          </div>
+          <div class="info-card">
+            <div class="kpi-label">Circularity Level</div>
+            <div class="result-value text-accent">${s.circularity || 'N/A'}</div>
+          </div>
+          <div class="info-card">
+            <div class="kpi-label">CO₂ Saved</div>
+            <div class="result-value">${s.co2_saved !== undefined ? s.co2_saved.toFixed(2) : 'N/A'} <small style="font-size:1rem;">kg</small></div>
+          </div>
+          <div class="info-card">
+            <div class="kpi-label">Water Saved</div>
+            <div class="result-value">${s.water_saved !== undefined ? s.water_saved.toFixed(1) : 'N/A'} <small style="font-size:1rem;">L</small></div>
+          </div>
+          <div class="info-card">
+            <div class="kpi-label">Landfill Diverted</div>
+            <div class="result-value">${s.landfill_diverted !== undefined ? s.landfill_diverted.toFixed(1) : 'N/A'}<small style="font-size:1rem;">%</small></div>
+          </div>
+          <div class="info-card">
+            <div class="kpi-label">Resource Recovery</div>
+            <div class="result-value">${s.resource_recovery !== undefined ? s.resource_recovery.toFixed(2) : 'N/A'} <small style="font-size:1rem;">kg</small></div>
+          </div>`;
+      } else {
+        repSus.innerHTML = '<div class="text-secondary">No Sustainability data available. Link an inventory item with calculated sustainability metrics.</div>';
+      }
+    }
+
+    // 6b. Benchmark section — rendered inline below rep-sus in the same report section
+    //     Fields from BenchmarkReportOut: available, overall_rating, message, record_count,
+    //     co2: {current, average, difference, status}, water, resource_recovery, landfill_diversion, sustainability_score
+    // (Inject benchmark into its own section using the rep-sus container extension approach)
+    const benchSection = document.getElementById('rep-bench');
+    if (benchSection) {
+      if (state.benchData && state.benchData.available) {
+        const b = state.benchData;
+        const renderMetric = (label, m) => m ? `
+          <div class="info-card">
+            <div class="kpi-label">${label}</div>
+            <div style="display:flex; gap:1rem; margin-top:4px; flex-wrap:wrap;">
+              <div><span class="text-secondary" style="font-size:0.75rem;">Current</span><br><span class="fw-bold text-primary">${m.current.toFixed(2)}</span></div>
+              <div><span class="text-secondary" style="font-size:0.75rem;">Platform Avg</span><br><span class="fw-bold">${m.average.toFixed(2)}</span></div>
+              <div><span class="text-secondary" style="font-size:0.75rem;">Status</span><br><span class="fw-bold" style="color:${m.status === 'Above Average' ? 'var(--color-primary)' : m.status === 'Below Average' ? 'var(--color-danger)' : 'var(--color-text-primary)'}">${m.status}</span></div>
+            </div>
+          </div>` : '';
+        benchSection.innerHTML = `
+          ${b.overall_rating ? `<div class="info-card" style="grid-column:1/-1;"><div class="kpi-label">Overall Rating</div><div class="result-value text-primary">${b.overall_rating}</div><div class="text-secondary" style="font-size:0.8rem;">Based on ${b.record_count} platform records</div></div>` : ''}
+          ${renderMetric('CO₂ Savings vs. Avg', b.co2)}
+          ${renderMetric('Water Savings vs. Avg', b.water)}
+          ${renderMetric('Resource Recovery vs. Avg', b.resource_recovery)}
+          ${renderMetric('Landfill Diversion vs. Avg', b.landfill_diversion)}
+          ${renderMetric('Sustainability Score vs. Avg', b.sustainability_score)}`;
+      } else if (state.benchData && !state.benchData.available) {
+        benchSection.innerHTML = `<div class="text-secondary">${state.benchData.message || 'Benchmark unavailable — insufficient historical data.'}</div>`;
+      } else {
+        benchSection.innerHTML = '<div class="text-secondary">No benchmark data available.</div>';
+      }
+    }
+
+    // 7. Circular Economy
+    //    Fields from CircularAnalyticsGenerateResponse: statistics: { total_items, average_circularity_score,
+    //    average_landfill_diversion, total_co2_saved, total_water_saved, average_sustainability_score, … },
+    //    overall_rating, summary, generated_insights: [str], most_common_material, least_common_material
+    const repCircGrid = document.getElementById('rep-circ-grid');
+    if (repCircGrid) {
+      if (state.circData) {
+        const c    = state.circData;
+        const st   = c.statistics || {};
+        const ins  = c.generated_insights || [];
+        repCircGrid.innerHTML = `
+          <div class="text-center">
+            <div class="fw-bold text-primary" style="font-size:1.5rem;">${st.average_circularity_score !== undefined ? st.average_circularity_score.toFixed(1) : 'N/A'}%</div>
+            <div class="text-secondary" style="font-size:0.8rem;text-transform:uppercase;">Avg. Circularity Score</div>
+          </div>
+          <div class="text-center">
+            <div class="fw-bold text-accent" style="font-size:1.5rem;">${st.average_landfill_diversion !== undefined ? st.average_landfill_diversion.toFixed(1) : 'N/A'}%</div>
+            <div class="text-secondary" style="font-size:0.8rem;text-transform:uppercase;">Avg. Landfill Diversion</div>
+          </div>
+          <div class="text-center">
+            <div class="fw-bold text-warning" style="font-size:1.5rem;">${st.total_items !== undefined ? st.total_items : 'N/A'}</div>
+            <div class="text-secondary" style="font-size:0.8rem;text-transform:uppercase;">Total Items Analysed</div>
+          </div>
+          <div class="text-center">
+            <div class="fw-bold text-primary" style="font-size:1.5rem;">${st.total_co2_saved !== undefined ? st.total_co2_saved.toFixed(1) : 'N/A'} kg</div>
+            <div class="text-secondary" style="font-size:0.8rem;text-transform:uppercase;">Platform CO₂ Saved</div>
+          </div>
+          <div class="text-center">
+            <div class="fw-bold text-accent" style="font-size:1.5rem;">${st.total_water_saved !== undefined ? Math.round(st.total_water_saved) : 'N/A'} L</div>
+            <div class="text-secondary" style="font-size:0.8rem;text-transform:uppercase;">Platform Water Saved</div>
+          </div>
+          <div class="text-center">
+            <div class="fw-bold" style="font-size:1rem;">${c.most_common_material || 'N/A'}</div>
+            <div class="text-secondary" style="font-size:0.8rem;text-transform:uppercase;">Most Common Material</div>
+          </div>`;
+
+        // Append overall rating + insights below the grid
+        const repCircParent = document.getElementById('rep-circ');
+        if (repCircParent) {
+          // Remove any previously injected extras
+          const oldExtras = repCircParent.querySelectorAll('.circ-extra');
+          oldExtras.forEach(el => el.remove());
+
+          if (c.overall_rating) {
+            const ratingEl = document.createElement('div');
+            ratingEl.className = 'circ-extra mt-md';
+            ratingEl.innerHTML = `<div class="kpi-label">Overall Rating</div><div class="fw-bold text-primary">${c.overall_rating}</div>`;
+            repCircParent.appendChild(ratingEl);
+          }
+          if (ins.length > 0) {
+            const insEl = document.createElement('div');
+            insEl.className = 'circ-extra mt-md';
+            insEl.innerHTML = `<div class="kpi-label mb-sm">AI Circular Insights</div>${ins.slice(0, 5).map(i => `<div class="text-secondary" style="font-size:0.85rem; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.04);">• ${i}</div>`).join('')}`;
+            repCircParent.appendChild(insEl);
+          }
+          if (c.summary) {
+            const sumEl = document.createElement('div');
+            sumEl.className = 'circ-extra mt-md';
+            sumEl.innerHTML = `<div class="kpi-label mb-sm">Circular Economy Summary</div><div class="text-secondary" style="font-size:0.85rem; line-height:1.6;">${c.summary}</div>`;
+            repCircParent.appendChild(sumEl);
+          }
+        }
+      } else {
+        repCircGrid.innerHTML = '<div class="text-secondary">No Circular Economy Insights available.</div>';
+      }
+    }
+  }
+
+</script>
+</body>
+</html>

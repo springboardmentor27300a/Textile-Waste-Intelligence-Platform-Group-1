@@ -1,0 +1,17 @@
+{
+    "total_images": 400,
+    "classes": 10,
+    "supported_materials": [
+        "Cotton",
+        "Polyester",
+        "Wool",
+        "Silk",
+        "Linen",
+        "Denim",
+        "Nylon",
+        "Rayon",
+        "Acrylic",
+        "Mixed Fabrics"
+    ],
+    "test_accuracy": 100.0
+}

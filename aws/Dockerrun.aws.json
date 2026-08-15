@@ -1,0 +1,46 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "containerDefinitions": [
+    {
+      "name": "backend",
+      "image": "textile-waste-backend:latest",
+      "essential": true,
+      "memory": 1024,
+      "portMappings": [
+        {
+          "hostPort": 8000,
+          "containerPort": 8000
+        }
+      ],
+      "environment": [
+        {
+          "name": "ENVIRONMENT",
+          "value": "production"
+        },
+        {
+          "name": "DATABASE_URL",
+          "value": "sqlite:///./textile_waste.db"
+        },
+        {
+          "name": "JWT_SECRET_KEY",
+          "value": "elastic-beanstalk-production-key-2026"
+        }
+      ]
+    },
+    {
+      "name": "frontend",
+      "image": "textile-waste-frontend:latest",
+      "essential": true,
+      "memory": 512,
+      "portMappings": [
+        {
+          "hostPort": 80,
+          "containerPort": 80
+        }
+      ],
+      "links": [
+        "backend"
+      ]
+    }
+  ]
+}

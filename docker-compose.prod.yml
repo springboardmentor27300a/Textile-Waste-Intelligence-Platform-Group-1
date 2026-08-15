@@ -1,0 +1,53 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: textile_waste_db
+    restart: always
+    environment:
+      POSTGRES_DB: textile_waste_db
+      POSTGRES_USER: textile_admin
+      POSTGRES_PASSWORD: production_secure_db_password_2026
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U textile_admin -d textile_waste_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: textile_waste_backend
+    restart: always
+    environment:
+      - DATABASE_URL=postgresql://textile_admin:production_secure_db_password_2026@postgres:5432/textile_waste_db
+      - JWT_SECRET_KEY=production-textile-intelligence-jwt-secret-key-2026
+      - ENVIRONMENT=production
+    volumes:
+      - backend_uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: textile_waste_frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  backend_uploads:

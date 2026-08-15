@@ -1,0 +1,70 @@
+# ==============================================================================
+# Git Ignore Configuration — Textile Waste Intelligence Platform
+# Keeps the GitHub repository lightweight (<25 MB) and fast to clone/push
+# ==============================================================================
+
+# Virtual Environments (Large binaries)
+venv/
+.venv/
+env/
+ENV/
+backend/venv/
+backend/env/
+
+# Node / Frontend Dependencies & Builds
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/
+build/
+.next/
+
+# Python Cache & Bytecode
+__pycache__/
+backend/**/__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# Pytest / Test Artifacts
+.pytest_cache/
+backend/.pytest_cache/
+.coverage
+htmlcov/
+
+# Local SQLite Databases
+*.db
+*.sqlite3
+textile_waste.db
+AI_textile_waste.db
+backend/textile_waste.db
+backend/AI_textile_waste.db
+
+# User Uploaded Temp Files & Logs
+backend/uploads/*
+!backend/uploads/.gitkeep
+backend/app/uploads/*
+uploads/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Large Downloaded Datasets (Use download script instead)
+data/datasets/
+backend/data/datasets/
+
+# Secret Environment Files
+.env
+.env.local
+.env.production
+backend/.env
+frontend/.env
+
+# OS / Editor Files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo

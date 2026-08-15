@@ -1,0 +1,48 @@
+========================================================================
+TEXTILE WASTE INTELLIGENCE PLATFORM — HOW TO RUN & DEPLOY
+========================================================================
+
+1. RUN LOCAL BACKEND (FastAPI):
+------------------------------------------------------------------------
+cd backend
+venv\Scripts\activate
+python -m uvicorn app.main:app --reload
+
+Backend URL: http://localhost:8000
+API Docs:    http://localhost:8000/docs
+
+
+2. RUN LOCAL FRONTEND (React + Vite):
+------------------------------------------------------------------------
+cd frontend
+npm run dev
+
+Frontend UI: http://localhost:5173
+
+
+3. RUN FULL AUTOMATED TEST SUITE (41 Tests):
+------------------------------------------------------------------------
+cd backend
+venv\Scripts\python.exe -m pytest tests/ -v
+
+
+4. RUN WITH DOCKER (Local / Development):
+------------------------------------------------------------------------
+docker compose up --build
+
+
+5. DEPLOY TO AWS CLOUD SERVICES (Production):
+------------------------------------------------------------------------
+See docs/AWS_Deployment_Guide.md for full AWS details.
+For EC2 One-Click Deployment:
+1. ./aws/setup_ec2.sh
+2. ./aws/deploy_aws.sh
+
+
+6. DEMO LOGIN ACCOUNTS:
+------------------------------------------------------------------------
+Email: operator@demo.com       | Password: Password123 (Recycling Facility Operator)
+Email: manager@demo.com        | Password: Password123 (Sustainability Manager)
+Email: manufacturer@demo.com   | Password: Password123 (Textile Manufacturer)
+Email: admin@demo.com          | Password: Password123 (Administrator)
+========================================================================

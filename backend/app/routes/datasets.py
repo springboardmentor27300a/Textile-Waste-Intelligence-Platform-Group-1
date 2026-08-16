@@ -34,6 +34,10 @@ def register_dataset(
         num_images=dataset_in.num_images or 0,
         size_bytes=dataset_in.size_bytes or 0,
         status="Ready" if dataset_in.size_bytes > 0 else "Pending",
+        version=dataset_in.version or "1.0.0",
+        is_used_by_model=dataset_in.is_used_by_model or False,
+        training_date=dataset_in.training_date,
+        model_compatibility=dataset_in.model_compatibility,
         uploaded_by=current_user.id
     )
     

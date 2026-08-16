@@ -28,8 +28,8 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 # Supported formats and size limits
-SUPPORTED_FORMATS = {"JPEG", "JPG", "PNG", "WEBP"}
-SUPPORTED_MIME_TYPES = {"image/jpeg", "image/jpg", "image/png", "image/webp"}
+SUPPORTED_FORMATS = {"JPEG", "JPG", "PNG"}
+SUPPORTED_MIME_TYPES = {"image/jpeg", "image/jpg", "image/png"}
 MAX_FILE_SIZE_BYTES = 20 * 1024 * 1024  # 20 MB
 TARGET_SIZE = (224, 224)  # Standard CNN input size
 
@@ -76,14 +76,20 @@ class ImageProcessor:
         self.textile_images_dir.mkdir(parents=True, exist_ok=True)
         self.processed_dir.mkdir(parents=True, exist_ok=True)
 
-    def validate_image(self, filename: str, file_size: int, content_type: str) -> Dict[str, Any]:
-        """Validate file format, extension, and size."""
-        ext = Path(filename).suffix.upper().lstrip(".")
-
-        if ext not in SUPPORTED_FORMATS and ext != "JPG":
+    def validate_image(self, filename: str, file_size: int, content_type: str, file_data: bytes = None) -> Dict[str, Any]:
+        """Validate file format, extension, size, and corruption."""
+        if file_size <= 0:
             return {
                 "valid": False,
-                "error": f"Unsupported format '{ext}'. Accepted: JPG, JPEG, PNG, WEBP"
+                "error": "Empty file uploaded"
+            }
+
+        ext = Path(filename).suffix.upper().lstrip(".")
+
+        if ext not in SUPPORTED_FORMATS:
+            return {
+                "valid": False,
+                "error": f"Unsupported format '{ext}'. Accepted: JPG, JPEG, PNG"
             }
 
         if file_size > MAX_FILE_SIZE_BYTES:
@@ -93,6 +99,18 @@ class ImageProcessor:
                 "error": f"File size {size_mb:.1f}MB exceeds maximum 20MB limit"
             }
 
+        if file_data:
+            try:
+                from PIL import Image
+                import io
+                img = Image.open(io.BytesIO(file_data))
+                img.verify()
+            except Exception as e:
+                return {
+                    "valid": False,
+                    "error": f"Corrupted or invalid image file: {str(e)}"
+                }
+
         return {"valid": True, "error": None}
 
     def save_original(self, file_data: bytes, filename: str) -> str:
@@ -100,7 +118,8 @@ class ImageProcessor:
         safe_name = Path(filename).stem.replace(" ", "_")
         file_hash = hashlib.md5(file_data).hexdigest()[:8]
         ext = Path(filename).suffix.lower()
-        stored_name = f"{file_hash}_{safe_name}{ext}"
+        import uuid
+        stored_name = f"{uuid.uuid4().hex[:8]}_{file_hash}_{safe_name}{ext}"
         save_path = self.textile_images_dir / stored_name
 
         with open(save_path, "wb") as f:

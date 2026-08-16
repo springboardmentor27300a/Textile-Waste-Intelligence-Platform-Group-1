@@ -136,6 +136,7 @@ def seed_database(db: Session):
         if u["role_name"] == "Administrator":
             admin_user = user
 
+    from datetime import datetime
     # 4. Seed 4 Default Datasets
     datasets_data = [
         {
@@ -143,28 +144,44 @@ def seed_database(db: Session):
             "description": "Large-scale clothes database containing over 800,000 diverse fashion images with rich annotations.",
             "format": "ZIP",
             "num_images": 800000,
-            "size_bytes": 12884901888 # 12 GB
+            "size_bytes": 12884901888, # 12 GB
+            "version": "1.0.0",
+            "is_used_by_model": False,
+            "training_date": None,
+            "model_compatibility": None
         },
         {
             "name": "Fashion-MNIST",
             "description": "Dataset of Zalando's article images consisting of a training set of 60,000 examples and a test set of 10,000 examples.",
             "format": "ZIP",
             "num_images": 70000,
-            "size_bytes": 31457280 # 30 MB
+            "size_bytes": 31457280, # 30 MB
+            "version": "1.0.0",
+            "is_used_by_model": False,
+            "training_date": None,
+            "model_compatibility": None
         },
         {
             "name": "Fabric Image Dataset",
             "description": "High resolution industrial fabric weave sample images containing defect bounding box annotations.",
             "format": "ZIP",
             "num_images": 12500,
-            "size_bytes": 4294967296 # 4 GB
+            "size_bytes": 4294967296, # 4 GB
+            "version": "2.1.0",
+            "is_used_by_model": True,
+            "training_date": datetime(2026, 8, 1),
+            "model_compatibility": "EfficientNet-B0 v1.0.0"
         },
         {
             "name": "Sustainable Fashion Dataset",
             "description": "Structured meta-data and garment catalog images describing environmental footprints and fabric percentages.",
             "format": "CSV",
             "num_images": 5200,
-            "size_bytes": 52428800 # 50 MB
+            "size_bytes": 52428800, # 50 MB
+            "version": "1.2.0",
+            "is_used_by_model": False,
+            "training_date": None,
+            "model_compatibility": None
         }
     ]
     
@@ -179,6 +196,10 @@ def seed_database(db: Session):
                     num_images=ds["num_images"],
                     size_bytes=ds["size_bytes"],
                     status="Ready",
+                    version=ds["version"],
+                    is_used_by_model=ds["is_used_by_model"],
+                    training_date=ds["training_date"],
+                    model_compatibility=ds["model_compatibility"],
                     uploaded_by=admin_user.id
                 )
                 db.add(dataset)
@@ -302,6 +323,40 @@ async def lifespan(app: FastAPI):
                     logger.info("Migrating: Adding column 'estimated_time' to recycling_recommendations table...")
                     conn.execute(text("ALTER TABLE recycling_recommendations ADD COLUMN estimated_time VARCHAR(50)"))
                     conn.commit()
+
+                # predictions table columns
+                res_mv = conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='predictions' AND column_name='model_version'"))
+                if not res_mv.scalar():
+                    logger.info("Migrating: Adding column 'model_version' to predictions table...")
+                    conn.execute(text("ALTER TABLE predictions ADD COLUMN model_version VARCHAR(50)"))
+                    conn.commit()
+                res_pt = conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='predictions' AND column_name='processing_time'"))
+                if not res_pt.scalar():
+                    logger.info("Migrating: Adding column 'processing_time' to predictions table...")
+                    conn.execute(text("ALTER TABLE predictions ADD COLUMN processing_time INTEGER"))
+                    conn.commit()
+
+                # datasets table columns
+                res_v = conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='datasets' AND column_name='version'"))
+                if not res_v.scalar():
+                    logger.info("Migrating: Adding column 'version' to datasets table...")
+                    conn.execute(text("ALTER TABLE datasets ADD COLUMN version VARCHAR(50) DEFAULT '1.0.0'"))
+                    conn.commit()
+                res_ium = conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='datasets' AND column_name='is_used_by_model'"))
+                if not res_ium.scalar():
+                    logger.info("Migrating: Adding column 'is_used_by_model' to datasets table...")
+                    conn.execute(text("ALTER TABLE datasets ADD COLUMN is_used_by_model BOOLEAN DEFAULT FALSE"))
+                    conn.commit()
+                res_td = conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='datasets' AND column_name='training_date'"))
+                if not res_td.scalar():
+                    logger.info("Migrating: Adding column 'training_date' to datasets table...")
+                    conn.execute(text("ALTER TABLE datasets ADD COLUMN training_date TIMESTAMP"))
+                    conn.commit()
+                res_mc = conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='datasets' AND column_name='model_compatibility'"))
+                if not res_mc.scalar():
+                    logger.info("Migrating: Adding column 'model_compatibility' to datasets table...")
+                    conn.execute(text("ALTER TABLE datasets ADD COLUMN model_compatibility VARCHAR(100)"))
+                    conn.commit()
             else:
                 # SQLite fallback
                 result = conn.execute(text("PRAGMA table_info(recycling_recommendations)")).fetchall()
@@ -321,6 +376,32 @@ async def lifespan(app: FastAPI):
                 if "estimated_time" not in columns:
                     logger.info("Migrating: Adding column 'estimated_time' to recycling_recommendations table...")
                     conn.execute(text("ALTER TABLE recycling_recommendations ADD COLUMN estimated_time VARCHAR(50)"))
+
+                # predictions table
+                res_p = conn.execute(text("PRAGMA table_info(predictions)")).fetchall()
+                p_cols = [r[1] for r in res_p]
+                if "model_version" not in p_cols:
+                    logger.info("Migrating: Adding column 'model_version' to predictions table...")
+                    conn.execute(text("ALTER TABLE predictions ADD COLUMN model_version VARCHAR(50)"))
+                if "processing_time" not in p_cols:
+                    logger.info("Migrating: Adding column 'processing_time' to predictions table...")
+                    conn.execute(text("ALTER TABLE predictions ADD COLUMN processing_time INTEGER"))
+
+                # datasets table
+                res_d = conn.execute(text("PRAGMA table_info(datasets)")).fetchall()
+                d_cols = [r[1] for r in res_d]
+                if "version" not in d_cols:
+                    logger.info("Migrating: Adding column 'version' to datasets table...")
+                    conn.execute(text("ALTER TABLE datasets ADD COLUMN version VARCHAR(50) DEFAULT '1.0.0'"))
+                if "is_used_by_model" not in d_cols:
+                    logger.info("Migrating: Adding column 'is_used_by_model' to datasets table...")
+                    conn.execute(text("ALTER TABLE datasets ADD COLUMN is_used_by_model BOOLEAN DEFAULT 0"))
+                if "training_date" not in d_cols:
+                    logger.info("Migrating: Adding column 'training_date' to datasets table...")
+                    conn.execute(text("ALTER TABLE datasets ADD COLUMN training_date TIMESTAMP"))
+                if "model_compatibility" not in d_cols:
+                    logger.info("Migrating: Adding column 'model_compatibility' to datasets table...")
+                    conn.execute(text("ALTER TABLE datasets ADD COLUMN model_compatibility VARCHAR(100)"))
     except Exception as e:
         logger.warning(f"Database migration check failed or skipped: {e}")
 

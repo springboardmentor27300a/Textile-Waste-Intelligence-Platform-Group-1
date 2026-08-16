@@ -103,7 +103,7 @@ export default function PrintableClassificationReport({ result, currentUser = nu
     <div className="w-full text-slate-800 bg-white font-poppins text-[10px] p-6 max-w-4xl mx-auto print:p-0 print:text-black">
       
       {/* ─── 1. Report Header ─────────────────────────────────────────── */}
-      <div className="border-b-2 border-slate-800 pb-4 mb-5 flex justify-between items-end">
+      <div className="border-b-2 border-slate-800 pb-4 mb-5 flex justify-between items-center">
         <div className="flex items-center space-x-3">
           <div className="p-2 bg-emerald-800 text-white rounded-xl">
             <Leaf size={24} />
@@ -117,9 +117,18 @@ export default function PrintableClassificationReport({ result, currentUser = nu
             </p>
           </div>
         </div>
-        <div className="text-right">
-          <h2 className="text-base font-bold text-slate-800 uppercase tracking-tight">Classification Report</h2>
-          <p className="font-mono text-[8px] text-slate-500">ID: {id}</p>
+        <div className="flex items-center space-x-3">
+          <div className="text-right">
+            <h2 className="text-xs font-bold text-slate-800 uppercase tracking-tight">Classification Report</h2>
+            <p className="font-mono text-[8px] text-slate-500">ID: {id}</p>
+          </div>
+          {id && id !== 'N/A' && (
+            <img 
+              src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(`${window.location.origin}/predictions/${id}`)}`} 
+              alt="Report QR Code"
+              className="w-10 h-10 border border-slate-200 rounded p-0.5"
+            />
+          )}
         </div>
       </div>
 
@@ -266,9 +275,22 @@ export default function PrintableClassificationReport({ result, currentUser = nu
             <span className="text-[8px] uppercase text-slate-400 block font-bold">Fiber Source</span>
             <span className="font-bold text-slate-700">{kbData.source || 'N/A'}</span>
           </div>
-          <div className="bg-slate-50/50 p-2 rounded-lg border border-slate-100">
-            <span className="text-[8px] uppercase text-slate-400 block font-bold">Detected Color</span>
-            <span className="font-bold text-slate-700">{detectedColor}</span>
+          <div className="bg-slate-50/50 p-2 rounded-lg border border-slate-100 flex flex-col justify-between">
+            <span className="text-[8px] uppercase text-slate-400 block font-bold">Detected Colors</span>
+            <div className="flex items-center space-x-1 mt-0.5">
+              {dominantColors.length > 0 ? (
+                dominantColors.slice(0, 3).map((col, idx) => (
+                  <div 
+                    key={idx} 
+                    className="w-3.5 h-3.5 rounded-full border border-slate-200" 
+                    style={{ backgroundColor: col }}
+                    title={col}
+                  />
+                ))
+              ) : (
+                <span className="font-bold text-slate-700">{detectedColor}</span>
+              )}
+            </div>
           </div>
           <div className="bg-slate-50/50 p-2 rounded-lg border border-slate-100">
             <span className="text-[8px] uppercase text-slate-400 block font-bold">Texture slubs</span>
@@ -567,20 +589,20 @@ export default function PrintableClassificationReport({ result, currentUser = nu
       <div className="print-section border border-slate-200 rounded-xl p-3 mb-6 text-[8px] text-slate-500">
         <div className="grid grid-cols-4 gap-4">
           <div>
-            <span className="block text-slate-400">Prediction UUID</span>
+            <span className="block text-slate-400 font-bold uppercase tracking-wider text-[7px]">Prediction UUID</span>
             <span className="font-mono text-[8px] font-bold">{id}</span>
           </div>
           <div>
-            <span className="block text-slate-400">Execution Node</span>
-            <span className="font-bold text-slate-600">LocalHost Engine v1.2</span>
+            <span className="block text-slate-400 font-bold uppercase tracking-wider text-[7px]">AI Model Version</span>
+            <span className="font-bold text-slate-700">{result.model_version || 'v1.0.0'}</span>
           </div>
           <div>
-            <span className="block text-slate-400">Database Layer</span>
-            <span className="font-bold text-slate-600">PostgreSQL (Connection: Active)</span>
+            <span className="block text-slate-400 font-bold uppercase tracking-wider text-[7px]">Processing Time</span>
+            <span className="font-bold text-slate-700">{result.processing_time_ms || result.processing_time || 0} ms</span>
           </div>
           <div>
-            <span className="block text-slate-400">Software Environment</span>
-            <span className="font-bold text-slate-600">React v19.2 • Tailwind v3.4</span>
+            <span className="block text-slate-400 font-bold uppercase tracking-wider text-[7px]">Database Sync Status</span>
+            <span className="font-bold text-emerald-600">Active (Synced)</span>
           </div>
         </div>
       </div>

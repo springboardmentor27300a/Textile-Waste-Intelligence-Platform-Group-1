@@ -110,6 +110,8 @@ class Prediction(Base):
     # Metadata
     overall_confidence = Column(Float, nullable=True)
     status = Column(String(20), default="Success")
+    model_version = Column(String(50), default="v1.0.0", nullable=True)
+    processing_time = Column(Integer, nullable=True)
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())

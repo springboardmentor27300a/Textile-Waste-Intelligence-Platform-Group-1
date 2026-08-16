@@ -20,6 +20,7 @@ import ImageAnalysis from './pages/ImageAnalysis/ImageAnalysis';
 import PredictionHistory from './pages/Predictions/PredictionHistory';
 import PredictionResult from './pages/Predictions/PredictionResult';
 import Reports from './pages/Predictions/Reports';
+import AIDashboard from './pages/Predictions/AIDashboard';
 
 // Milestone 3 — Sustainability Intelligence Pages
 import SustainabilityDashboard from './pages/Sustainability/SustainabilityDashboard';
@@ -107,6 +108,12 @@ function AppRoutes() {
       <Route path="*" element={<Navigate to="/" replace />} />
 
       {/* Milestone 2 — AI Routes */}
+      <Route path="/ai-dashboard" element={
+        <ProtectedRoute>
+          <AIDashboard />
+        </ProtectedRoute>
+      } />
+
       <Route path="/analysis" element={
         <ProtectedRoute>
           <ImageAnalysis />

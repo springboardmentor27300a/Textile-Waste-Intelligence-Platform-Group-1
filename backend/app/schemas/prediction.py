@@ -126,6 +126,9 @@ class FullPredictionResponse(BaseModel):
     # Image features
     image_features: Dict[str, Any]
 
+    model_version: Optional[str] = "v1.0.0"
+    processing_time_ms: Optional[int] = 0
+
     created_at: datetime
 
     class Config:
@@ -157,6 +160,8 @@ class PredictionListItem(BaseModel):
     overall_rating: Optional[str] = None
     status: str
     user_name: Optional[str] = None
+    model_version: Optional[str] = "v1.0.0"
+    processing_time_ms: Optional[int] = 0
     created_at: datetime
 
     class Config:

@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Leaf, Home, ClipboardList, Database, User as UserIcon, Settings, LogOut, 
   Menu, X, Bell, Moon, Sun, ChevronDown, Search, ArrowRight, UserCircle, Users,
-  Brain, History, FileText, Compass, Wrench, Activity
+  Brain, History, FileText, Compass, Wrench, Activity, BarChart2
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -100,6 +100,11 @@ export default function DashboardLayout({ children }) {
           <div className="px-4 pt-4 pb-1">
             <p className="text-[8px] font-bold text-slate-300 dark:text-slate-600 uppercase tracking-widest">AI Intelligence</p>
           </div>
+
+          <Link to="/ai-dashboard" id="sidebar-ai-dashboard-link" className={`flex items-center space-x-3 px-4 py-3 rounded-r-2xl text-xs transition-all ${activeLink('/ai-dashboard')}`}>
+            <BarChart2 size={16} />
+            <span>AI Dashboard</span>
+          </Link>
 
           <Link to="/analysis" id="sidebar-analysis-link" className={`flex items-center space-x-3 px-4 py-3 rounded-r-2xl text-xs transition-all ${activeLink('/analysis')}`}>
             <Brain size={16} />

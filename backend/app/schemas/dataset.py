@@ -11,6 +11,10 @@ class DatasetBase(BaseModel):
 class DatasetRegister(DatasetBase):
     num_images: Optional[int] = 0
     size_bytes: Optional[int] = 0
+    version: Optional[str] = "1.0.0"
+    is_used_by_model: Optional[bool] = False
+    training_date: Optional[datetime] = None
+    model_compatibility: Optional[str] = None
 
 class DatasetResponse(DatasetBase):
     id: UUID
@@ -18,6 +22,10 @@ class DatasetResponse(DatasetBase):
     num_images: int
     status: str
     upload_path: Optional[str] = None
+    version: str
+    is_used_by_model: bool
+    training_date: Optional[datetime] = None
+    model_compatibility: Optional[str] = None
     uploaded_by: UUID
     created_at: datetime
 

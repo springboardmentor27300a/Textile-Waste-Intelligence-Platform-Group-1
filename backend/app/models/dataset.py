@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, String, BigInteger, Integer, DateTime, ForeignKey
+from sqlalchemy import Column, String, BigInteger, Integer, DateTime, ForeignKey, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -17,6 +17,10 @@ class Dataset(Base):
     format = Column(String(50), nullable=False) # e.g. JPEG, PNG, CSV, ZIP
     status = Column(String(50), default="Pending", nullable=False) # Pending, Processing, Ready, Failed
     upload_path = Column(String(255), nullable=True)
+    version = Column(String(50), default="1.0.0", nullable=False)
+    is_used_by_model = Column(Boolean, default=False, nullable=False)
+    training_date = Column(DateTime, nullable=True)
+    model_compatibility = Column(String(100), nullable=True)
     
     uploaded_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())

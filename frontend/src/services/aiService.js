@@ -12,9 +12,10 @@ const AIService = {
    * Upload a textile image for analysis
    * @param {FormData} formData - FormData with 'file' field and optional 'inventory_id'
    */
-  uploadImage: (formData) =>
+  uploadImage: (formData, config = {}) =>
     api.post('/image/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
+      ...config
     }),
 
   /**
@@ -72,6 +73,24 @@ const AIService = {
    */
   getReports: (params = {}) =>
     api.get('/reports', { params }),
+
+  /**
+   * Delete a prediction by ID
+   */
+  deletePrediction: (id) =>
+    api.delete(`/history/${id}`),
+
+  /**
+   * Get explainability metadata for a prediction
+   */
+  getExplainability: (id) =>
+    api.get(`/history/${id}/explainability`),
+
+  /**
+   * Get AI prediction analytics for dashboard
+   */
+  getAnalytics: () =>
+    api.get('/history/analytics'),
 };
 
 export default AIService;

@@ -110,6 +110,8 @@ class PredictionService:
             overall_rating=rec.get("overall_rating"),
             overall_confidence=pipeline_result.get("overall_confidence"),
             status=pipeline_result.get("status", "Success"),
+            model_version=pipeline_result.get("model_version", "v1.0.0"),
+            processing_time=pipeline_result.get("processing_time_ms", 0),
         )
         db.add(pred)
         db.commit()
@@ -291,3 +293,12 @@ class PredictionService:
                 for i in recent_images
             ],
         }
+
+    @staticmethod
+    def delete_prediction(db: Session, prediction_id) -> bool:
+        pred = db.query(Prediction).filter(Prediction.id == _coerce_id(prediction_id)).first()
+        if not pred:
+            return False
+        db.delete(pred)
+        db.commit()
+        return True

@@ -78,6 +78,7 @@ export default function ImageAnalysis() {
   const [error, setError] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingLabel, setProcessingLabel] = useState('');
+  const [uploadProgress, setUploadProgress] = useState(0);
   
   const { user } = useAuth();
   const [isPrinting, setIsPrinting] = useState(false);
@@ -119,31 +120,38 @@ export default function ImageAnalysis() {
     if (!selectedFiles.length) return;
     setError(null);
     setIsProcessing(true);
+    setUploadProgress(0);
 
     try {
-      // Step 1: Upload
+      // Step 1: Upload (with progress)
       setCurrentStep('processing');
-      setProcessingLabel('Uploading & validating image...');
+      setProcessingLabel('Uploading textile image... 0%');
+      
       const formData = new FormData();
       formData.append('file', selectedFiles[0].file);
-      const uploadRes = await AIService.uploadImage(formData);
+      
+      const uploadRes = await AIService.uploadImage(formData, {
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          setUploadProgress(percentCompleted);
+          if (percentCompleted < 100) {
+            setProcessingLabel(`Uploading textile image... ${percentCompleted}%`);
+          } else {
+            setProcessingLabel('Preprocessing image on server...');
+          }
+        }
+      });
       const imgData = uploadRes.data;
       setUploadedImage(imgData);
 
-      // Step 2: Process
-      setProcessingLabel('Extracting visual features...');
-      await new Promise(r => setTimeout(r, 800)); // Visual delay for realism
-
-      // Step 3: Classify
+      // Step 2: Running Model
       setCurrentStep('classification');
-      setProcessingLabel('Running AI material classification...');
-      await new Promise(r => setTimeout(r, 700));
-
-      setProcessingLabel('Classifying waste category...');
-      await new Promise(r => setTimeout(r, 500));
-
-      setProcessingLabel('Computing recyclability score...');
+      setProcessingLabel('Running AI material & waste classification models...');
+      
       const analysisRes = await AIService.analyzeImage(imgData.id);
+      
+      // Step 3: Completed / Generating Report
+      setProcessingLabel('Generating report...');
       setPrediction({ ...analysisRes.data, image: imgData });
 
       setCurrentStep('results');
@@ -154,6 +162,7 @@ export default function ImageAnalysis() {
     } finally {
       setIsProcessing(false);
       setProcessingLabel('');
+      setUploadProgress(0);
     }
   }, [selectedFiles]);
 
@@ -277,11 +286,19 @@ export default function ImageAnalysis() {
             <h2 className="text-lg font-bold text-slate-800 dark:text-white mb-1">AI Pipeline Running</h2>
             <p className="text-sm text-slate-500 dark:text-slate-400">{processingLabel}</p>
           </div>
-          {/* Fake progress bar */}
-          <div className="max-w-xs mx-auto h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-primary-500 to-accent-cyan rounded-full animate-pulse w-3/4" />
+          {/* Real progress bar */}
+          <div className="max-w-xs mx-auto space-y-2">
+            <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-gradient-to-r from-primary-500 to-accent-cyan rounded-full transition-all duration-300"
+                style={{ width: `${currentStep === 'processing' ? Math.max(10, uploadProgress) : 92}%` }}
+              />
+            </div>
+            {currentStep === 'processing' && uploadProgress > 0 && (
+              <span className="text-[10px] font-mono text-slate-400 block">{uploadProgress}% Uploaded</span>
+            )}
           </div>
-          <p className="text-[10px] text-slate-400 font-mono">This typically takes 2–5 seconds</p>
+          <p className="text-[10px] text-slate-400 font-mono">This typically takes 2–4 seconds</p>
         </div>
       )}
 
@@ -318,8 +335,10 @@ export default function ImageAnalysis() {
                   { label: 'Waste Class', value: prediction.waste_category, color: 'text-yellow-600 dark:text-yellow-400' },
                   { label: 'Recyclability', value: `${(prediction.recyclability || prediction.recyclability_score || 0).toFixed(0)}%`, color: 'text-green-600 dark:text-green-400' },
                   { label: 'Recovery', value: prediction.recovery || prediction.recovery_difficulty, color: 'text-blue-600 dark:text-blue-400' },
+                  { label: 'Processing Time', value: `${prediction.processing_time_ms || prediction.processing_time || 0} ms`, color: 'text-slate-600 dark:text-slate-400' },
+                  { label: 'Model Version', value: prediction.model_version || 'v1.0.0', color: 'text-slate-600 dark:text-slate-400' },
                 ].map(({ label, value, color }) => (
-                  <div key={label} className="flex justify-between items-center py-1 border-b border-borderLight dark:border-borderDark last:border-0">
+                  <div key={label} className="flex justify-between items-center py-1.5 border-b border-borderLight dark:border-borderDark last:border-0">
                     <span className="text-[10px] text-slate-400">{label}</span>
                     <span className={`text-[11px] font-bold ${color}`}>{value}</span>
                   </div>

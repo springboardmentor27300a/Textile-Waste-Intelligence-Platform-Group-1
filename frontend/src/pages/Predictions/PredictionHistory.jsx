@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   History, Search, Filter, ChevronRight, ChevronLeft,
-  Loader, AlertCircle, Brain, Download, SlidersHorizontal, ArrowUpDown
+  Loader, AlertCircle, Brain, Download, SlidersHorizontal, ArrowUpDown, Trash2, RefreshCw
 } from 'lucide-react';
 import AIService from '../../services/aiService';
 
@@ -46,6 +46,35 @@ export default function PredictionHistory() {
   const [page, setPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
   const PER_PAGE = 10;
+
+  const handleDelete = async (id, e) => {
+    e.stopPropagation();
+    if (!window.confirm('Are you sure you want to delete this prediction record?')) return;
+    try {
+      await AIService.deletePrediction(id);
+      load();
+    } catch (err) {
+      alert(err.response?.data?.detail || 'Failed to delete prediction');
+    }
+  };
+
+  const handleRerun = async (imageId, e) => {
+    e.stopPropagation();
+    if (!imageId) {
+      alert('Cannot re-run: Associated image record is missing.');
+      return;
+    }
+    setLoading(true);
+    try {
+      await AIService.analyzeImage(imageId);
+      alert('Analysis re-run successfully!');
+      load();
+    } catch (err) {
+      alert(err.response?.data?.detail || 'Failed to re-run analysis');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const API_BASE = 'http://localhost:8000';
 
@@ -285,8 +314,29 @@ export default function PredictionHistory() {
                           {new Date(p.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </p>
                       </td>
-                      <td className="px-4 py-3">
-                        <ChevronRight size={14} className="text-slate-300 dark:text-slate-600" />
+                      <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={(e) => handleRerun(p.image?.id, e)}
+                            className="p-1 text-slate-400 hover:text-primary-500 transition-colors"
+                            title="Re-run Analysis"
+                          >
+                            <RefreshCw size={12} />
+                          </button>
+                          <button
+                            onClick={(e) => handleDelete(p.id, e)}
+                            className="p-1 text-slate-400 hover:text-red-500 transition-colors"
+                            title="Delete Prediction"
+                          >
+                            <Trash2 size={12} />
+                          </button>
+                          <button
+                            onClick={() => navigate(`/predictions/${p.id}`)}
+                            className="p-1 text-slate-400 hover:text-slate-600 transition-colors"
+                          >
+                            <ChevronRight size={14} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );

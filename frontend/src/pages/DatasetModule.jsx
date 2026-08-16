@@ -75,7 +75,11 @@ export default function DatasetModule() {
         description: data.description,
         format: data.format,
         num_images: parseInt(data.num_images) || 0,
-        size_bytes: parseInt(data.size_bytes) || 0
+        size_bytes: parseInt(data.size_bytes) || 0,
+        version: data.version || '1.0.0',
+        model_compatibility: data.model_compatibility || '',
+        is_used_by_model: !!data.is_used_by_model,
+        training_date: data.training_date || null
       });
       setSuccess(`Dataset ${res.data.name} registered successfully.`);
       setRegisterOpen(false);
@@ -221,7 +225,15 @@ export default function DatasetModule() {
               >
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="text-md font-bold text-slate-900 dark:text-white">{dataset.name}</h3>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="text-md font-bold text-slate-900 dark:text-white">{dataset.name}</h3>
+                      {dataset.is_used_by_model && (
+                        <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-primary-800 dark:bg-emerald-950 text-white dark:text-primary-neon border border-primary-600 dark:border-primary-neon/30 flex items-center space-x-1 shadow-neon">
+                          <CheckCircle2 size={10} />
+                          <span>Active Model Core</span>
+                        </span>
+                      )}
+                    </div>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 max-w-lg leading-relaxed font-medium">{dataset.description}</p>
                   </div>
                   <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-bold border ${
@@ -232,11 +244,14 @@ export default function DatasetModule() {
                     {dataset.status}
                   </span>
                 </div>
-
-                <div className="flex flex-wrap items-center gap-6 mt-6 pt-4 border-t border-borderLight dark:border-borderDark text-xs text-slate-500 font-medium">
+ 
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-6 pt-4 border-t border-borderLight dark:border-borderDark text-xs text-slate-500 font-medium">
                   <div>Format: <span className="font-bold text-slate-800 dark:text-white">{dataset.format}</span></div>
                   <div>Images: <span className="font-bold text-slate-800 dark:text-white">{dataset.num_images.toLocaleString()}</span></div>
                   <div>Size: <span className="font-bold text-slate-800 dark:text-white">{formatBytes(dataset.size_bytes)}</span></div>
+                  {dataset.version && <div>Version: <span className="font-bold text-slate-800 dark:text-white">{dataset.version}</span></div>}
+                  {dataset.model_compatibility && <div>Compatibility: <span className="font-bold text-slate-800 dark:text-white">{dataset.model_compatibility}</span></div>}
+                  {dataset.training_date && <div>Training Date: <span className="font-bold text-slate-800 dark:text-white">{new Date(dataset.training_date).toLocaleDateString()}</span></div>}
                 </div>
 
                 <div className="flex items-center justify-end space-x-3 mt-6">
@@ -272,33 +287,63 @@ export default function DatasetModule() {
                 <RefreshCw size={20} className="animate-spin text-primary-neon mb-2" />
                 <span>Pulling sample vectors...</span>
               </div>
-            ) : previewData ? (
-              <div className="space-y-4">
+            ) : selectedDataset ? (
+              <div className="space-y-4 animate-fade-in">
                 <div className="pb-3 border-b border-borderLight dark:border-borderDark flex justify-between items-center">
                   <span className="text-xs font-bold text-slate-900 dark:text-white truncate max-w-[150px]">
-                    {selectedDataset?.name}
+                    {selectedDataset.name}
                   </span>
-                  <button onClick={() => setPreviewData(null)} className="text-slate-400 hover:text-slate-600">
+                  <button onClick={() => { setSelectedDataset(null); setPreviewData(null); }} className="text-slate-400 hover:text-slate-600">
                     <X size={14} />
                   </button>
                 </div>
 
-                <div className="space-y-3">
-                  {previewData.map((item) => (
-                    <div key={item.id} className="p-3 bg-slate-50 dark:bg-bgDark/40 border border-borderLight dark:border-borderDark rounded-2xl text-xs space-y-1.5">
-                      <div className="flex justify-between font-bold">
-                        <span className="text-slate-800 dark:text-white truncate max-w-[120px]">{item.label}</span>
-                        <span className="text-[10px] text-emerald-600 dark:text-primary-neon font-mono">{item.resolution}</span>
-                      </div>
-                      <div className="flex justify-between text-[10px] text-slate-500 font-medium">
-                        <span>Split: {item.split}</span>
-                        {item.category && <span>Category: {item.category}</span>}
-                        {item.defect && <span>Defect: {item.defect}</span>}
-                        {item.material && <span>Composition: {item.material}</span>}
-                      </div>
-                    </div>
-                  ))}
+                <div className="space-y-2 text-xs font-medium border-b border-borderLight dark:border-borderDark pb-3">
+                  <div className="flex justify-between py-1">
+                    <span className="text-slate-400">Version</span>
+                    <span className="font-bold text-slate-700 dark:text-slate-300">{selectedDataset.version || '1.0.0'}</span>
+                  </div>
+                  <div className="flex justify-between py-1">
+                    <span className="text-slate-400">Used by Model</span>
+                    <span className={`font-bold ${selectedDataset.is_used_by_model ? 'text-primary-neon' : 'text-slate-500'}`}>
+                      {selectedDataset.is_used_by_model ? 'Yes' : 'No'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between py-1">
+                    <span className="text-slate-400">Compatibility</span>
+                    <span className="font-bold text-slate-700 dark:text-slate-300">{selectedDataset.model_compatibility || 'N/A'}</span>
+                  </div>
+                  <div className="flex justify-between py-1">
+                    <span className="text-slate-400">Training Date</span>
+                    <span className="font-bold text-slate-700 dark:text-slate-300">
+                      {selectedDataset.training_date ? new Date(selectedDataset.training_date).toLocaleDateString() : 'N/A'}
+                    </span>
+                  </div>
                 </div>
+
+                {previewData ? (
+                  <div className="space-y-3">
+                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Sample Vectors</h4>
+                    {previewData.map((item) => (
+                      <div key={item.id} className="p-3 bg-slate-50 dark:bg-bgDark/40 border border-borderLight dark:border-borderDark rounded-2xl text-xs space-y-1.5">
+                        <div className="flex justify-between font-bold">
+                          <span className="text-slate-800 dark:text-white truncate max-w-[120px]">{item.label}</span>
+                          <span className="text-[10px] text-emerald-600 dark:text-primary-neon font-mono">{item.resolution}</span>
+                        </div>
+                        <div className="flex justify-between text-[10px] text-slate-500 font-medium">
+                          <span>Split: {item.split}</span>
+                          {item.category && <span>Category: {item.category}</span>}
+                          {item.defect && <span>Defect: {item.defect}</span>}
+                          {item.material && <span>Composition: {item.material}</span>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-6 text-slate-400 text-[10px]">
+                    Click "Preview Dataset" below to fetch visual vectors.
+                  </div>
+                )}
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center text-center py-12 text-slate-400 text-xs">
@@ -365,6 +410,50 @@ export default function DatasetModule() {
                     className="w-full px-3 py-2.5 bg-slate-50 dark:bg-bgDark border border-borderLight dark:border-borderDark rounded-xl outline-none"
                     {...register('num_images')}
                   />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Version</label>
+                  <input
+                    type="text"
+                    defaultValue="1.0.0"
+                    placeholder="e.g. 1.0.0"
+                    className="w-full px-3 py-2.5 bg-slate-50 dark:bg-bgDark border border-borderLight dark:border-borderDark rounded-xl outline-none"
+                    {...register('version')}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Compatibility</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. EfficientNet-B0"
+                    className="w-full px-3 py-2.5 bg-slate-50 dark:bg-bgDark border border-borderLight dark:border-borderDark rounded-xl outline-none"
+                    {...register('model_compatibility')}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Training Date</label>
+                  <input
+                    type="date"
+                    className="w-full px-3 py-2.5 bg-slate-50 dark:bg-bgDark border border-borderLight dark:border-borderDark rounded-xl outline-none"
+                    {...register('training_date')}
+                  />
+                </div>
+
+                <div className="flex items-center space-x-2 pt-4">
+                  <input
+                    type="checkbox"
+                    id="is_used_by_model"
+                    className="rounded border-slate-300 text-primary-800 focus:ring-primary-500"
+                    {...register('is_used_by_model')}
+                  />
+                  <label htmlFor="is_used_by_model" className="text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Used by Model</label>
                 </div>
               </div>
 

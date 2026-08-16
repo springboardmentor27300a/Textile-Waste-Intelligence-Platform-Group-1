@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Leaf, Home, ClipboardList, Database, User as UserIcon, Settings, LogOut, 
   Menu, X, Bell, Moon, Sun, ChevronDown, Search, ArrowRight, UserCircle, Users,
-  Brain, History, FileText
+  Brain, History, FileText, Compass, Wrench, Activity
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -53,7 +53,7 @@ export default function DashboardLayout({ children }) {
       {/* Sidebar Navigation */}
       <aside 
         id="dashboard-sidebar"
-        className={`fixed inset-y-0 left-0 z-45 w-64 bg-white dark:bg-cardDark border-r border-borderLight dark:border-borderDark transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-45 w-64 bg-white dark:bg-cardDark border-r border-borderLight dark:border-borderDark transform transition-transform duration-300 ease-in-out lg:translate-x-0 flex flex-col ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -74,7 +74,7 @@ export default function DashboardLayout({ children }) {
           </button>
         </div>
 
-        <nav className="p-4 space-y-2 mt-4">
+        <nav className="flex-1 overflow-y-auto p-4 space-y-2">
           <Link to="/dashboard" id="sidebar-dashboard-link" className={`flex items-center space-x-3 px-4 py-3 rounded-r-2xl text-xs transition-all ${activeLink('/dashboard')}`}>
             <Home size={16} />
             <span>Dashboard</span>
@@ -116,6 +116,36 @@ export default function DashboardLayout({ children }) {
             <span>Reports</span>
           </Link>
 
+          {/* ── Milestone 3: Sustainability Intelligence ── */}
+          <div className="px-4 pt-4 pb-1">
+            <p className="text-[8px] font-bold text-slate-300 dark:text-slate-600 uppercase tracking-widest">Sustainability</p>
+          </div>
+
+          <Link to="/sustainability" id="sidebar-sustainability-link" className={`flex items-center space-x-3 px-4 py-3 rounded-r-2xl text-xs transition-all ${activeLink('/sustainability')}`}>
+            <Leaf size={16} />
+            <span>Sustainability Portal</span>
+          </Link>
+
+          <Link to="/recommendations" id="sidebar-recommendations-link" className={`flex items-center space-x-3 px-4 py-3 rounded-r-2xl text-xs transition-all ${activeLink('/recommendations')}`}>
+            <Wrench size={16} />
+            <span>Recommendations</span>
+          </Link>
+
+          <Link to="/environment" id="sidebar-environment-link" className={`flex items-center space-x-3 px-4 py-3 rounded-r-2xl text-xs transition-all ${activeLink('/environment')}`}>
+            <Activity size={16} />
+            <span>Ecological Impact</span>
+          </Link>
+
+          <Link to="/circularity" id="sidebar-circularity-link" className={`flex items-center space-x-3 px-4 py-3 rounded-r-2xl text-xs transition-all ${activeLink('/circularity')}`}>
+            <Compass size={16} />
+            <span>Circular Economy</span>
+          </Link>
+
+          <Link to="/sustainability/history" id="sidebar-sustain-history-link" className={`flex items-center space-x-3 px-4 py-3 rounded-r-2xl text-xs transition-all ${activeLink('/sustainability/history')}`}>
+            <History size={16} />
+            <span>Sustainability History</span>
+          </Link>
+
           <div className="px-4 pt-4 pb-1">
             <p className="text-[8px] font-bold text-slate-300 dark:text-slate-600 uppercase tracking-widest">Account</p>
           </div>
@@ -140,7 +170,7 @@ export default function DashboardLayout({ children }) {
         </nav>
 
         {/* Sidebar Footer */}
-        <div className="absolute bottom-0 w-full p-4 border-t border-borderLight dark:border-borderDark bg-slate-50/50 dark:bg-bgDark/20">
+        <div className="p-4 border-t border-borderLight dark:border-borderDark bg-slate-50/50 dark:bg-bgDark/20 flex-shrink-0">
           <div className="flex items-center space-x-3 mb-4 px-2">
             <div className="w-8 h-8 rounded-full bg-primary-800 dark:bg-emerald-950 text-primary-neon font-bold text-xs uppercase flex items-center justify-center border border-borderLight dark:border-borderDark shadow-neon">
               {user?.full_name?.charAt(0) || 'U'}

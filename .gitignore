@@ -29,6 +29,7 @@ __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
+*.pyc
 *.so
 
 # Virtual environments
@@ -65,3 +66,4 @@ backend/weavecycle.db
 
 # Uploaded images
 backend/uploads/
+backend/kaggle_env/

@@ -1,0 +1,7 @@
+{
+  "material_recyclability": 0.35,
+  "material_condition": 0.20,
+  "reuse_potential": 0.20,
+  "environmental_benefit": 0.15,
+  "processing_feasibility": 0.10
+}

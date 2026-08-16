@@ -3,8 +3,12 @@ import { Link } from 'react-router-dom';
 import { 
   Users, Layers, Recycle, ShieldAlert, TrendingUp, Leaf, 
   Droplet, Trash, Activity, Calendar, ArrowRight, Package, Plus, Database,
-  Brain, History, Sparkles, BarChart2
+  Brain, History, Sparkles, BarChart2, Award, ClipboardList, RefreshCw
 } from 'lucide-react';
+import {
+  ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
+  PieChart, Pie, Cell, Legend
+} from 'recharts';
 
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -50,7 +54,7 @@ export default function DashboardHub() {
     );
   }
 
-  const { role, stats, charts, activities, ai_stats } = data;
+  const { role, stats, charts, activities, ai_stats, sustainability_stats } = data;
 
 
   // Circular gauge config
@@ -515,6 +519,212 @@ export default function DashboardHub() {
             </div>
           </div>
         )}
+
+      {/* ── Milestone 3: Sustainability Intelligence Extension ── */}
+      {sustainability_stats && (
+        <div className="space-y-6 pt-6 border-t border-borderLight dark:border-borderDark">
+          <div className="flex items-center space-x-2">
+            <div className="p-1.5 bg-primary-800 dark:bg-emerald-950 text-primary-neon rounded-xl shadow-neon">
+              <Leaf size={14} />
+            </div>
+            <h2 className="text-sm font-bold text-slate-800 dark:text-white">Sustainability & Circular Economy Intelligence</h2>
+          </div>
+
+          {/* 3-Column Averages & Savings KPIs */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Sustainability Index Score Card */}
+            <div className="p-6 bg-white dark:bg-cardDark border border-borderLight dark:border-borderDark rounded-3xl shadow-soft">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Avg Sustainability Score</p>
+                  <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-2 leading-none">
+                    {sustainability_stats.average_sustainability_score ? sustainability_stats.average_sustainability_score.toFixed(1) : '—'}/100
+                  </h3>
+                </div>
+                <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 rounded-2xl">
+                  <Award size={16} />
+                </div>
+              </div>
+              <div className="w-full h-2 bg-slate-50 dark:bg-slate-900 border border-borderLight dark:border-borderDark rounded-full overflow-hidden mt-4">
+                <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${sustainability_stats.average_sustainability_score || 0}%` }}></div>
+              </div>
+              <p className="text-[9px] text-slate-400 mt-2 font-semibold">Across all completed audit reports</p>
+            </div>
+
+            {/* Circular Economy Index Card */}
+            <div className="p-6 bg-white dark:bg-cardDark border border-borderLight dark:border-borderDark rounded-3xl shadow-soft">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Avg Circularity Index</p>
+                  <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-2 leading-none">
+                    {sustainability_stats.average_circularity_score ? sustainability_stats.average_circularity_score.toFixed(1) : '—'}/100
+                  </h3>
+                </div>
+                <div className="p-2.5 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 rounded-2xl">
+                  <TrendingUp size={16} />
+                </div>
+              </div>
+              <div className="w-full h-2 bg-slate-50 dark:bg-slate-900 border border-borderLight dark:border-borderDark rounded-full overflow-hidden mt-4">
+                <div className="h-full bg-blue-500 rounded-full" style={{ width: `${sustainability_stats.average_circularity_score || 0}%` }}></div>
+              </div>
+              <p className="text-[9px] text-slate-400 mt-2 font-semibold">Weighted scoring model evaluation</p>
+            </div>
+
+            {/* Average Recyclability Card */}
+            <div className="p-6 bg-white dark:bg-cardDark border border-borderLight dark:border-borderDark rounded-3xl shadow-soft">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Avg Recyclability Index</p>
+                  <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-2 leading-none">
+                    {sustainability_stats.average_recyclability ? sustainability_stats.average_recyclability.toFixed(1) : '—'}%
+                  </h3>
+                </div>
+                <div className="p-2.5 bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 rounded-2xl">
+                  <RefreshCw size={16} />
+                </div>
+              </div>
+              <div className="w-full h-2 bg-slate-50 dark:bg-slate-900 border border-borderLight dark:border-borderDark rounded-full overflow-hidden mt-4">
+                <div className="h-full bg-purple-500 rounded-full" style={{ width: `${sustainability_stats.average_recyclability || 0}%` }}></div>
+              </div>
+              <p className="text-[9px] text-slate-400 mt-2 font-semibold">Based on AI prediction outcomes</p>
+            </div>
+          </div>
+
+          {/* Environmental Equivalencies grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="p-4 bg-emerald-50/20 dark:bg-emerald-950/10 border border-emerald-100/50 dark:border-emerald-900/10 rounded-2xl">
+              <span className="text-[9px] text-emerald-600 dark:text-emerald-400 uppercase tracking-wider font-bold">CO₂ Prevented</span>
+              <p className="text-lg font-black text-slate-800 dark:text-white mt-1">{sustainability_stats.estimated_co2_saved_kg || 0} kg</p>
+            </div>
+            <div className="p-4 bg-blue-50/20 dark:bg-blue-950/10 border border-blue-100/50 dark:border-blue-900/10 rounded-2xl">
+              <span className="text-[9px] text-blue-600 dark:text-blue-400 uppercase tracking-wider font-bold">Water Saved</span>
+              <p className="text-lg font-black text-slate-800 dark:text-white mt-1">{sustainability_stats.estimated_water_saved_liters || 0} L</p>
+            </div>
+            <div className="p-4 bg-yellow-50/20 dark:bg-yellow-950/10 border border-yellow-100/50 dark:border-yellow-900/10 rounded-2xl">
+              <span className="text-[9px] text-yellow-600 dark:text-yellow-400 uppercase tracking-wider font-bold">Waste Diverted</span>
+              <p className="text-lg font-black text-slate-800 dark:text-white mt-1">{sustainability_stats.total_waste_diverted_kg || 0} kg</p>
+            </div>
+            <div className="p-4 bg-purple-50/20 dark:bg-purple-950/10 border border-purple-100/50 dark:border-purple-900/10 rounded-2xl">
+              <span className="text-[9px] text-purple-600 dark:text-purple-400 uppercase tracking-wider font-bold">Common Method</span>
+              <p className="text-lg font-black text-slate-800 dark:text-white mt-1 truncate">{sustainability_stats.most_common_recovery_method || 'N/A'}</p>
+            </div>
+          </div>
+
+          {/* Chart & Trend Area */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Circularity Trend (Line Chart) */}
+            <div className="lg:col-span-2 p-6 bg-white dark:bg-cardDark border border-borderLight dark:border-borderDark rounded-3xl shadow-soft">
+              <h3 className="text-xs font-bold text-slate-700 dark:text-white mb-4">Circularity Trend</h3>
+              <div className="h-64">
+                {sustainability_stats.circularity_trend && (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart
+                      data={sustainability_stats.circularity_trend.labels.map((lbl, idx) => ({
+                        name: lbl,
+                        score: sustainability_stats.circularity_trend.data[idx]
+                      }))}
+                      margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                    >
+                      <defs>
+                        <linearGradient id="colorCirc" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2}/>
+                          <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" className="dark:hidden" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" className="hidden dark:block" />
+                      <XAxis dataKey="name" stroke="#94a3b8" fontSize={10} tickLine={false} />
+                      <YAxis stroke="#94a3b8" fontSize={10} domain={[0, 100]} tickLine={false} />
+                      <Tooltip 
+                        contentStyle={{
+                          backgroundColor: 'rgba(30, 41, 59, 0.8)',
+                          border: 'none',
+                          borderRadius: '8px',
+                          color: '#fff',
+                          fontSize: '11px'
+                        }}
+                      />
+                      <Area type="monotone" dataKey="score" stroke="#3b82f6" strokeWidth={2} fillOpacity={1} fill="url(#colorCirc)" />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                )}
+              </div>
+            </div>
+
+            {/* Recovery Method Distribution (Donut Chart) */}
+            <div className="lg:col-span-1 p-6 bg-white dark:bg-cardDark border border-borderLight dark:border-borderDark rounded-3xl shadow-soft">
+              <h3 className="text-xs font-bold text-slate-700 dark:text-white mb-4">Recovery Methods</h3>
+              <div className="h-64 flex flex-col justify-center items-center">
+                {sustainability_stats.material_recovery_statistics && sustainability_stats.material_recovery_statistics.length > 0 ? (
+                  <ResponsiveContainer width="100%" height="80%">
+                    <PieChart>
+                      <Pie
+                        data={sustainability_stats.material_recovery_statistics.map(m => ({
+                          name: m.material,
+                          value: m.avg_circularity_score
+                        }))}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={50}
+                        outerRadius={70}
+                        paddingAngle={3}
+                        dataKey="value"
+                      >
+                        {sustainability_stats.material_recovery_statistics.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ec4899'][index % 5]} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <p className="text-[10px] text-slate-400">No recovery data logged.</p>
+                )}
+                {/* Custom Legend */}
+                <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 mt-2">
+                  {sustainability_stats.material_recovery_statistics && sustainability_stats.material_recovery_statistics.map((m, idx) => (
+                    <div key={m.material} className="flex items-center space-x-1.5 text-[8px] font-bold text-slate-500">
+                      <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ec4899'][idx % 5] }}></span>
+                      <span>{m.material} ({m.avg_circularity_score.toFixed(0)}%)</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Recent Sustainability Reports List */}
+          <div className="p-6 bg-white dark:bg-cardDark border border-borderLight dark:border-borderDark rounded-3xl shadow-soft">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xs font-bold text-slate-700 dark:text-white flex items-center space-x-2">
+                <ClipboardList size={14} className="text-primary-800 dark:text-primary-neon" />
+                <span>Recent Sustainability Audits & Reports</span>
+              </h3>
+              <Link to="/sustainability/history" className="text-[10px] font-bold text-primary-800 dark:text-primary-neon hover:underline">View History Log</Link>
+            </div>
+            {sustainability_stats.recent_sustainability_reports && sustainability_stats.recent_sustainability_reports.length > 0 ? (
+              <div className="divide-y divide-slate-100 dark:divide-slate-800">
+                {sustainability_stats.recent_sustainability_reports.slice(0, 4).map((report) => (
+                  <div key={report.id} className="py-3 flex justify-between items-center text-xs">
+                    <div className="min-w-0 flex-1 pr-4">
+                      <p className="font-bold text-slate-800 dark:text-white truncate">{report.report_title}</p>
+                      <p className="text-[10px] text-slate-400 mt-0.5">Material: {report.material} &bull; Stream: {report.waste_category}</p>
+                    </div>
+                    <Link
+                      to={`/sustainability/reports/${report.prediction_id}`}
+                      className="px-3 py-1.5 bg-slate-50 dark:bg-bgDark/40 border border-slate-200 dark:border-borderDark hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-xl text-[10px] font-bold text-slate-700 dark:text-slate-300 transition-colors"
+                    >
+                      View Report
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-slate-400 text-center py-6">No audits reported yet.</p>
+            )}
+          </div>
+        </div>
+      )}
 
       </div>
     </div>

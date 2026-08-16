@@ -4,11 +4,19 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from datetime import date
+from app.routes.material_classifier import router as material_router
 
 from app.config import settings
 from app.database.session import engine, SessionLocal, Base, get_db
 from app.routes import auth, users, inventory, datasets, dashboard, health
 from app.routes import predictions as predictions_router  # Milestone 2
+
+# Milestone 3 — Sustainability Intelligence Routers
+from app.sustainability import router as sustainability_router
+from app.recommendations import router as recommendations_router
+from app.environment import router as environment_router
+from app.circularity import router as circularity_router
+
 from app.auth.deps import RoleChecker
 from app.models.support import ActivityLog
 
@@ -258,6 +266,64 @@ async def lifespan(app: FastAPI):
     logger.info("Initializing database schemas...")
     Base.metadata.create_all(bind=engine)
     
+    # Run column migrations if needed
+    logger.info("Checking database column migrations...")
+    try:
+        from sqlalchemy import text
+        with engine.connect() as conn:
+            if "postgresql" in str(engine.url):
+                # reason column
+                result = conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='recycling_recommendations' AND column_name='reason'"))
+                if not result.scalar():
+                    logger.info("Migrating: Adding column 'reason' to recycling_recommendations table...")
+                    conn.execute(text("ALTER TABLE recycling_recommendations ADD COLUMN reason TEXT"))
+                    conn.commit()
+                # industry_applications column
+                result = conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='recycling_recommendations' AND column_name='industry_applications'"))
+                if not result.scalar():
+                    logger.info("Migrating: Adding column 'industry_applications' to recycling_recommendations table...")
+                    conn.execute(text("ALTER TABLE recycling_recommendations ADD COLUMN industry_applications TEXT"))
+                    conn.commit()
+                # environmental_benefit column
+                result = conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='recycling_recommendations' AND column_name='environmental_benefit'"))
+                if not result.scalar():
+                    logger.info("Migrating: Adding column 'environmental_benefit' to recycling_recommendations table...")
+                    conn.execute(text("ALTER TABLE recycling_recommendations ADD COLUMN environmental_benefit TEXT"))
+                    conn.commit()
+                # estimated_cost column
+                result = conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='recycling_recommendations' AND column_name='estimated_cost'"))
+                if not result.scalar():
+                    logger.info("Migrating: Adding column 'estimated_cost' to recycling_recommendations table...")
+                    conn.execute(text("ALTER TABLE recycling_recommendations ADD COLUMN estimated_cost VARCHAR(50)"))
+                    conn.commit()
+                # estimated_time column
+                result = conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='recycling_recommendations' AND column_name='estimated_time'"))
+                if not result.scalar():
+                    logger.info("Migrating: Adding column 'estimated_time' to recycling_recommendations table...")
+                    conn.execute(text("ALTER TABLE recycling_recommendations ADD COLUMN estimated_time VARCHAR(50)"))
+                    conn.commit()
+            else:
+                # SQLite fallback
+                result = conn.execute(text("PRAGMA table_info(recycling_recommendations)")).fetchall()
+                columns = [r[1] for r in result]
+                if "reason" not in columns:
+                    logger.info("Migrating: Adding column 'reason' to recycling_recommendations table...")
+                    conn.execute(text("ALTER TABLE recycling_recommendations ADD COLUMN reason TEXT"))
+                if "industry_applications" not in columns:
+                    logger.info("Migrating: Adding column 'industry_applications' to recycling_recommendations table...")
+                    conn.execute(text("ALTER TABLE recycling_recommendations ADD COLUMN industry_applications TEXT"))
+                if "environmental_benefit" not in columns:
+                    logger.info("Migrating: Adding column 'environmental_benefit' to recycling_recommendations table...")
+                    conn.execute(text("ALTER TABLE recycling_recommendations ADD COLUMN environmental_benefit TEXT"))
+                if "estimated_cost" not in columns:
+                    logger.info("Migrating: Adding column 'estimated_cost' to recycling_recommendations table...")
+                    conn.execute(text("ALTER TABLE recycling_recommendations ADD COLUMN estimated_cost VARCHAR(50)"))
+                if "estimated_time" not in columns:
+                    logger.info("Migrating: Adding column 'estimated_time' to recycling_recommendations table...")
+                    conn.execute(text("ALTER TABLE recycling_recommendations ADD COLUMN estimated_time VARCHAR(50)"))
+    except Exception as e:
+        logger.warning(f"Database migration check failed or skipped: {e}")
+
     # Run data seeds
     db = SessionLocal()
     try:
@@ -290,6 +356,19 @@ app.include_router(inventory.router, prefix=settings.API_V1_STR)
 app.include_router(datasets.router, prefix=settings.API_V1_STR)
 app.include_router(dashboard.router, prefix=settings.API_V1_STR)
 app.include_router(predictions_router.router, prefix=settings.API_V1_STR)  # Milestone 2
+
+# Milestone 3 — Sustainability Intelligence Routers
+app.include_router(sustainability_router.router, prefix=settings.API_V1_STR)
+app.include_router(recommendations_router.router, prefix=settings.API_V1_STR)
+app.include_router(environment_router.router, prefix=settings.API_V1_STR)
+app.include_router(circularity_router.router, prefix=settings.API_V1_STR)
+
+# Register aliases directly on /api for standalone API compatibility
+app.include_router(sustainability_router.router, prefix="/api")
+app.include_router(recommendations_router.router, prefix="/api")
+app.include_router(environment_router.router, prefix="/api")
+app.include_router(circularity_router.router, prefix="/api")
+app.include_router(material_router)
 
 # Serve uploaded images as static files
 from fastapi.staticfiles import StaticFiles

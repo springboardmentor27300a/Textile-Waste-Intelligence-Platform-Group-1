@@ -7,6 +7,15 @@ from app.models.support import Session, Notification, ActivityLog
 # Milestone 2 — AI Prediction Models
 from app.models.prediction import UploadedImage, Prediction, ClassificationResult, PredictionReport
 
+# Milestone 3 — Sustainability Intelligence
+from app.models.sustainability import (
+    SustainabilityAnalysis,
+    RecyclingRecommendation,
+    EnvironmentalImpact,
+    CircularityScore,
+    SustainabilityReport,
+)
+
 __all__ = [
     "Base",
     "Role",
@@ -23,4 +32,11 @@ __all__ = [
     "Prediction",
     "ClassificationResult",
     "PredictionReport",
+    # Milestone 3
+    "SustainabilityAnalysis",
+    "RecyclingRecommendation",
+    "EnvironmentalImpact",
+    "CircularityScore",
+    "SustainabilityReport",
 ]
+

@@ -8,3 +8,5 @@ Supports: Cotton, Polyester, Wool, Silk, Linen, Denim, Rayon, Nylon, Acrylic, Mi
 from app.material_classifier.classifier import MaterialClassifier
 
 __all__ = ["MaterialClassifier"]
+
+from .model_loader import model_loader

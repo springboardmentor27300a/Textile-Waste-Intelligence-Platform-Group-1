@@ -21,6 +21,15 @@ import PredictionHistory from './pages/Predictions/PredictionHistory';
 import PredictionResult from './pages/Predictions/PredictionResult';
 import Reports from './pages/Predictions/Reports';
 
+// Milestone 3 — Sustainability Intelligence Pages
+import SustainabilityDashboard from './pages/Sustainability/SustainabilityDashboard';
+import RecyclingRecommendations from './pages/Recommendations/RecyclingRecommendations';
+import EnvironmentalImpact from './pages/Environment/EnvironmentalImpact';
+import CircularEconomy from './pages/Circularity/CircularEconomy';
+import SustainabilityHistory from './pages/Sustainability/SustainabilityHistory';
+import SustainabilityReport from './pages/Sustainability/SustainabilityReport';
+
+
 import { Activity } from 'lucide-react';
 
 // Protected Route Wrapper Component
@@ -119,6 +128,43 @@ function AppRoutes() {
       <Route path="/reports" element={
         <ProtectedRoute>
           <Reports />
+        </ProtectedRoute>
+      } />
+
+      {/* Milestone 3 — Sustainability Intelligence Routes */}
+      <Route path="/sustainability" element={
+        <ProtectedRoute>
+          <SustainabilityDashboard />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/recommendations" element={
+        <ProtectedRoute>
+          <RecyclingRecommendations />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/environment" element={
+        <ProtectedRoute>
+          <EnvironmentalImpact />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/circularity" element={
+        <ProtectedRoute>
+          <CircularEconomy />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/sustainability/history" element={
+        <ProtectedRoute>
+          <SustainabilityHistory />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/sustainability/reports/:id" element={
+        <ProtectedRoute>
+          <SustainabilityReport />
         </ProtectedRoute>
       } />
     </Routes>

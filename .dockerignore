@@ -1,0 +1,69 @@
+# Version control
+.git/
+.gitignore
+
+# Python cache & bytecode
+__pycache__/
+backend/**/__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+backend/.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual environments & Node modules
+.venv/
+venv/
+env/
+ENV/
+backend/venv/
+backend/env/
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/
+
+# Local databases & logs
+*.db
+*.sqlite3
+*.log
+textile_waste.db
+AI_textile_waste.db
+backend/textile_waste.db
+backend/AI_textile_waste.db
+
+# Secrets & local env
+.env
+.env.*
+!.env.example
+backend/.env
+frontend/.env
+
+# Temp uploads & cache
+backend/uploads/*
+!backend/uploads/.gitkeep
+backend/app/uploads/*
+!backend/app/uploads/.gitkeep
+uploads/
+
+# Large training datasets & evaluation plots
+backend/data/tips/
+backend/data/datasets/
+backend/data/textile_dataset/
+backend/data/TFD/
+data/tips/
+data/datasets/
+backend/ml/loss.png
+backend/ml/accuracy.png
+backend/ml/history.json
+backend/ml/evaluation.json
+
+# IDE & OS files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

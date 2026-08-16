@@ -1,0 +1,55 @@
+# Version control
+.git/
+.gitignore
+
+# Python cache & bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Local databases & logs
+*.db
+*.sqlite3
+*.log
+textile_waste.db
+AI_textile_waste.db
+
+# Secrets & local env
+.env
+.env.*
+!.env.example
+
+# Temp uploads & cache
+uploads/*
+!uploads/.gitkeep
+app/uploads/*
+!app/uploads/.gitkeep
+
+# Large training datasets & evaluation plots (keep Docker image < 1.5GB)
+data/tips/
+data/datasets/
+data/textile_dataset/
+data/TFD/
+ml/loss.png
+ml/accuracy.png
+ml/history.json
+ml/evaluation.json
+
+# IDE & OS files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.md

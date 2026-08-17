@@ -75,21 +75,6 @@ const Sidebar = () => {
           );
         })}
       </nav>
-
-      {/* Sustainability Tip/Stats Footer inside Sidebar */}
-      <div className="p-4 m-4 rounded-2xl bg-gradient-to-br from-primary-900 to-emerald-950 text-white shadow-md">
-        <div className="flex items-center space-x-2 text-primary-300 mb-2">
-          <Leaf className="h-4 w-4 text-primary-400" />
-          <span className="text-xs font-bold uppercase tracking-wider">TWIP Hub</span>
-        </div>
-        <p className="text-xs text-primary-100 font-medium">
-          Tracking waste records, locations, and roles helps establish the foundation for circular fabric reuse.
-        </p>
-        <div className="mt-3 flex items-center justify-between text-[10px] text-primary-300 font-semibold border-t border-primary-800/50 pt-2">
-          <span>Active Role:</span>
-          <span className="text-white">{user?.role?.name || 'Loading'}</span>
-        </div>
-      </div>
     </aside>
   );
 };

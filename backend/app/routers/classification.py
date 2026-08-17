@@ -211,10 +211,11 @@ def classify_by_image_properties(image: Image.Image, filename: str) -> Dict[str,
     
     # 0. Primary non-fabric filename check
     non_fabric_keywords = [
-        "not_fabric", "non_fabric", "notfabric", "nonfabric", "face", "car",
-        "building", "laptop", "phone", "electronic", "device", "paper",
-        "document", "animal", "random", "food", "apple", "chair", "metal",
-        "plastic_bottle", "object"
+        "not_fabric", "non_fabric", "notfabric", "nonfabric", "screenshot", "screen",
+        "capture", "plot", "graph", "chart", "colab", "vscode", "code", "desktop",
+        "window", "face", "car", "building", "laptop", "phone", "electronic", "device",
+        "paper", "document", "animal", "random", "food", "apple", "chair", "metal",
+        "plastic_bottle", "object", "diagram", "figure", "result", "histogram"
     ]
     if any(kw in fn_lower for kw in non_fabric_keywords):
         return get_non_fabric_template()
@@ -284,9 +285,17 @@ def classify_by_image_properties(image: Image.Image, filename: str) -> Dict[str,
         min_l = min(lumas) if lumas else 0
         contrast_ratio = (max_l - min_l) / (max_l + min_l + 1e-5)
 
-        # 2.5 Fabric Verification: Check for non-textile image characteristics
-        # Blank solid canvas OR extreme non-textile geometric document contrast
-        if (std_dev < 1.0 and avg_h_diff < 0.2) or (std_dev > 85.0 and avg_h_diff > 45.0 and contrast_ratio > 0.90):
+        # Extreme dark (<35) and extreme light (>220) pixel ratio (UI screen/graph plot detection)
+        extreme_pixels = sum(1 for l in lumas if l < 35 or l > 220)
+        extreme_ratio = extreme_pixels / len(lumas) if lumas else 0
+
+        # 2.5 Fabric Verification: Check for non-textile image characteristics (Screenshots, Plots, Code IDEs)
+        if (
+            extreme_ratio > 0.35 or
+            (contrast_ratio > 0.65 and extreme_ratio > 0.25) or
+            (std_dev < 1.5 and avg_h_diff < 0.5) or
+            (std_dev > 80.0 and avg_h_diff > 40.0)
+        ):
             return get_non_fabric_template()
 
         # Color tint indicators

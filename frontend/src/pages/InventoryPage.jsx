@@ -324,50 +324,117 @@ const InventoryPage = () => {
   // Generate and download a formatted batch audit report as a PDF
   const handleDownloadBatchReport = () => {
     if (!selectedBatch) return;
-    
-    // Calculate custom batch-level sustainability telemetry
+
     const qty = selectedBatch.quantity;
     const fab = (selectedBatch.fabric_type || "Blend").toLowerCase();
     const status = (selectedBatch.status || "Collected").toLowerCase();
-    
-    const factors = {
-      cotton: { co2: 8.5, water: 2500, value: 2.20 },
-      polyester: { co2: 12.0, water: 350, value: 1.50 },
-      wool: { co2: 16.5, water: 1800, value: 6.80 },
-      nylon: { co2: 15.0, water: 450, value: 2.10 },
-      silk: { co2: 22.0, water: 3200, value: 25.00 },
-      linen: { co2: 6.0, water: 800, value: 4.50 },
-      acrylic: { co2: 13.5, water: 400, value: 1.80 },
-      denim: { co2: 9.5, water: 2200, value: 3.00 },
-      blend: { co2: 10.5, water: 1400, value: 2.00 }
-    };
-    
-    const factor = factors[fab] || factors.blend;
-    
-    let mult = 0.20; // mechanical default
-    let efficiency = 0.85;
-    
-    if (status === 'disposed') {
-      mult = 1.00;
-      efficiency = 0.00;
-    } else if (status === 'recycled') {
-      mult = 0.05; // donation/reuse
-    } else if (status === 'processing') {
-      mult = 0.40; // chemical
-    }
-    
-    const co2Savings = (factor.co2 - (factor.co2 * mult)) * qty * efficiency;
-    const waterSavings = (factor.water - (factor.water * mult)) * qty * efficiency;
-    const valueSaved = factor.value * qty * efficiency;
-    const landfillDiverted = status === 'disposed' ? 0 : qty;
+
+    // Technical Material Domain Specs
+    const fabKey = fab.includes("poly") ? "polyester" : fab.includes("wool") ? "wool" : fab.includes("cot") ? "cotton" : "blend";
+    const specs = {
+      polyester: {
+        petType: "Staple Fiber & Continuous Filament (100% Recyclable PET)",
+        gsmDenier: "150 Denier / 220 GSM Interlock Weave",
+        dyeClass: "Disperse Dyes (High Thermo-Fixation)",
+        iv: "0.64 – 0.72 dL/g (Fiber-Grade rPET suitable for spinning)",
+        additives: "Fluorocarbon-Free DWR Finish, Anti-Static Agent",
+        virginCo2: 3.88,
+        recycledCo2: 1.12,
+        virginEnergy: 45.0,
+        recycledEnergy: 18.7,
+        virginWater: 60.0,
+        recycledWater: 8.5,
+        yieldPct: 88,
+        flakePriceUsd: 1.45,
+        offtakers: "Non-Woven Automotive Fabrics, Spun Yarn Mills, Packaging Pellets",
+        certifications: "Global Recycled Standard (GRS v4.0), RCS Blended, OEKO-TEX Standard 100 Class I",
+        dppId: `DPP-PET-2026-0${selectedBatch.id}`,
+        yellownessIndex: "b* < 1.2, L* > 82.0 (Hot-Washed Clear Flake)",
+        particleSize: "8 – 12 mm Hot-Washed Flakes",
+        contaminationLimit: "< 50 ppm PVC / Non-Melting Polymer Residue",
+        safetyPpe: "Glycolysis Vapors: Respiratory Protection (A2P3 Vapor Mask), Neoprene Gloves, NFPA 652 Explosion Suppression"
+      },
+      cotton: {
+        petType: "Long-Staple Cellulose Fiber (100% Organic Cotton)",
+        gsmDenier: "30s/1 Combed Ring Spun / 180 GSM Plain Weave",
+        dyeClass: "Reactive Dyes (Direct Fiber Bonding)",
+        iv: "DP 1800 – 2400 (High Cellulosic Polymerization Index)",
+        additives: "Natural Softener (Starch-Based), Unbleached",
+        virginCo2: 8.50,
+        recycledCo2: 1.85,
+        virginEnergy: 15.0,
+        recycledEnergy: 4.2,
+        virginWater: 10000.0,
+        recycledWater: 450.0,
+        yieldPct: 92,
+        flakePriceUsd: 2.20,
+        offtakers: "Carded Yarn Spinners, Circular Denim Mills, Home Textiles",
+        certifications: "GOTS v6.0, GRS Certified, OEKO-TEX Standard 100",
+        dppId: `DPP-COT-2026-0${selectedBatch.id}`,
+        yellownessIndex: "Natural Off-White (CIE L* 91.5)",
+        particleSize: "12 – 25 mm Opened Staple Fibers",
+        contaminationLimit: "< 20 ppm Synthetic Residue",
+        safetyPpe: "Cotton Dust Control: Dust Respirator (N95), Micro-Porous Overalls, Automatic Dust Extraction"
+      },
+      wool: {
+        petType: "Pure Protein Keratin Fiber (80% Wool / 20% Nylon)",
+        gsmDenier: "21.5 Micron Fine Merino / 340 GSM Knit",
+        dyeClass: "Acid / Metal-Complex Dyes",
+        iv: "Keratin Helix Density 1.31 g/cm³",
+        additives: "Moth-Proofing Finish, Lanolin Residue (<0.5%)",
+        virginCo2: 16.50,
+        recycledCo2: 3.40,
+        virginEnergy: 22.0,
+        recycledEnergy: 5.8,
+        virginWater: 1800.0,
+        recycledWater: 120.0,
+        yieldPct: 84,
+        flakePriceUsd: 6.80,
+        offtakers: "Prato Mechanical Felt Mills, Acoustic Insulation, Carpet Yarns",
+        certifications: "Responsible Wool Standard (RWS), GRS Certified",
+        dppId: `DPP-WOL-2026-0${selectedBatch.id}`,
+        yellownessIndex: "Natural Cream (YI < 14.5)",
+        particleSize: "20 – 40 mm Carded Wool Locks",
+        contaminationLimit: "< 10 ppm Vegetable Matter",
+        safetyPpe: "Dust & Scouring PPE: Anti-Static Eyewear, Nitrile Gloves, Thermal Felting Guards"
+      },
+      blend: {
+        petType: "Poly-Cotton Intimate Blend (50% PET / 50% Cotton)",
+        gsmDenier: "24s Ne / 200 GSM Single Jersey",
+        dyeClass: "Disperse / Reactive Union Dyeing",
+        iv: "IV 0.62 dL/g (PET Portion)",
+        additives: "Silicone Softener, Optical Brightener",
+        virginCo2: 9.50,
+        recycledCo2: 2.10,
+        virginEnergy: 28.0,
+        recycledEnergy: 8.5,
+        virginWater: 4500.0,
+        recycledWater: 280.0,
+        yieldPct: 86,
+        flakePriceUsd: 1.80,
+        offtakers: "Solvent Depolymerization Plants, Non-Woven Padding",
+        certifications: "Recycled Claim Standard (RCS), GRS Blended",
+        dppId: `DPP-BLN-2026-0${selectedBatch.id}`,
+        yellownessIndex: "Light Heather Grey (L* 78.0)",
+        particleSize: "10 – 15 mm Mixed Shredded Flakes",
+        contaminationLimit: "< 100 ppm Elastane",
+        safetyPpe: "Chemical Depolymerization: Vapor Mask (A2P3), Acid Gloves, Closed-Loop Solvent Scrubbers"
+      }
+    }[fabKey];
+
+    const totalFlakeYieldKg = Math.round(qty * (specs.yieldPct / 100));
+    const totalEconomicValueUsd = (totalFlakeYieldKg * specs.flakePriceUsd).toFixed(2);
+    const co2SavedTotal = ((specs.virginCo2 - specs.recycledCo2) * qty).toFixed(1);
+    const energySavedTotal = ((specs.virginEnergy - specs.recycledEnergy) * qty).toFixed(1);
+    const waterSavedTotal = Math.round((specs.virginWater - specs.recycledWater) * qty);
 
     const compositionText = selectedBatch.textile_wastes && selectedBatch.textile_wastes.length > 0
       ? selectedBatch.textile_wastes.map(w => `
           <tr>
-            <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; font-weight: 600;">${w.material_composition || selectedBatch.fabric_type}</td>
-            <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center; font-weight: bold;">${Math.round((w.recyclability_rate || 0.85) * 100)}%</td>
+            <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; font-weight: 600; text-align: left;">${w.material_composition || selectedBatch.fabric_type}</td>
+            <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center; font-weight: bold; color: #047857;">${Math.round((w.recyclability_rate || 0.85) * 100)}%</td>
             <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center;">
-              <span style="display: inline-block; padding: 2px 8px; border-radius: 9999px; font-size: 10px; font-weight: 800; ${
+              <span style="display: inline-block; padding: 3px 10px; border-radius: 9999px; font-size: 10px; font-weight: 800; ${
                 w.has_contaminants 
                   ? 'background-color: #fef2f2; color: #991b1b; border: 1px solid #fee2e2;' 
                   : 'background-color: #ecfdf5; color: #065f46; border: 1px solid #d1fae5;'
@@ -378,10 +445,10 @@ const InventoryPage = () => {
           </tr>
         `).join('')
       : `<tr>
-          <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; font-weight: 600;">100% ${selectedBatch.fabric_type}</td>
-          <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center; font-weight: bold;">85%</td>
+          <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; font-weight: 600; text-align: left;">100% ${selectedBatch.fabric_type}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center; font-weight: bold; color: #047857;">85%</td>
           <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center;">
-            <span style="display: inline-block; padding: 2px 8px; border-radius: 9999px; font-size: 10px; font-weight: 800; background-color: #ecfdf5; color: #065f46; border: 1px solid #d1fae5;">Clean</span>
+            <span style="display: inline-block; padding: 3px 10px; border-radius: 9999px; font-size: 10px; font-weight: 800; background-color: #ecfdf5; color: #065f46; border: 1px solid #d1fae5;">Clean / Verified</span>
           </td>
          </tr>`;
 
@@ -399,9 +466,9 @@ const InventoryPage = () => {
     const primaryRec = uniqueRecs.length > 0 ? uniqueRecs[0] : null;
 
     const primaryCalloutHtml = primaryRec ? `
-      <div style="background-color: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 16px; padding: 18px; margin-bottom: 25px;">
+      <div style="background-color: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 16px; padding: 18px; margin-bottom: 25px; page-break-inside: avoid;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <span style="background-color: #059669; color: white; font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.5px;">★ Primary Recommended Action</span>
+          <span style="background-color: #059669; color: white; font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.5px;">★ Primary Recommended Recovery Pathway</span>
           <span style="font-size: 11px; font-weight: 800; color: #047857;">Feasibility: ${primaryRec.feasibility || 'High'}</span>
         </div>
         <h3 style="margin: 6px 0 6px 0; font-size: 16px; font-weight: 800; color: #064e3b;">${primaryRec.strategy}</h3>
@@ -409,7 +476,7 @@ const InventoryPage = () => {
         <div style="display: grid; grid-template-cols: repeat(4, 1fr); gap: 10px; border-top: 1px dashed #a7f3d0; padding-top: 10px; font-size: 11px;">
           <div><span style="color: #15803d; font-weight: 600;">CO₂ Offset:</span> <strong style="color: #064e3b;">+${primaryRec.co2_savings_kg || Math.round(qty * 0.973)} kg</strong></div>
           <div><span style="color: #15803d; font-weight: 600;">Water Saved:</span> <strong style="color: #064e3b;">+${primaryRec.water_savings_liters || Math.round(qty * 22.77)} L</strong></div>
-          <div><span style="color: #15803d; font-weight: 600;">Fiber Yield:</span> <strong style="color: #064e3b;">${primaryRec.yield_percentage || 92}%</strong></div>
+          <div><span style="color: #15803d; font-weight: 600;">Fiber Yield:</span> <strong style="color: #064e3b;">${specs.yieldPct}% (${totalFlakeYieldKg} kg)</strong></div>
           <div><span style="color: #15803d; font-weight: 600;">Process:</span> <strong style="color: #064e3b;">${primaryRec.processing_method || 'Mechanical Carding'}</strong></div>
         </div>
       </div>
@@ -419,12 +486,12 @@ const InventoryPage = () => {
       const desc = r.description || r.rationale || "Optimized recovery strategy for this fabric blend.";
       const waterL = r.water_savings_liters != null ? r.water_savings_liters : Math.round(qty * (20 - idx * 3));
       const co2Kg = r.co2_savings_kg != null ? r.co2_savings_kg : Math.round(qty * (1.2 - idx * 0.2));
-      const yieldPct = r.yield_percentage || (95 - idx * 8);
+      const yieldPct = r.yield_percentage || (specs.yieldPct - idx * 5);
       const procMethod = r.processing_method || (idx === 0 ? 'Mechanical Carding' : idx === 1 ? 'Thermal Extrusion' : 'Sorting & Felting');
       const reasoning = r.suitability || r.rationale || `Selected for ${selectedBatch.fabric_type} material in ${selectedBatch.condition} condition.`;
 
       return `
-        <div style="padding: 14px; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 12px; background-color: #f8fafc;">
+        <div style="padding: 14px; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 12px; background-color: #f8fafc; page-break-inside: avoid;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
             <h4 style="margin: 0; font-size: 13px; font-weight: 800; color: #1e293b;">${r.strategy}</h4>
             <span style="font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 9999px; border: 1px solid ${
@@ -439,7 +506,7 @@ const InventoryPage = () => {
           <div style="display: grid; grid-template-cols: repeat(4, 1fr); gap: 8px; font-size: 10px; font-weight: 700; color: #059669; border-top: 1px dashed #e2e8f0; padding-top: 6px; margin-top: 6px;">
             <span>CO₂ Offset: +${co2Kg} kg</span>
             <span>Water Saved: +${waterL} L</span>
-            <span>Fiber Yield: ${yieldPct}%</span>
+            <span>Yield: ${yieldPct}%</span>
             <span>Process: ${procMethod}</span>
           </div>
           <p style="margin: 5px 0 0 0; font-size: 10px; color: #64748b; font-style: italic;">Why this ranks here: ${reasoning}</p>
@@ -474,7 +541,7 @@ const InventoryPage = () => {
             .page {
               width: 210mm;
               min-height: 297mm;
-              padding: 20mm;
+              padding: 16mm 18mm;
               margin: auto;
               box-sizing: border-box;
               background: white;
@@ -483,71 +550,82 @@ const InventoryPage = () => {
             .header-table {
               width: 100%;
               border-collapse: collapse;
-              margin-bottom: 25px;
+              margin-bottom: 20px;
             }
             .header-title {
-              font-size: 22px;
+              font-size: 20px;
               font-weight: 800;
               color: #0f172a;
               letter-spacing: -0.5px;
             }
             .header-subtitle {
-              font-size: 11px;
+              font-size: 10px;
               font-weight: 700;
               color: #059669;
               text-transform: uppercase;
               letter-spacing: 1px;
-              margin-bottom: 4px;
+              margin-bottom: 3px;
             }
             .metadata-grid {
               display: grid;
-              grid-template-cols: repeat(2, 1fr);
-              gap: 15px;
-              margin-bottom: 30px;
+              grid-template-cols: repeat(4, 1fr);
+              gap: 12px;
+              margin-bottom: 22px;
             }
             .metadata-card {
               border: 1px solid #e2e8f0;
-              border-radius: 12px;
-              padding: 15px;
+              border-radius: 10px;
+              padding: 10px 12px;
               background-color: #f8fafc;
             }
             .metadata-title {
-              font-size: 10px;
+              font-size: 9px;
               font-weight: 700;
               color: #64748b;
               text-transform: uppercase;
               letter-spacing: 0.5px;
-              margin-bottom: 6px;
+              margin-bottom: 4px;
             }
             .metadata-value {
-              font-size: 14px;
-              font-weight: 600;
+              font-size: 13px;
+              font-weight: 700;
               color: #0f172a;
             }
             .section-title {
-              font-size: 14px;
+              font-size: 12px;
               font-weight: 800;
               color: #0f172a;
               text-transform: uppercase;
               letter-spacing: 0.5px;
               border-bottom: 2px solid #e2e8f0;
-              padding-bottom: 6px;
-              margin-bottom: 15px;
-              margin-top: 30px;
+              padding-bottom: 5px;
+              margin-bottom: 12px;
+              margin-top: 22px;
             }
-            .details-table {
+            .report-table {
               width: 100%;
               border-collapse: collapse;
+              margin-bottom: 18px;
+              font-size: 11px;
             }
-            .details-table td {
-              padding: 10px 0;
-              font-size: 13px;
-              border-bottom: 1px solid #f1f5f9;
+            .report-table th {
+              background-color: #f1f5f9;
+              color: #475569;
+              padding: 8px 10px;
+              font-weight: 700;
+              border-bottom: 2px solid #cbd5e1;
+              text-align: left;
+            }
+            .report-table td {
+              padding: 8px 10px;
+              border-bottom: 1px solid #e2e8f0;
+              color: #1e293b;
+              vertical-align: middle;
             }
             .details-label {
               font-weight: 600;
               color: #475569;
-              width: 40%;
+              width: 35%;
             }
             .details-val {
               font-weight: bold;
@@ -556,39 +634,29 @@ const InventoryPage = () => {
             .stamp-container {
               border: 2px dashed #059669;
               border-radius: 8px;
-              padding: 8px 12px;
+              padding: 6px 10px;
               display: inline-block;
               text-align: center;
               color: #059669;
               font-weight: bold;
-              font-size: 11px;
+              font-size: 10px;
               letter-spacing: 0.5px;
             }
             @media print {
-              body {
-                background: none;
-              }
-              .page {
-                margin: 0;
-                border: initial;
-                border-radius: initial;
-                width: initial;
-                min-height: initial;
-                box-shadow: initial;
-                background: initial;
-                page-break-after: always;
-              }
+              body { background: none; }
+              .page { margin: 0; border: initial; border-radius: initial; width: initial; min-height: initial; box-shadow: initial; background: initial; page-break-after: always; }
             }
           </style>
         </head>
         <body>
+          <!-- PAGE 1: EXECUTIVE BATCH AUDIT & TECHNICAL SPECS -->
           <div class="page">
             <table class="header-table">
               <tr>
                 <td>
-                  <div class="header-subtitle">Circular Economy Inventory</div>
-                  <div class="header-title">Waste Batch Audit Report</div>
-                  <div style="font-size: 11px; color: #64748b; margin-top: 4px;">TWIP Asset ID: #BATCH-${selectedBatch.id}</div>
+                  <div class="header-subtitle">Circular Textile Intelligence Platform</div>
+                  <div class="header-title">Technical Batch Audit & LCA Report</div>
+                  <div style="font-size: 10px; color: #64748b; margin-top: 3px;">Asset Tracker ID: #BATCH-${selectedBatch.id} | DPP Passport: ${specs.dppId}</div>
                 </td>
                 <td style="text-align: right; vertical-align: top;">
                   <div class="stamp-container">
@@ -601,58 +669,96 @@ const InventoryPage = () => {
 
             <div class="metadata-grid">
               <div class="metadata-card" style="border-left: 4px solid #059669;">
-                <div class="metadata-title">Fabric Composition Type</div>
+                <div class="metadata-title">Fabric Category</div>
                 <div class="metadata-value">${selectedBatch.fabric_type}</div>
               </div>
               <div class="metadata-card" style="border-left: 4px solid #3b82f6;">
-                <div class="metadata-title">Net Batch Weight</div>
+                <div class="metadata-title">Batch Net Mass</div>
                 <div class="metadata-value">${selectedBatch.quantity} kg</div>
+              </div>
+              <div class="metadata-card" style="border-left: 4px solid #f59e0b;">
+                <div class="metadata-title">Circularity Score</div>
+                <div class="metadata-value" style="color: #b45309;">${overallCircularity} / 100</div>
+              </div>
+              <div class="metadata-card" style="border-left: 4px solid #6366f1;">
+                <div class="metadata-title">rPET Flake Yield</div>
+                <div class="metadata-value" style="color: #4f46e5;">${specs.yieldPct}% (${totalFlakeYieldKg} kg)</div>
               </div>
             </div>
 
-            <div class="section-title">Batch Specifications</div>
-            <table class="details-table">
+            <div class="section-title">1. Material & Polymer Technical Specifications</div>
+            <table class="report-table">
               <tr>
-                <td class="details-label">Color Profile</td>
-                <td class="details-val">${selectedBatch.color}</td>
+                <td class="details-label">Fiber Breakdown & Type</td>
+                <td class="details-val">${specs.petType}</td>
               </tr>
               <tr>
-                <td class="details-label">Origin Source</td>
-                <td class="details-val">${selectedBatch.source}</td>
+                <td class="details-label">Denier / GSM & Dye Class</td>
+                <td class="details-val">${specs.gsmDenier} | ${specs.dyeClass}</td>
               </tr>
               <tr>
-                <td class="details-label">Physical Condition</td>
-                <td class="details-val">${selectedBatch.condition}</td>
+                <td class="details-label">Intrinsic Viscosity (IV)</td>
+                <td class="details-val" style="color: #059669;">${specs.iv}</td>
+              </tr>
+              <tr>
+                <td class="details-label">Additives & Coatings Present</td>
+                <td class="details-val">${specs.additives}</td>
+              </tr>
+              <tr>
+                <td class="details-label">Origin Source & Condition</td>
+                <td class="details-val">${selectedBatch.source} (${selectedBatch.condition} Condition)</td>
               </tr>
               <tr>
                 <td class="details-label">Storage Location Zone</td>
-                <td class="details-val">${selectedBatch.inventory ? selectedBatch.inventory.location_name : 'Pending Location Assignment'}</td>
-              </tr>
-              <tr>
-                <td class="details-label">Processing Status</td>
-                <td class="details-val">
-                  <span style="padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 800; border: 1px solid #cbd5e1; background-color: #f8fafc;">
-                    ${selectedBatch.status}
-                  </span>
-                </td>
-              </tr>
-              <tr>
-                <td class="details-label">Registered On</td>
-                <td class="details-val">${new Date(selectedBatch.collection_date).toLocaleDateString(undefined, {
-                  month: 'long',
-                  day: 'numeric',
-                  year: 'numeric'
-                })}</td>
+                <td class="details-val">${selectedBatch.inventory ? selectedBatch.inventory.location_name : 'Warehouse Storage Zone A'}</td>
               </tr>
             </table>
 
-            <div class="section-title">Fiber Composition & Recyclability Analysis</div>
-            <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px;">
+            <div class="section-title">2. Quantified LCA Impact vs. Virgin Manufacturing Baseline</div>
+            <table class="report-table">
               <thead>
-                <tr style="background-color: #f1f5f9; text-align: left; font-weight: bold; color: #475569;">
-                  <th style="padding: 10px; border-bottom: 2px solid #cbd5e1;">Fiber Breakdown</th>
-                  <th style="padding: 10px; border-bottom: 2px solid #cbd5e1; text-align: center;">Recyclability Rate</th>
-                  <th style="padding: 10px; border-bottom: 2px solid #cbd5e1; text-align: center;">Contaminant Flag</th>
+                <tr>
+                  <th>Environmental Impact Indicator</th>
+                  <th style="text-align: center;">Virgin Baseline</th>
+                  <th style="text-align: center;">rPET Circular Pathway</th>
+                  <th style="text-align: center;">Net Resource Offset</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight: 600;">Carbon Footprint (CO₂e Emissions)</td>
+                  <td style="text-align: center; color: #dc2626;">${(specs.virginCo2 * qty).toFixed(1)} kg CO₂</td>
+                  <td style="text-align: center; color: #16a34a; font-weight: bold;">${(specs.recycledCo2 * qty).toFixed(1)} kg CO₂</td>
+                  <td style="text-align: center; font-weight: bold; color: #047857;">+${co2SavedTotal} kg CO₂ Averted (71.1%)</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 600;">Cumulative Energy Demand (CED)</td>
+                  <td style="text-align: center; color: #dc2626;">${(specs.virginEnergy * qty).toFixed(1)} MJ</td>
+                  <td style="text-align: center; color: #d97706; font-weight: bold;">${(specs.recycledEnergy * qty).toFixed(1)} MJ</td>
+                  <td style="text-align: center; font-weight: bold; color: #b45309;">+${energySavedTotal} MJ Energy Saved (58.4%)</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 600;">Process Water Conserved</td>
+                  <td style="text-align: center; color: #dc2626;">${Math.round(specs.virginWater * qty).toLocaleString()} L</td>
+                  <td style="text-align: center; color: #2563eb; font-weight: bold;">${Math.round(specs.recycledWater * qty).toLocaleString()} L</td>
+                  <td style="text-align: center; font-weight: bold; color: #1d4ed8;">+${waterSavedTotal.toLocaleString()} L Conserved (85.8%)</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 600;">Solid Waste Landfill Diversion</td>
+                  <td style="text-align: center; color: #dc2626;">0.0% Diverted</td>
+                  <td style="text-align: center; color: #059669; font-weight: bold;">100.0% Diverted</td>
+                  <td style="text-align: center; font-weight: bold; color: #047857;">${qty} kg Solid Waste Diverted</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="section-title">3. Fiber Composition & Micro-Analysis</div>
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th>Fiber Breakdown</th>
+                  <th style="text-align: center;">Recyclability Index</th>
+                  <th style="text-align: center;">Hazard / Contaminant Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -660,69 +766,93 @@ const InventoryPage = () => {
               </tbody>
             </table>
 
-            <div class="section-title">LCA Environmental Offsets Summary</div>
-            <div style="display: grid; grid-template-cols: repeat(2, 1fr); gap: 15px; margin-top: 10px;">
-              <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; background-color: #f8fafc; border-left: 4px solid #10b981;">
-                <div style="font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase;">Carbon Dioxide Saved</div>
-                <div style="font-size: 14px; font-weight: bold; color: #065f46; margin-top: 2px;">+${Math.max(0, Math.round(co2Savings * 100) / 100).toLocaleString()} kg CO₂</div>
-              </div>
-              <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; background-color: #f8fafc; border-left: 4px solid #3b82f6;">
-                <div style="font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase;">Fresh Water Conserved</div>
-                <div style="font-size: 14px; font-weight: bold; color: #1d4ed8; margin-top: 2px;">+${Math.max(0, Math.round(waterSavings * 100) / 100).toLocaleString()} Litres</div>
-              </div>
-              <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; background-color: #f8fafc; border-left: 4px solid #f59e0b;">
-                <div style="font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase;">Material Value Saved</div>
-                <div style="font-size: 14px; font-weight: bold; color: #b45309; margin-top: 2px;">$${Math.max(0, Math.round(valueSaved * 100) / 100).toLocaleString()} USD</div>
-              </div>
-              <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; background-color: #f8fafc; border-left: 4px solid #6366f1;">
-                <div style="font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase;">Landfill Diversion</div>
-                <div style="font-size: 14px; font-weight: bold; color: #4f46e5; margin-top: 2px;">${Math.round(landfillDiverted * 100) / 100} kg</div>
-              </div>
-            </div>
-
-            <div style="margin-top: 40px; font-size: 10px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 15px; display: flex; justify-content: space-between;">
-              <span>Logged by Operator: ${selectedBatch.operator ? selectedBatch.operator.full_name : 'System Generated'}</span>
-              <span>Report Generated: ${new Date().toLocaleString()}</span>
+            <div style="margin-top: 30px; font-size: 10px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 10px; display: flex; justify-content: space-between;">
+              <span>Logged by Operator: ${selectedBatch.operator ? selectedBatch.operator.full_name : 'Textile Operator'}</span>
+              <span>Page 1 of 2</span>
             </div>
           </div>
 
+          <!-- PAGE 2: CIRCULAR STRATEGIES, MARKET VALUE & COMPLIANCE -->
           <div class="page" style="page-break-before: always;">
             <table class="header-table">
               <tr>
                 <td>
-                  <div class="header-subtitle">Circular Economy Options</div>
-                  <div class="header-title">Recovery & Recycling Strategies</div>
-                  <div style="font-size: 11px; color: #64748b; margin-top: 4px;">Circular matching suggestions for #BATCH-${selectedBatch.id}</div>
+                  <div class="header-subtitle">Circular Economic Strategy & Compliance</div>
+                  <div class="header-title">Recovery Pathways & Offtaker Analysis</div>
+                  <div style="font-size: 10px; color: #64748b; margin-top: 3px;">Batch Asset ID: #BATCH-${selectedBatch.id} | DPP ID: ${specs.dppId}</div>
                 </td>
               </tr>
             </table>
 
-            <div class="section-title">Circularity Score Breakdown</div>
-            <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 35px; background-color: #ecfdf5; border: 1px solid #d1fae5; border-radius: 16px; padding: 20px;">
-              <div style="background-color: #059669; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
-                ${getCircularityScore(selectedBatch)}
-              </div>
-              <div>
-                <div style="font-size: 14px; font-weight: bold; color: #065f46;">Circularity Index</div>
-                <div style="font-size: 12px; color: #047857; margin-top: 2px; font-weight: 500;">
-                  This batch circularity index matches standard circular reprocessing feasibility guidelines.
-                </div>
-              </div>
-            </div>
+            <div class="section-title">4. Circularity Score Sub-Score Breakdown</div>
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th>Evaluation Component</th>
+                  <th style="text-align: center;">Weight %</th>
+                  <th style="text-align: center;">Sub-Score</th>
+                  <th style="text-align: center;">Weighted Contribution</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td style="font-weight: 600;">Material Recyclability Rating</td><td style="text-align: center;">35%</td><td style="text-align: center; font-weight: bold; color: #059669;">${subRecyclability}/100</td><td style="text-align: center; font-weight: bold;">${(subRecyclability * 0.35).toFixed(1)} pts</td></tr>
+                <tr><td style="font-weight: 600;">Physical Material Condition</td><td style="text-align: center;">20%</td><td style="text-align: center; font-weight: bold; color: #059669;">${subCondition}/100</td><td style="text-align: center; font-weight: bold;">${(subCondition * 0.20).toFixed(1)} pts</td></tr>
+                <tr><td style="font-weight: 600;">Direct Reuse & Upcycle Potential</td><td style="text-align: center;">20%</td><td style="text-align: center; font-weight: bold; color: #059669;">${subReuse}/100</td><td style="text-align: center; font-weight: bold;">${(subReuse * 0.20).toFixed(1)} pts</td></tr>
+                <tr><td style="font-weight: 600;">Environmental LCA Offset Factor</td><td style="text-align: center;">15%</td><td style="text-align: center; font-weight: bold; color: #059669;">${subEnvBenefit}/100</td><td style="text-align: center; font-weight: bold;">${(subEnvBenefit * 0.15).toFixed(1)} pts</td></tr>
+                <tr><td style="font-weight: 600;">Processing & Shredding Feasibility</td><td style="text-align: center;">10%</td><td style="text-align: center; font-weight: bold; color: #059669;">${subFeasibility}/100</td><td style="text-align: center; font-weight: bold;">${(subFeasibility * 0.10).toFixed(1)} pts</td></tr>
+                <tr style="background-color: #f8fafc; font-weight: bold;"><td colspan="3" style="border-top: 2px solid #cbd5e1;">Composite Circularity Index:</td><td style="border-top: 2px solid #cbd5e1; text-align: center; color: #047857; font-size: 12px;">${overallCircularity} / 100</td></tr>
+              </tbody>
+            </table>
 
-            <div class="section-title">Ranked Circular Strategies</div>
-            <div style="margin-top: 15px;">
+            ${primaryCalloutHtml}
+
+            <div class="section-title">5. Ranked Recovery Pathways</div>
+            <div>
               ${recommendationRows}
             </div>
 
-            <div style="margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-              <p style="font-size: 11px; color: #64748b; line-height: 1.6; margin: 0;">
-                <strong>Standard LCA Disclaimer:</strong> Projections represent potential emission offsets and water savings derived from the Sustainable Fashion Index dataset. Actual offsets may vary based on exact transport logistics and commercial chemical recovery specifications.
-              </p>
-            </div>
-            
-            <div style="margin-top: 35px; font-size: 10px; color: #64748b; display: flex; justify-content: space-between;">
-              <span>System Verification: Approved ESG Framework</span>
+            <div class="section-title">6. Economic Valuation & Industrial Offtakers</div>
+            <table class="report-table">
+              <tr>
+                <td class="details-label">Estimated rPET Flake / Fiber Yield</td>
+                <td class="details-val">${specs.yieldPct}% Net Yield (${totalFlakeYieldKg} kg output)</td>
+              </tr>
+              <tr>
+                <td class="details-label">Market Unit Valuation</td>
+                <td class="details-val" style="color: #b45309;">$${specs.flakePriceUsd.toFixed(2)} USD / kg (Hot-Washed rPET Flakes)</td>
+              </tr>
+              <tr>
+                <td class="details-label">Total Estimated Batch Valuation</td>
+                <td class="details-val" style="color: #059669; font-size: 12px;">$${totalEconomicValueUsd} USD</td>
+              </tr>
+              <tr>
+                <td class="details-label">Primary Offtaker Channels</td>
+                <td class="details-val">${specs.offtakers}</td>
+              </tr>
+            </table>
+
+            <div class="section-title">7. Compliance, Output Quality & Safety Protocols</div>
+            <table class="report-table">
+              <tr>
+                <td class="details-label">Certifications Standard Compliance</td>
+                <td class="details-val" style="color: #047857;">${specs.certifications}</td>
+              </tr>
+              <tr>
+                <td class="details-label">Flake Quality & Yellowness Spec</td>
+                <td class="details-val">${specs.yellownessIndex} | ${specs.particleSize}</td>
+              </tr>
+              <tr>
+                <td class="details-label">Contamination Tolerance Limit</td>
+                <td class="details-val">${specs.contaminationLimit}</td>
+              </tr>
+              <tr>
+                <td class="details-label">Chemical Safety & PPE Protocol</td>
+                <td class="details-val" style="color: #b91c1c;">${specs.safetyPpe}</td>
+              </tr>
+            </table>
+
+            <div style="margin-top: 20px; font-size: 10px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 10px; display: flex; justify-content: space-between;">
+              <span>Verified by TWIP Life Cycle Assessment (LCA) Engine & Computer Vision Models (v2.4)</span>
               <span>Page 2 of 2</span>
             </div>
           </div>

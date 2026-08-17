@@ -126,6 +126,15 @@ def run_tests():
     print(f"  - Circularity Score: {classify_res['circularity_score']} ({classify_res['circularity_category']})")
     print(f"  - Hazard warning: {classify_res['has_contaminants']}")
         
+    # 3.85. Test Non-Fabric Image Upload Verification
+    print("\n[Test 3.85] Simulating Non-Fabric Image Upload Detection...")
+    non_fab_files = [("file", "not_fabric_random_object.png", img_bytes)]
+    non_fab_res = make_multipart_request("/api/classification/analyze", non_fab_files, token=token)
+    print(f"[OK] Non-Fabric verification result:")
+    print(f"  - Is Fabric: {non_fab_res['is_fabric']}")
+    print(f"  - Category: {non_fab_res['category']}")
+    print(f"  - Explanation: {non_fab_res['categorization_explanation']}")
+        
     # 3.9. Test Sustainability Engine API (Milestone 3)
     print("\n[Test 3.9] Running Sustainability Intelligence & Recommendations (Milestone 3)...")
     sust_stats = make_request("/api/sustainability/stats", method="GET", token=token)

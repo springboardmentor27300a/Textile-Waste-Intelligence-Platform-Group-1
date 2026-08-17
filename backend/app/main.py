@@ -1,14 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database.db import engine, Base
-from app.routers import auth, inventory, datasets, classification, sustainability, recommendation, impact, circular, dashboard
+from app.routers import auth, inventory, datasets, classification, sustainability, recommendation, impact, circular, dashboard, reports
 
 # Create database tables automatically if they don't exist
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Textile Waste Intelligence Platform API",
-    description="Interactive Swagger API documentation for the Textile Waste Intelligence Platform (Milestones 1, 2 & 3). Exposes endpoints for user authentication, inventory CRUD, AI image classification, dataset cataloging, and ESG sustainability metrics.",
+    description="Interactive Swagger API documentation for the Textile Waste Intelligence Platform (Milestones 1, 2, 3 & 4). Exposes endpoints for user authentication, inventory CRUD, AI image classification, dataset cataloging, ESG sustainability metrics, role dashboards, and report streaming exports.",
     version="1.0.0",
 )
 
@@ -33,6 +33,7 @@ app.include_router(impact.router)
 app.include_router(circular.router)
 app.include_router(circular.router_analytics)
 app.include_router(dashboard.router)
+app.include_router(reports.router)
 
 @app.get("/")
 def read_root():

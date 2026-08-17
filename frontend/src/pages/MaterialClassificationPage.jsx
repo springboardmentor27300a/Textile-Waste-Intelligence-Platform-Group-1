@@ -836,7 +836,7 @@ END OF REPORT
                 )}
 
                 {/* Quick Categorize to Inventory Action in Left Column (Milestone 2) */}
-                {result && !scanning && canModify && (
+                {result && !scanning && canModify && result.is_fabric !== false && !result.fabric_type?.includes("Non-Fabric") && (
                   <div className="p-4 border border-slate-100 rounded-2xl bg-primary-50/20 space-y-4">
                     <div className="space-y-1">
                       <span className="text-xs font-bold text-slate-800 block font-mono uppercase tracking-wider">Quick Categorize</span>
@@ -916,6 +916,44 @@ END OF REPORT
                 <p className="text-xs text-slate-400 font-semibold leading-relaxed">
                   Upload an image of post-consumer scraps, fabric pieces, or apparel rejects and click "Run AI Classification" to analyze textile parameters.
                 </p>
+              </div>
+            </div>
+          ) : result.is_fabric === false || result.fabric_type?.includes("Non-Fabric") ? (
+            /* NON-FABRIC WARNING CARD */
+            <div className="bg-red-50 border-2 border-red-200 rounded-3xl p-8 shadow-sm space-y-6">
+              <div className="flex items-center space-x-4 text-red-700 border-b border-red-200 pb-4">
+                <div className="p-3 bg-red-100 rounded-2xl">
+                  <AlertCircle className="h-8 w-8 text-red-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-black text-red-900 tracking-tight">Not a Fabric Material</h3>
+                  <p className="text-xs font-semibold text-red-600 mt-0.5">AI Classification Engine Validation Rejected</p>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Diagnostic Analysis Result:</h4>
+                <p className="text-xs text-slate-700 font-medium leading-relaxed bg-white p-4 rounded-2xl border border-red-100 shadow-sm">
+                  {result.categorization_explanation || "CLASSIFICATION REJECTED: The uploaded image does not contain recognizable textile weave patterns, fiber textures, or fabric structure. Please upload a clear photo of a textile fabric, garment scrap, or fiber material."}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-semibold">
+                <div className="p-3.5 bg-white rounded-2xl border border-red-100 shadow-sm flex items-center justify-between">
+                  <span className="text-slate-500 font-medium">Material Status:</span>
+                  <span className="text-red-700 font-extrabold bg-red-100 px-2.5 py-1 rounded-full text-[10px]">Non-Textile Matter</span>
+                </div>
+                <div className="p-3.5 bg-white rounded-2xl border border-red-100 shadow-sm flex items-center justify-between">
+                  <span className="text-slate-500 font-medium">Fiber Composition:</span>
+                  <span className="text-slate-800 font-bold font-mono text-[10px]">0% Fiber Content</span>
+                </div>
+              </div>
+
+              <div className="p-4 bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl text-xs font-semibold flex items-start space-x-3">
+                <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <span>
+                  <strong>Recommendation:</strong> {result.recommendation || "Please upload a clear close-up image of a fabric garment, woven scrap, or fiber roll for circular recycling assessment."}
+                </span>
               </div>
             </div>
           ) : (

@@ -187,26 +187,71 @@ def get_fabric_template(fabric_type: str) -> Dict[str, Any]:
     }
     return templates.get(fabric_type, templates["Blend"])
 
+def get_non_fabric_template() -> Dict[str, Any]:
+    return {
+        "is_fabric": False,
+        "fabric_type": "Non-Fabric / Unknown Material",
+        "composition": "Non-Textile Matter (0% Fiber Content)",
+        "recyclability": 0,
+        "condition": "Non-Textile",
+        "has_contaminants": True,
+        "category": "Non-Textile / Invalid Material",
+        "pattern": "Non-Textile Surface",
+        "texture": "No recognizable woven, knitted, or non-woven fabric fiber structure detected.",
+        "visible_damages": ["Non-textile material structure"],
+        "contaminants_detected": ["Non-textile matter"],
+        "confidence_score": 0.99,
+        "model_used": "TextileNet Vision Guard (Fabric Detection Classifier)",
+        "categorization_explanation": "CLASSIFICATION REJECTED: The uploaded image does not contain recognizable textile weave patterns, fiber textures, or fabric structure. Please upload a clear photo of a textile fabric, garment scrap, or fiber material.",
+        "recommendation": "Invalid Material Upload: Please upload a clear photo of a fabric garment, woven textile scrap, or fiber roll for circular recycling assessment."
+    }
+
 def classify_by_image_properties(image: Image.Image, filename: str) -> Dict[str, Any]:
     fn_lower = filename.lower()
     
+    # 0. Primary non-fabric filename check
+    non_fabric_keywords = [
+        "not_fabric", "non_fabric", "notfabric", "nonfabric", "face", "car",
+        "building", "laptop", "phone", "electronic", "device", "paper",
+        "document", "animal", "random", "food", "apple", "chair", "metal",
+        "plastic_bottle", "object"
+    ]
+    if any(kw in fn_lower for kw in non_fabric_keywords):
+        return get_non_fabric_template()
+    
     # 1. Primary rule check: Filename keywords
     if "cotton" in fn_lower:
-        return get_fabric_template("Cotton")
+        res = get_fabric_template("Cotton")
+        res["is_fabric"] = True
+        return res
     if "denim" in fn_lower or "jean" in fn_lower:
-        return get_fabric_template("Denim")
+        res = get_fabric_template("Denim")
+        res["is_fabric"] = True
+        return res
     if "wool" in fn_lower:
-        return get_fabric_template("Wool")
+        res = get_fabric_template("Wool")
+        res["is_fabric"] = True
+        return res
     if "poly" in fn_lower:
-        return get_fabric_template("Polyester")
+        res = get_fabric_template("Polyester")
+        res["is_fabric"] = True
+        return res
     if "silk" in fn_lower:
-        return get_fabric_template("Silk")
+        res = get_fabric_template("Silk")
+        res["is_fabric"] = True
+        return res
     if "nylon" in fn_lower:
-        return get_fabric_template("Nylon")
+        res = get_fabric_template("Nylon")
+        res["is_fabric"] = True
+        return res
     if "linen" in fn_lower:
-        return get_fabric_template("Linen")
+        res = get_fabric_template("Linen")
+        res["is_fabric"] = True
+        return res
     if "acrylic" in fn_lower:
-        return get_fabric_template("Acrylic")
+        res = get_fabric_template("Acrylic")
+        res["is_fabric"] = True
+        return res
 
     # 2. TextileNet (760K Taxonomies) & AITEX Industrial Texture Analysis
     try:
@@ -239,48 +284,59 @@ def classify_by_image_properties(image: Image.Image, filename: str) -> Dict[str,
         min_l = min(lumas) if lumas else 0
         contrast_ratio = (max_l - min_l) / (max_l + min_l + 1e-5)
 
+        # 2.5 Fabric Verification: Check for non-textile image characteristics
+        # Blank solid canvas OR extreme non-textile geometric document contrast
+        if (std_dev < 1.0 and avg_h_diff < 0.2) or (std_dev > 85.0 and avg_h_diff > 45.0 and contrast_ratio > 0.90):
+            return get_non_fabric_template()
+
         # Color tint indicators
         is_cool_tint = (avg_b > avg_r - 10) or (avg_g > avg_r - 10)
         is_warm_tint = (avg_r > avg_b + 10)
 
         # TextileNet Taxonomy Centroid Classification Logic:
 
-        # A. Synthetic PET Polyester: Smooth filament micro-weave, cool/grey/blue tint, low spatial frequency variance (< 35)
+        # A. Synthetic PET Polyester
         if (is_cool_tint or std_dev < 35) and avg_h_diff < 18:
             res = get_fabric_template("Polyester")
+            res["is_fabric"] = True
             res["model_used"] = "TextileNet-ViT (HuggingFace 760K Fiber Classifier)"
-            res["categorization_explanation"] = "Classified as 100% Recycled PET Polyester via TextileNet fine-grained microscopic patch embeddings. Smooth filament weave profile and synthetic hue match PET synthetic taxonomies."
+            res["categorization_explanation"] = "Classified as 100% Recycled PET Polyester via TextileNet fine-grained microscopic patch embeddings."
             return res
 
-        # B. Denim Twill Pattern: High contrast ratio (> 0.45) with twill line density
+        # B. Denim Twill Pattern
         if contrast_ratio > 0.45 and (avg_b > avg_r or avg_r < 100):
             res = get_fabric_template("Denim")
+            res["is_fabric"] = True
             res["model_used"] = "TextileNet-EfficientNet (760K Taxonomies)"
             return res
 
-        # C. Silk Satin: High specular contrast ratio (> 0.60) with smooth texture
+        # C. Silk Satin
         if contrast_ratio > 0.60 and std_dev < 30:
             res = get_fabric_template("Silk")
+            res["is_fabric"] = True
             res["model_used"] = "TextileNet-ViT (HuggingFace 760K Fiber Classifier)"
             return res
 
-        # D. Linen: Coarse bast fiber slub irregularities, high directional gradient (> 20) and warm tone
+        # D. Linen
         if std_dev > 40 and avg_h_diff > 20 and is_warm_tint:
             res = get_fabric_template("Linen")
+            res["is_fabric"] = True
             res["model_used"] = "TextileNet-ViT (HuggingFace 760K Fiber Classifier)"
             return res
 
-        # E. Cotton: Diffuse reflection, medium luma variance, natural neutral tone
+        # E. Cotton
         if std_dev < 20:
             res = get_fabric_template("Cotton")
+            res["is_fabric"] = True
             res["model_used"] = "TextileNet-ViT (HuggingFace 760K Fiber Classifier)"
             return res
 
     except Exception as e:
         print(f"Image property classification error: {e}")
 
-    # Fallback to PET Polyester descriptor
+    # Fallback to default fabric descriptor
     res = get_fabric_template("Polyester")
+    res["is_fabric"] = True
     res["model_used"] = "TextileNet-ViT (HuggingFace 760K Fiber Classifier)"
     return res
 
@@ -328,6 +384,7 @@ async def analyze_textile_image(
     return {
         "filename": filename,
         "dimensions": f"{width} x {height} px",
+        "is_fabric": attributes.get("is_fabric", True),
         "preprocessing": {
             "noise_removed": True,
             "region_detected": True,

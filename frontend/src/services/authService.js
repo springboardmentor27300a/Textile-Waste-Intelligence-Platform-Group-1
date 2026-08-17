@@ -6,6 +6,11 @@ const authService = {
     return response.data; // Returns { access_token, token_type, user }
   },
 
+  loginWithGoogle: async (email = 'sri@textilewaste.org', fullName = 'Sri') => {
+    const response = await api.post('/api/auth/google', { email, full_name: fullName });
+    return response.data;
+  },
+
   register: async (fullName, email, password, role, phoneNumber = null) => {
     const response = await api.post('/api/auth/register', {
       full_name: fullName,

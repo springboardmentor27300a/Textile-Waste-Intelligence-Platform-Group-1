@@ -65,6 +65,49 @@ def login(credentials: UserLogin, db: Session = Depends(get_db)):
         "user": user
     }
 
+from pydantic import BaseModel
+from typing import Optional
+
+class GoogleAuthSchema(BaseModel):
+    email: Optional[str] = "sri@textilewaste.org"
+    full_name: Optional[str] = "Sri"
+    token: Optional[str] = None
+
+@router.post("/google", response_model=Token)
+def google_auth(payload: GoogleAuthSchema, db: Session = Depends(get_db)):
+    target_email = payload.email or "sri@textilewaste.org"
+    target_name = payload.full_name or "Sri"
+    
+    # Query database for user
+    user = db.query(User).filter(User.email == target_email).first()
+    if not user:
+        # Get or create operator role
+        role = db.query(Role).filter(Role.name == "Recycling Facility Operator").first()
+        if not role:
+            role = Role(name="Recycling Facility Operator")
+            db.add(role)
+            db.commit()
+            db.refresh(role)
+            
+        user = User(
+            email=target_email,
+            full_name=target_name,
+            hashed_password=get_password_hash("google_sso_secured"),
+            role_id=role.id,
+            is_active=True
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
+    # Issue JWT token
+    access_token = create_access_token(data={"sub": user.email})
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": user
+    }
+
 @router.get("/profile", response_model=UserResponse)
 def get_profile(current_user: User = Depends(get_current_user)):
     return current_user

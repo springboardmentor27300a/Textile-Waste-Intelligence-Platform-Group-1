@@ -7,7 +7,7 @@ from app.database.session import get_db
 from app.config import settings
 from app.models.user import User, Role, Organization
 from app.models.support import Session as UserSession, ActivityLog
-from app.schemas.auth import Token, LoginRequest, RefreshRequest
+from app.schemas.auth import Token, LoginRequest, RefreshRequest, SwaggerTokenResponse
 from app.schemas.user import UserCreate, UserResponse
 from app.auth.security import (
     verify_password,
@@ -130,6 +130,19 @@ def login(login_data: LoginRequest, db: Session = Depends(get_db)):
     return {
         "access_token": access_token,
         "refresh_token": refresh_token,
+        "token_type": "bearer"
+    }
+
+@router.post("/token", response_model=SwaggerTokenResponse)
+def login_for_swagger(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    login_data = LoginRequest(
+        username=form_data.username,
+        password=form_data.password,
+        remember_me=False
+    )
+    token_response = login(login_data=login_data, db=db)
+    return {
+        "access_token": token_response["access_token"],
         "token_type": "bearer"
     }
 

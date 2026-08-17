@@ -58,9 +58,19 @@ class ModelLoader:
             print("Loading model architecture...")
 
             with open(ARCHITECTURE_PATH, "r") as f:
-                model_json = f.read()
+                model_data = json.load(f)
 
-            self._model = model_from_json(model_json)
+            def clean_dict(d):
+                if isinstance(d, dict):
+                    d.pop("quantization_config", None)
+                    for k, v in list(d.items()):
+                        clean_dict(v)
+                elif isinstance(d, list):
+                    for item in d:
+                        clean_dict(item)
+
+            clean_dict(model_data)
+            self._model = model_from_json(json.dumps(model_data))
 
             print("Loading model weights...")
 

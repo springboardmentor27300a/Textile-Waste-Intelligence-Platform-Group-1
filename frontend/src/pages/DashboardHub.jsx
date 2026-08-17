@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   Users, Layers, Recycle, ShieldAlert, TrendingUp, Leaf, 
   Droplet, Trash, Activity, Calendar, ArrowRight, Package, Plus, Database,
@@ -12,13 +12,53 @@ import {
 
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import ReportService from '../services/reportService';
+import AIService from '../services/aiService';
 
 export default function DashboardHub() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [generatingESG, setGeneratingESG] = useState(false);
+  const [esgError, setEsgError] = useState('');
+
+  const handleGenerateESG = async () => {
+    setGeneratingESG(true);
+    setEsgError('');
+    try {
+      // 1. Get the latest prediction
+      const predRes = await AIService.getPredictions({ per_page: 1 });
+      const latestPred = predRes.data?.items?.[0];
+      if (!latestPred) {
+        setEsgError('Cannot generate ESG report: No AI predictions found in the database. Run an analysis first.');
+        return;
+      }
+      
+      // 2. Generate ESG report
+      const repRes = await ReportService.generateReport(
+        'esg_summary',
+        latestPred.id,
+        `ESG Summary Report — ${latestPred.material}`
+      );
+      
+      // 3. Redirect to Reports Hub, set filterType to esg_summary, auto-preview, and trigger success notification
+      navigate('/reports', { 
+        state: { 
+          previewReportId: repRes.data.id,
+          filterType: 'esg_summary',
+          successMsg: 'ESG Summary Report generated successfully.' 
+        } 
+      });
+    } catch (err) {
+      console.error(err);
+      setEsgError(err.response?.data?.detail || 'Failed to generate ESG Report summary');
+    } finally {
+      setGeneratingESG(false);
+    }
+  };
 
   const fetchDashboardData = async () => {
     setLoading(true);
@@ -312,11 +352,17 @@ export default function DashboardHub() {
                   <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 leading-relaxed font-semibold">
                     Synthesize database metrics to export compliant corporate sustainability reports.
                   </p>
+                  {esgError && (
+                    <div className="mb-4 p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 rounded-2xl text-[10px] font-semibold text-red-650 dark:text-red-400 leading-normal">
+                      {esgError}
+                    </div>
+                  )}
                   <button
-                    onClick={() => alert('ESG Report generated successfully! Saved to exports catalog.')}
-                    className="w-full py-2.5 bg-primary-800 dark:bg-emerald-950 text-white dark:text-primary-neon font-bold text-xs rounded-2xl hover-scale shadow-neon"
+                    onClick={handleGenerateESG}
+                    disabled={generatingESG}
+                    className="w-full py-2.5 bg-primary-800 dark:bg-emerald-950 text-white dark:text-primary-neon font-bold text-xs rounded-2xl hover-scale shadow-neon disabled:opacity-50 flex items-center justify-center gap-2"
                   >
-                    Generate ESG Summary
+                    {generatingESG ? 'Generating...' : 'Generate ESG Summary'}
                   </button>
                 </div>
 

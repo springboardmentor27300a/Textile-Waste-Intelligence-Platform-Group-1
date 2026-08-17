@@ -17,6 +17,9 @@ from app.recommendations import router as recommendations_router
 from app.environment import router as environment_router
 from app.circularity import router as circularity_router
 
+# Milestone 4 — Reports & Export System
+from app.reports import router as reports_router
+
 from app.auth.deps import RoleChecker
 from app.models.support import ActivityLog
 
@@ -29,6 +32,9 @@ from app.auth.security import get_password_hash
 
 # Milestone 2 — AI Prediction Models
 from app.models.prediction import UploadedImage, Prediction, ClassificationResult, PredictionReport
+
+# Milestone 4 — Report Model
+from app.models.report import Report
 
 # Setup logs
 logging.basicConfig(level=logging.INFO)
@@ -359,6 +365,28 @@ async def lifespan(app: FastAPI):
                     conn.commit()
             else:
                 # SQLite fallback
+                # ── Milestone 4: reports_m4 table ──
+                res_rpt = conn.execute(text("PRAGMA table_info(reports_m4)")).fetchall()
+                if not res_rpt:
+                    logger.info("Creating reports_m4 table for Milestone 4...")
+                    conn.execute(text("""
+                        CREATE TABLE IF NOT EXISTS reports_m4 (
+                            id VARCHAR(36) PRIMARY KEY,
+                            report_type VARCHAR(50) NOT NULL,
+                            title VARCHAR(255) NOT NULL,
+                            status VARCHAR(30) DEFAULT 'Generated',
+                            prediction_id VARCHAR(36) REFERENCES predictions(id),
+                            user_id VARCHAR(36) NOT NULL REFERENCES users(id),
+                            organization_id VARCHAR(36) REFERENCES organizations(id),
+                            report_data TEXT,
+                            pdf_path VARCHAR(512),
+                            excel_path VARCHAR(512),
+                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                            updated_at TIMESTAMP
+                        )
+                    """))
+                    conn.commit()
+
                 result = conn.execute(text("PRAGMA table_info(recycling_recommendations)")).fetchall()
                 columns = [r[1] for r in result]
                 if "reason" not in columns:
@@ -449,6 +477,10 @@ app.include_router(sustainability_router.router, prefix="/api")
 app.include_router(recommendations_router.router, prefix="/api")
 app.include_router(environment_router.router, prefix="/api")
 app.include_router(circularity_router.router, prefix="/api")
+
+# Milestone 4 — Reports & Export System
+app.include_router(reports_router, prefix=settings.API_V1_STR)
+app.include_router(reports_router, prefix="/api")
 app.include_router(material_router)
 
 # Serve uploaded images as static files

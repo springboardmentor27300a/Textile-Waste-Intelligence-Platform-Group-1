@@ -157,28 +157,44 @@ def get_compatibility_recommendations(
         
     recs = recommend_strategy(batch)
     
-    # Map to list of strategy objects with strategy, feasibility, and co2_savings_kg
-    strategy_mapping = {
-        "UPCYCLING": ("Upcycling & Fabric Reuse", "High"),
-        "FABRIC_REUSE": ("Upcycling & Fabric Reuse", "High"),
-        "DONATION": ("Direct Donation", "High"),
-        "FIBER_RECYCLING": ("Mechanical Fiber Recycling", "High"),
-        "MECHANICAL_RECYCLING": ("Mechanical Fiber Recycling", "High"),
-        "CHEMICAL_RECYCLING": ("Chemical Depolymerization", "High"),
-        "INDUSTRIAL_RECOVERY": ("Industrial felt & mats", "Medium"),
-        "DISPOSAL": ("Landfill Disposal", "Low")
+    # Map to list of detailed, deduplicated strategy objects
+    strategy_details = {
+        "UPCYCLING": ("Upcycling & Fabric Remanufacturing", "High", "Transform scraps into tote bags, patchwork accessories, and home decor without fiber degradation.", 92, "Direct Cutting & Hand Stitching", 22.5),
+        "FABRIC_REUSE": ("Garment Reuse & Thrift Redistribution", "High", "Direct reuse preserving material structural integrity with zero processing energy required.", 95, "Sanitization & Direct Redistribution", 24.8),
+        "DONATION": ("Social Enterprise Donation", "High", "Direct distribution to community networks, charities, and vocational training centers.", 95, "Sorting & Direct Shipping", 24.0),
+        "FIBER_RECYCLING": ("Mechanical Fiber Spinning", "High", "Mechanical pulling and carding of long fibers into secondary yarn for new circular textile lines.", 85, "Mechanical Carding & Rotor Spinning", 18.4),
+        "MECHANICAL_RECYCLING": ("Shredding & Insulation Padding", "High", "Mechanical shredding yielding high-grade acoustic and thermal insulation batting.", 80, "Mechanical Shredding & Garnetting", 15.2),
+        "CHEMICAL_RECYCLING": ("Chemical Depolymerization", "High", "Chemical dissolution splitting poly-cotton blends and reforming virgin-quality PET filaments.", 88, "Solvent Extraction & Extrusion", 12.0),
+        "INDUSTRIAL_RECOVERY": ("Industrial Felt & Carpet Underlay", "Medium", "Processing coarse or short fibers into industrial rugs, engineering wraps, and padding.", 70, "Needle Punching & Felting", 8.5),
+        "DISPOSAL": ("Municipal Landfill Diversion", "Low", "Material is heavily soiled or hazardous; diverted to energy-from-waste thermal plants.", 0, "Incineration / RDF Energy Recovery", 0.0)
     }
     
     output = []
+    seen_strategies = set()
     for item in recs["ranked_recommendations"]:
         strat = item["strategy"]
-        name, feasibility = strategy_mapping.get(strat, (strat, "Medium"))
+        if strat in seen_strategies:
+            continue
+        seen_strategies.add(strat)
+        
+        name, feasibility, desc, yield_pct, proc_method, water_factor = strategy_details.get(
+            strat, 
+            (strat, "Medium", item.get("rationale", "Optimized circular recovery pathway."), 75, "Standard Recovery Processing", 10.0)
+        )
+        
         co2_savings = estimate_co2_savings(strat, batch.fabric_type, batch.quantity)
+        water_savings = round(batch.quantity * water_factor, 2)
         
         output.append({
             "strategy": name,
             "feasibility": feasibility,
-            "co2_savings_kg": co2_savings
+            "description": desc,
+            "rationale": item.get("rationale", desc),
+            "co2_savings_kg": co2_savings,
+            "water_savings_liters": water_savings,
+            "yield_percentage": yield_pct,
+            "processing_method": proc_method,
+            "suitability": f"Recommended for {batch.fabric_type} ({batch.condition} condition)."
         })
     return output
 

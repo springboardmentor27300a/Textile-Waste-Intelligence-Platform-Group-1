@@ -582,7 +582,6 @@ Landfill Diversion Rate,93.4%
                   </div>
                   <span className="text-xs font-extrabold text-slate-800 group-hover:text-primary-950 transition-colors">{rep}</span>
                 </div>
-                <Printer className="h-4 w-4 text-slate-400 group-hover:text-primary-600 transition-colors" />
               </button>
             ))}
           </div>

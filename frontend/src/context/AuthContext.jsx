@@ -56,11 +56,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const loginWithGoogle = async () => {
+  const loginWithGoogle = async (email = "sri@textilewaste.org", fullName = "Sri") => {
     setLoading(true);
     try {
-      const googleUserEmail = "operator@textilewaste.org";
-      const data = await authService.login(googleUserEmail, "operator123");
+      const data = await authService.loginWithGoogle(email, fullName);
       setToken(data.access_token);
       setUser(data.user);
       localStorage.setItem('token', data.access_token);

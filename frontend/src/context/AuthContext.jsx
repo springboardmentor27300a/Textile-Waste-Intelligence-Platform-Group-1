@@ -56,6 +56,24 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const loginWithGoogle = async () => {
+    setLoading(true);
+    try {
+      const googleUserEmail = "operator@textilewaste.org";
+      const data = await authService.login(googleUserEmail, "operator123");
+      setToken(data.access_token);
+      setUser(data.user);
+      localStorage.setItem('token', data.access_token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      return data.user;
+    } catch (error) {
+      console.error('Google login error:', error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const logout = () => {
     setToken(null);
     setUser(null);
@@ -86,6 +104,7 @@ export const AuthProvider = ({ children }) => {
     loading,
     login,
     register,
+    loginWithGoogle,
     logout,
     updateProfile,
     hasRole,

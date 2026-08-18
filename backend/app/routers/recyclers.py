@@ -136,20 +136,13 @@ def get_all_recyclers(
     recyclers = db.query(Recycler).order_by(Recycler.rating.desc()).all()
     return [parse_recycler_response(r) for r in recyclers]
 
-# 2. POST /api/recyclers - Create new recycler (Admin / Recycler / Manufacturer)
+# 2. POST /api/recyclers - Create new recycler (Authenticated users)
 @router.post("", response_model=RecyclerResponse, status_code=status.HTTP_201_CREATED)
 def create_recycler(
     recycler_in: RecyclerCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    user_role = current_user.role.name if current_user and current_user.role else ""
-    if user_role not in ["Administrator", "Recycling Facility Operator", "Textile Manufacturer"]:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Permission denied. Only Administrators, Facility Operators, or Manufacturers can register recyclers."
-        )
-
     mat_str = json.dumps(recycler_in.accepted_materials)
     cond_str = json.dumps(recycler_in.accepted_conditions)
 

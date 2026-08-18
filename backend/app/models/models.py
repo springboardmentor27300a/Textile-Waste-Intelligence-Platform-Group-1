@@ -162,3 +162,20 @@ class CircularityAnalytics(Base):
     avg_circularity_score = Column(Float, default=0.0)
     recorded_date = Column(Date, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+class Recycler(Base):
+    __tablename__ = "recyclers"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False, index=True)
+    accepted_materials = Column(String, nullable=False)   # Comma-separated or JSON list e.g. "Cotton,Polyester,Denim"
+    accepted_conditions = Column(String, nullable=False)  # Comma-separated or JSON list e.g. "Clean,Good,Fair"
+    min_quantity = Column(Float, default=50.0)             # in kg
+    max_contamination_level = Column(Float, default=15.0) # percentage e.g. 15.0%
+    location = Column(String, nullable=False)             # e.g. "Surat, Gujarat"
+    contact_email = Column(String, nullable=False)
+    phone_number = Column(String, nullable=True)
+    specialization = Column(String, nullable=True)
+    rating = Column(Float, default=4.8)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+

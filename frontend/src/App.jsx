@@ -17,6 +17,7 @@ import SustainabilityDashboardPage from './pages/SustainabilityDashboardPage';
 import AdminUserListPage from './pages/AdminUserListPage';
 import SustainabilityCalculatorPage from './pages/SustainabilityCalculatorPage';
 import RecyclingCatalogPage from './pages/RecyclingCatalogPage';
+import RecyclerMarketplacePage from './pages/RecyclerMarketplacePage';
 import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
               <Route path="/classify" element={<MaterialClassificationPage />} />
               <Route path="/sustainability" element={<SustainabilityDashboardPage />} />
               <Route path="/recycling-methods" element={<RecyclingCatalogPage />} />
+              <Route path="/recyclers" element={<RecyclerMarketplacePage />} />
               <Route path="/datasets" element={<DatasetCatalogPage />} />
               <Route path="/calculator" element={<SustainabilityCalculatorPage />} />
               <Route path="/admin/users" element={<AdminUserListPage />} />

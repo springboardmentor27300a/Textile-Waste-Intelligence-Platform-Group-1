@@ -131,3 +131,53 @@ class WasteBatchListResponse(BaseModel):
     size: int
     pages: int
     items: List[WasteBatchResponse]
+
+# --- Recycler Marketplace Schemas ---
+class RecyclerCreate(BaseModel):
+    name: str
+    accepted_materials: List[str]
+    accepted_conditions: List[str]
+    min_quantity: float = Field(default=50.0, ge=0)
+    max_contamination_level: float = Field(default=15.0, ge=0, le=100)
+    location: str
+    contact_email: EmailStr
+    phone_number: Optional[str] = None
+    specialization: Optional[str] = None
+    rating: Optional[float] = 4.8
+
+class RecyclerUpdate(BaseModel):
+    name: Optional[str] = None
+    accepted_materials: Optional[List[str]] = None
+    accepted_conditions: Optional[List[str]] = None
+    min_quantity: Optional[float] = None
+    max_contamination_level: Optional[float] = None
+    location: Optional[str] = None
+    contact_email: Optional[EmailStr] = None
+    phone_number: Optional[str] = None
+    specialization: Optional[str] = None
+    rating: Optional[float] = None
+
+class RecyclerResponse(BaseModel):
+    id: int
+    name: str
+    accepted_materials: List[str]
+    accepted_conditions: List[str]
+    min_quantity: float
+    max_contamination_level: float
+    location: str
+    contact_email: str
+    phone_number: Optional[str] = None
+    specialization: Optional[str] = None
+    rating: float
+    created_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+class RecyclerMatchResponse(BaseModel):
+    recycler: RecyclerResponse
+    fit_score: int
+    fit_category: str
+    why_matched: List[str]
+    is_eligible: bool
+

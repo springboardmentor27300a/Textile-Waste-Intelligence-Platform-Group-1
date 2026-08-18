@@ -204,7 +204,7 @@ Analysis History
      ↓
 Reports & Exports
 
----
+```
 
 ## 🏗️ Project Structure
 

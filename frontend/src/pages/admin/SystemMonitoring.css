@@ -1,0 +1,432 @@
+/* =========================================================
+   SYSTEM MONITORING PAGE
+   ========================================================= */
+
+.system-monitoring-page {
+    min-height: 100vh;
+    padding: 40px 7%;
+    background: #f7faf9;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.system-monitoring-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: white;
+    padding: 35px 40px;
+    border-radius: 18px;
+
+    margin-bottom: 35px;
+
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+}
+
+.system-monitoring-header h1 {
+    margin: 8px 0;
+    font-size: 36px;
+    color: #183b32;
+}
+
+.system-monitoring-header p {
+    margin: 0;
+    color: #6b7d77;
+    font-size: 15px;
+}
+
+.monitoring-header-icon {
+    width: 70px;
+    height: 70px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 18px;
+
+    background: #e8f5ef;
+    color: #2f7d5f;
+
+    font-size: 30px;
+}
+
+
+/* =========================================================
+   SECTION
+   ========================================================= */
+
+.monitoring-section {
+    margin-bottom: 35px;
+}
+
+.monitoring-section-heading {
+    margin-bottom: 20px;
+}
+
+.section-label {
+    display: inline-block;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    letter-spacing: 1.5px;
+
+    color: #4f8f75;
+}
+
+.monitoring-section h2 {
+    margin: 8px 0;
+
+    font-size: 25px;
+    color: #183b32;
+}
+
+.section-description {
+    color: #71827d;
+    margin-bottom: 22px;
+}
+
+
+/* =========================================================
+   HEALTH CARDS
+   ========================================================= */
+
+.health-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 20px;
+}
+
+.health-card {
+    background: white;
+
+    padding: 25px;
+
+    border-radius: 16px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 18px;
+
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+
+    border: 1px solid #e8efec;
+}
+
+.health-icon {
+    width: 52px;
+    height: 52px;
+
+    border-radius: 14px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #e9f7ef;
+
+    color: #2f8a62;
+
+    font-size: 22px;
+}
+
+.health-card span {
+    display: block;
+
+    font-size: 13px;
+
+    color: #71827d;
+
+    margin-bottom: 5px;
+}
+
+.health-card strong {
+    font-size: 18px;
+}
+
+.status-online {
+    color: #27855c;
+}
+
+.status-warning {
+    color: #d18b32;
+}
+.status-offline {
+    color: #d64545;
+}
+
+/* =========================================================
+   MONITORING CARDS
+   ========================================================= */
+
+.monitoring-card-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 20px;
+}
+
+.monitoring-card {
+    background: white;
+
+    padding: 25px;
+
+    border-radius: 16px;
+
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+
+    border: 1px solid #e8efec;
+}
+
+.monitoring-card-icon {
+    width: 45px;
+    height: 45px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    margin-bottom: 18px;
+
+    font-size: 19px;
+}
+
+.monitoring-card span {
+    display: block;
+
+    color: #687973;
+
+    font-size: 13px;
+
+    margin-bottom: 8px;
+}
+
+.monitoring-card strong {
+    display: block;
+
+    font-size: 28px;
+
+    color: #183b32;
+
+    margin-bottom: 6px;
+}
+
+.monitoring-card small {
+    color: #84928e;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   CARD VARIATIONS
+   ========================================================= */
+
+.monitoring-card.blue .monitoring-card-icon {
+    background: #eaf2fb;
+    color: #477ca8;
+}
+
+.monitoring-card.green .monitoring-card-icon {
+    background: #e8f6ef;
+    color: #3b8b67;
+}
+
+.monitoring-card.orange .monitoring-card-icon {
+    background: #fff2df;
+    color: #c98532;
+}
+
+.monitoring-card.purple .monitoring-card-icon {
+    background: #f0ebfa;
+    color: #7757a8;
+}
+
+.monitoring-card.red .monitoring-card-icon {
+    background: #faeaea;
+    color: #c15c5c;
+}
+
+
+/* =========================================================
+   INSIGHT
+   ========================================================= */
+
+.monitoring-insight {
+    display: flex;
+
+    align-items: center;
+
+    gap: 22px;
+
+    background: white;
+
+    padding: 30px 35px;
+
+    border-radius: 18px;
+
+    border: 1px solid #e3ece8;
+
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+
+    margin-bottom: 40px;
+}
+
+.monitoring-insight-icon {
+    width: 55px;
+    height: 55px;
+
+    min-width: 55px;
+
+    border-radius: 14px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #e8f5ef;
+
+    color: #2f7d5f;
+
+    font-size: 22px;
+}
+
+.monitoring-insight span {
+    font-size: 12px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.3px;
+
+    color: #4f8f75;
+}
+
+.monitoring-insight h3 {
+    margin: 7px 0;
+
+    color: #183b32;
+
+    font-size: 21px;
+}
+
+.monitoring-insight p {
+    margin: 0;
+
+    color: #71827d;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   LOADING
+   ========================================================= */
+
+.monitoring-loading {
+    min-height: 500px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #4f8f75;
+
+    font-size: 20px;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.monitoring-error {
+    min-height: 500px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    color: #c15c5c;
+}
+
+.monitoring-error svg {
+    font-size: 40px;
+
+    margin-bottom: 15px;
+}
+
+.monitoring-error h2 {
+    margin-bottom: 8px;
+
+    color: #8e4545;
+}
+
+.monitoring-error p {
+    color: #71827d;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+    .health-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .monitoring-card-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .system-monitoring-page {
+        padding: 25px 5%;
+    }
+
+    .system-monitoring-header {
+        padding: 25px;
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 25px;
+    }
+
+    .system-monitoring-header h1 {
+        font-size: 29px;
+    }
+
+    .monitoring-card-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .monitoring-insight {
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+}

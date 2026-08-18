@@ -1,0 +1,171 @@
+.analysis-card{
+    margin-top:35px;
+    background:#fff;
+    border-radius:18px;
+    padding:25px;
+    box-shadow:0 8px 24px rgba(0,0,0,.08);
+    border:1px solid #e5e7eb;
+    overflow-x:auto;
+}
+
+.analysis-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.analysis-header h2{
+    margin:0;
+    font-size:22px;
+    font-weight:700;
+    color:#1f2937;
+}
+
+.analysis-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.analysis-table thead{
+    background:#f8fafc;
+}
+
+.analysis-table th{
+    padding:15px;
+    text-align:center;
+    font-size:15px;
+    font-weight:700;
+    color:#374151;
+}
+
+.analysis-table td{
+    padding:15px;
+    text-align:center;
+    vertical-align:middle;
+    border-top:1px solid #e5e7eb;
+}
+
+.analysis-table tbody tr:hover{
+    background:#f9fbff;
+}
+
+/* ==========================
+   Badges
+========================== */
+.badge{
+    display:inline-flex;
+    justify-content:center;
+    align-items:center;
+
+    min-width:80px;
+    height:34px;
+
+    padding:0 16px;
+
+    border-radius:999px;
+
+    color:#fff;
+    font-size:13px;
+    font-weight:600;
+}
+.badge span{
+    width:100%;
+    text-align:center;
+}
+
+.blue{
+    background:#2563eb;
+}
+
+.green{
+    background:#16a34a;
+}
+
+.orange{
+    background:#f59e0b;
+}
+
+.purple{
+    background:#7c3aed;
+}
+
+.red{
+    background:#dc2626;
+}
+
+/* ==========================
+   Action Buttons
+========================== */
+
+.action-buttons{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:6px;
+}
+
+.view-btn,
+.pdf-btn,
+.csv-btn{
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+
+    width:74px;
+    height:36px;
+    padding:0 12px;
+
+    border:none;
+    border-radius:8px;
+
+    color:#fff;
+    cursor:pointer;
+
+    font-size:13px;
+    font-weight:600;
+
+    transition:.25s;
+
+    
+}
+
+.view-btn{
+    background:#2563eb;
+}
+
+.view-btn:hover{
+    background:#1d4ed8;
+}
+
+.pdf-btn{
+    background:#dc2626;
+}
+
+.pdf-btn:hover{
+    background:#b91c1c;
+}
+
+.csv-btn{
+    background:#16a34a;
+}
+
+.csv-btn:hover{
+    background:#15803d;
+}
+
+.view-btn svg,
+.pdf-btn svg,
+.csv-btn svg{
+    font-size:14px;
+}
+
+@media(max-width:768px){
+
+    .analysis-table{
+        min-width:950px;
+    }
+
+}

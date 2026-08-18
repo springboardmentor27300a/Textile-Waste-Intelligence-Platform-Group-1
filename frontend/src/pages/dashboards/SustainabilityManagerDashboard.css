@@ -1,0 +1,586 @@
+/* ==========================================
+   SUSTAINABILITY DASHBOARD
+========================================== */
+
+.sustainability-dashboard {
+    max-width: 1100px;
+    margin: auto;
+    padding: 30px;
+    background: #f5f8fc;
+    min-height: 100vh;
+}
+
+
+/* ==========================================
+   HERO
+========================================== */
+
+.sustainability-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: linear-gradient(
+        135deg,
+        #0f766e,
+        #2563eb
+    );
+
+    color: white;
+
+    padding: 38px;
+    border-radius: 20px;
+
+    margin-bottom: 35px;
+
+    box-shadow: 0 12px 28px rgba(15, 118, 110, 0.2);
+}
+
+.hero-content {
+    max-width: 720px;
+}
+
+.hero-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    opacity: 0.85;
+}
+
+.sustainability-hero h1 {
+    font-size: 34px;
+    margin: 10px 0;
+}
+
+.sustainability-hero p {
+    margin: 0;
+    line-height: 1.6;
+    opacity: 0.92;
+}
+
+.hero-icon {
+    width: 75px;
+    height: 75px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(255,255,255,0.15);
+    border-radius: 18px;
+
+    font-size: 40px;
+}
+
+
+/* ==========================================
+   SECTION
+========================================== */
+
+.dashboard-section {
+    background: white;
+
+    padding: 28px;
+
+    border-radius: 18px;
+
+    margin-bottom: 28px;
+
+    box-shadow: 0 7px 20px rgba(15,23,42,0.07);
+}
+
+.section-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    margin-bottom: 22px;
+}
+
+.section-label {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+    color: #0f766e;
+}
+
+.section-heading h2 {
+    margin: 6px 0;
+
+    font-size: 24px;
+    color: #0f172a;
+}
+
+.section-heading p {
+    margin: 0;
+
+    color: #64748b;
+    font-size: 14px;
+}
+
+.section-icon {
+    font-size: 25px;
+    color: #0f766e;
+}
+
+.green-icon {
+    color: #16a34a;
+}
+
+.purple-icon {
+    color: #7c3aed;
+}
+
+
+/* ==========================================
+   METRICS
+========================================== */
+
+.metric-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 18px;
+}
+
+.metric-card {
+    padding: 22px;
+
+    border-radius: 15px;
+
+    background: #f8fafc;
+
+    border-top: 4px solid;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.metric-card.green {
+    border-color: #16a34a;
+}
+
+.metric-card.blue {
+    border-color: #2563eb;
+}
+
+.metric-card.cyan {
+    border-color: #0891b2;
+}
+
+.metric-card.orange {
+    border-color: #f59e0b;
+}
+
+.metric-icon {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 11px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-bottom: 15px;
+
+    background: #ecfdf5;
+    color: #16a34a;
+}
+
+.metric-card.blue .metric-icon {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.metric-card.cyan .metric-icon {
+    background: #ecfeff;
+    color: #0891b2;
+}
+
+.metric-card.orange .metric-icon {
+    background: #fffbeb;
+    color: #f59e0b;
+}
+
+.metric-card span {
+    color: #ffffff;
+    font-size: 13px;
+}
+
+.metric-card strong {
+    font-size: 27px;
+    margin: 7px 0;
+    color: #0f172a;
+}
+
+.metric-card small {
+    color: #000000;
+    font-size: 11px;
+}
+
+
+/* ==========================================
+   CARBON
+========================================== */
+
+.carbon-card {
+    background: #f0fdf4;
+
+    border: 1px solid #bbf7d0;
+
+    border-radius: 15px;
+
+    padding: 25px;
+}
+
+.carbon-main {
+    display: flex;
+    align-items: center;
+
+    gap: 20px;
+
+    margin-bottom: 25px;
+}
+
+.carbon-circle {
+    width: 70px;
+    height: 70px;
+
+    border-radius: 50%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: #16a34a;
+    color: white;
+
+    font-size: 27px;
+}
+
+.carbon-main span {
+    color: #64748b;
+    font-size: 13px;
+}
+
+.carbon-main h3 {
+    font-size: 30px;
+    margin: 5px 0;
+    color: #166534;
+}
+
+.carbon-main p {
+    margin: 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+
+    margin-bottom: 8px;
+
+    color: #475569;
+    font-size: 13px;
+}
+
+.progress-header strong {
+    color: #166534;
+}
+
+.progress-bar {
+    height: 10px;
+
+    background: #dcfce7;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+
+    background: #16a34a;
+
+    border-radius: 20px;
+}
+
+
+/* ==========================================
+   WASTE DIVERSION
+========================================== */
+
+.diversion-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 18px;
+}
+
+.diversion-card {
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 20px;
+
+    background: #f8fafc;
+
+    border-radius: 14px;
+
+    border: 1px solid #e2e8f0;
+}
+
+.diversion-icon {
+    width: 48px;
+    height: 48px;
+
+    flex-shrink: 0;
+
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.blue-bg {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.orange-bg {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.diversion-card span {
+    display: block;
+
+    color: #64748b;
+
+    font-size: 12px;
+}
+
+.diversion-card strong {
+    display: block;
+
+    color: #0f172a;
+
+    font-size: 23px;
+
+    margin: 4px 0;
+}
+
+.diversion-card small {
+    color: #94a3b8;
+
+    font-size: 10px;
+}
+
+
+/* ==========================================
+   ESG
+========================================== */
+
+.esg-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 18px;
+}
+
+.esg-card {
+    padding: 22px;
+
+    background: #f8fafc;
+
+    border-radius: 15px;
+
+    border: 1px solid #e2e8f0;
+}
+
+.esg-title {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    color: #0f766e;
+}
+
+.esg-title h3 {
+    margin: 0;
+
+    font-size: 16px;
+    color: #0f172a;
+}
+
+.esg-value {
+    font-size: 28px;
+
+    font-weight: 700;
+
+    color: #2563eb;
+
+    margin: 18px 0 8px;
+}
+
+.esg-value span {
+    font-size: 14px;
+    color: #94a3b8;
+}
+
+.esg-card p {
+    color: #64748b;
+
+    font-size: 12px;
+
+    line-height: 1.6;
+
+    margin: 0;
+}
+
+
+/* ==========================================
+   INSIGHT
+========================================== */
+
+.insight-card {
+    display: flex;
+
+    align-items: center;
+
+    gap: 20px;
+
+    background: linear-gradient(
+        135deg,
+        #ecfdf5,
+        #eff6ff
+    );
+
+    border: 1px solid #dbeafe;
+
+    padding: 25px;
+
+    border-radius: 18px;
+
+    margin-bottom: 30px;
+}
+
+.insight-icon {
+    width: 55px;
+    height: 55px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: white;
+
+    border-radius: 14px;
+
+    color: #2563eb;
+
+    font-size: 23px;
+}
+
+.insight-card span {
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.3px;
+
+    color: #0f766e;
+}
+
+.insight-card h3 {
+    margin: 5px 0;
+
+    color: #0f172a;
+
+    font-size: 18px;
+}
+
+.insight-card p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 900px) {
+
+    .metric-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .diversion-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .esg-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .sustainability-dashboard {
+        padding: 20px;
+    }
+
+    .sustainability-hero {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 20px;
+
+        padding: 28px;
+    }
+
+    .sustainability-hero h1 {
+        font-size: 27px;
+    }
+
+    .metric-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-section {
+        padding: 20px;
+    }
+
+    .section-heading {
+        gap: 15px;
+    }
+
+}

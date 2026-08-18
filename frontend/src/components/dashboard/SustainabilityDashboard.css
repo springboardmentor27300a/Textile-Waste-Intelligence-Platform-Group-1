@@ -1,0 +1,173 @@
+.sustainability-section{
+    margin:40px 0;
+}
+
+.sustainability-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+    gap:20px;
+
+}
+
+.sustainability-card{
+
+    background:#fff;
+
+    border-radius:16px;
+
+    padding:25px;
+
+    text-align:center;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+    border-top:5px solid transparent;
+
+}
+
+.sustainability-card:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:0 16px 35px rgba(0,0,0,.15);
+
+}
+
+.card-icon{
+    font-size:46px;
+    margin-bottom:18px;
+}
+
+.sustainability-card h4{
+
+    color:#666;
+
+    margin-bottom:12px;
+
+}
+
+.sustainability-card h2{
+    font-size:34px;
+    margin-top:10px;
+}
+
+/* Colors */
+
+.green{
+    background:#ecfdf5;
+    border-top:5px solid #22c55e;
+}
+
+.green h2,
+.green h4,
+.green .card-icon{
+    color:#22c55e;
+}
+
+.blue{
+    background:#eff6ff;
+    border-top:5px solid #3b82f6;
+}
+
+.blue h2,
+.blue h4,
+.blue .card-icon{
+    color:#2563eb;
+}
+
+.orange{
+    background:#fff7ed;
+    border-top:5px solid #f59e0b;
+}
+
+.orange h2,
+.orange h4,
+.orange .card-icon{
+    color:#ea580c;
+}
+.emerald h2,
+.emerald h4,
+.emerald .card-icon{
+    color:#10b981;
+}
+
+.purple h2,
+.purple h4,
+.purple .card-icon{
+    color:#8b5cf6;
+}
+
+.teal h2,
+.teal h4,
+.teal .card-icon{
+    color:#14b8a6;
+}.green{
+    background:#22c55e;
+    border-top:5px solid #15803d;
+}
+
+.green h2,
+.green h4,
+.green .card-icon{
+    color:#ffffff;
+}
+
+.blue{
+    background:#3b82f6;
+    border-top:5px solid #1d4ed8;
+}
+
+.blue h2,
+.blue h4,
+.blue .card-icon{
+    color:#ffffff;
+}
+
+.orange{
+    background:#f59e0b;
+    border-top:5px solid #d97706;
+}
+
+.orange h2,
+.orange h4,
+.orange .card-icon{
+    color:#ffffff;
+}
+
+.emerald{
+    background:#ffffff;
+    border-top:5px solid #10b981;
+}
+
+.emerald h2,
+.emerald h4,
+.emerald .card-icon{
+    color:#10b981;
+}
+
+.purple{
+    background:#7c3aed;
+    border-top:5px solid #6d28d9;
+}
+
+.purple h2,
+.purple h4,
+.purple .card-icon{
+    color:#ffffff;
+}
+
+.teal{
+    background:#ffffff;
+    border-top:5px solid #14b8a6;
+}
+
+.teal h2,
+.teal h4,
+.teal .card-icon{
+    color:#14b8a6;
+}

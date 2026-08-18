@@ -1,0 +1,46 @@
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Environment files
+.env
+*.env
+
+# Node
+node_modules/
+
+# Build
+dist/
+build/
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Datasets
+datasets/
+
+damage_classes.json
+damage_model.keras
+
+backend/uploads
+backend/test_analysis.py
+backend/test_damage.py
+backend/test_material.py
+backend/test_quality.py
+backend/sample_images/
+
+backend/.env.docker
+
+frontend/.dockerignore
+
+textile_waste_backup.dump

@@ -1,0 +1,54 @@
+services:
+
+  postgres:
+    image: postgres:18
+    container_name: textile-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: system@123
+      POSTGRES_DB: textile_waste_db
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql
+
+
+  backend:
+    build:
+      context: ./backend
+
+    container_name: textile-backend
+
+    restart: unless-stopped
+
+    env_file:
+      - ./backend/.env.docker
+
+    ports:
+      - "8000:8000"
+
+    depends_on:
+      - postgres
+
+
+  frontend:
+    build:
+      context: ./frontend
+
+    container_name: textile-frontend
+
+    restart: unless-stopped
+
+    ports:
+      - "5173:5173"
+
+    depends_on:
+      - backend
+
+
+volumes:
+  postgres_data:

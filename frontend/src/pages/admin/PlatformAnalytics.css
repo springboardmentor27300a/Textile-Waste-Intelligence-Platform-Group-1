@@ -1,0 +1,463 @@
+/* =========================================
+   PLATFORM ANALYTICS
+========================================= */
+
+.platform-analytics-page {
+    min-height: 100vh;
+    background: #f5f8fc;
+    padding: 35px 30px 60px;
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.platform-analytics-header {
+    max-width: 1120px;
+    margin: 0 auto 35px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 34px 38px;
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #1e3a8a,
+            #2563eb,
+            #0f766e
+        );
+
+    color: white;
+
+    box-shadow:
+        0 15px 35px rgba(15, 23, 42, 0.16);
+}
+
+
+.platform-analytics-header h1 {
+    margin: 6px 0 8px;
+
+    font-size: 32px;
+}
+
+
+.platform-analytics-header p {
+    margin: 0;
+
+    max-width: 650px;
+
+    font-size: 13px;
+    line-height: 1.6;
+
+    opacity: 0.85;
+}
+
+
+.section-label {
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+}
+
+
+.analytics-header-icon {
+    width: 60px;
+    height: 60px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 16px;
+
+    background: rgba(255,255,255,0.15);
+
+    font-size: 25px;
+}
+
+
+/* =========================================
+   SECTIONS
+========================================= */
+
+.analytics-section {
+    max-width: 1120px;
+    margin: 0 auto 35px;
+}
+
+
+.analytics-section-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+
+    margin-bottom: 18px;
+}
+
+
+.analytics-section-heading > div > span {
+    color: #2563eb;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+}
+
+
+.analytics-section-heading h2 {
+    margin: 5px 0 0;
+
+    font-size: 23px;
+
+    color: #0f172a;
+}
+
+
+.analytics-section-heading p {
+    max-width: 390px;
+
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 12px;
+}
+
+
+/* =========================================
+   ANALYTICS CARDS
+========================================= */
+
+.analytics-card-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 16px;
+}
+
+
+.analytics-card {
+    padding: 20px;
+
+    background: white;
+
+    border-radius: 15px;
+
+    border: 1px solid #e2e8f0;
+
+    box-shadow:
+        0 7px 20px rgba(15,23,42,0.05);
+
+    transition: 0.25s ease;
+}
+
+
+.analytics-card:hover {
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 12px 25px rgba(15,23,42,0.09);
+}
+
+
+.analytics-icon {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    margin-bottom: 15px;
+
+    font-size: 17px;
+}
+
+
+.analytics-card span {
+    display: block;
+
+    color: #64748b;
+
+    font-size: 11px;
+}
+
+
+.analytics-card strong {
+    display: block;
+
+    margin-top: 5px;
+
+    color: #0f172a;
+
+    font-size: 24px;
+}
+
+
+.analytics-card small {
+    display: block;
+
+    margin-top: 5px;
+
+    color: #94a3b8;
+
+    font-size: 9px;
+}
+
+
+/* COLORS */
+
+.analytics-card.blue {
+    border-top: 3px solid #2563eb;
+}
+
+.analytics-card.blue .analytics-icon {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+
+.analytics-card.green {
+    border-top: 3px solid #16a34a;
+}
+
+.analytics-card.green .analytics-icon {
+    background: #f0fdf4;
+    color: #16a34a;
+}
+
+
+.analytics-card.orange {
+    border-top: 3px solid #f59e0b;
+}
+
+.analytics-card.orange .analytics-icon {
+    background: #fffbeb;
+    color: #f59e0b;
+}
+
+
+.analytics-card.purple {
+    border-top: 3px solid #9333ea;
+}
+
+.analytics-card.purple .analytics-icon {
+    background: #faf5ff;
+    color: #9333ea;
+}
+
+
+/* =========================================
+   ACTIVITY PANEL
+========================================= */
+
+.analytics-panel {
+    background: white;
+
+    padding: 28px;
+
+    border-radius: 18px;
+
+    border: 1px solid #e2e8f0;
+
+    box-shadow:
+        0 8px 22px rgba(15,23,42,0.06);
+}
+
+
+.analytics-panel h2 {
+    margin: 6px 0 8px;
+
+    font-size: 22px;
+
+    color: #0f172a;
+}
+
+
+.analytics-panel > p {
+    margin: 0 0 22px;
+
+    color: #64748b;
+
+    font-size: 12px;
+
+    line-height: 1.6;
+}
+
+
+.activity-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 12px;
+}
+
+
+.activity-grid div {
+    padding: 17px;
+
+    border-radius: 12px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+}
+
+
+.activity-grid strong {
+    display: block;
+
+    color: #0f172a;
+
+    font-size: 13px;
+}
+
+
+.activity-grid span {
+    display: block;
+
+    margin-top: 5px;
+
+    color: #64748b;
+
+    font-size: 10px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================
+   INSIGHT
+========================================= */
+
+.analytics-insight {
+    max-width: 1120px;
+
+    margin: 5px auto 0;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 18px 20px;
+
+    border-radius: 15px;
+
+    background: #eff6ff;
+
+    border: 1px solid #dbeafe;
+}
+
+
+.analytics-insight-icon {
+    width: 42px;
+    height: 42px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: white;
+
+    color: #2563eb;
+}
+
+
+.analytics-insight span {
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.3px;
+
+    color: #2563eb;
+}
+
+
+.analytics-insight h3 {
+    margin: 4px 0;
+
+    font-size: 14px;
+
+    color: #1e3a8a;
+}
+
+
+.analytics-insight p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 11px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 900px) {
+
+    .analytics-card-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .activity-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .platform-analytics-page {
+        padding: 25px 18px 45px;
+    }
+
+    .platform-analytics-header {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 20px;
+
+        padding: 27px;
+    }
+
+    .analytics-section-heading {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 8px;
+    }
+
+    .analytics-card-grid,
+    .activity-grid {
+        grid-template-columns: 1fr;
+    }
+
+}

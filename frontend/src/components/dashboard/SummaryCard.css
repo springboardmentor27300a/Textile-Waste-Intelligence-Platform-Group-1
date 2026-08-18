@@ -1,0 +1,83 @@
+.summary-card{
+
+    background:#fff;
+
+    border-radius:18px;
+
+    padding:22px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+    cursor:pointer;
+
+}
+
+.summary-card:hover{
+
+    transform:translateY(-6px);
+
+}
+
+.summary-left p{
+
+    color:#fcfcfc;
+
+    margin-bottom:8px;
+
+    font-size:14px;
+
+}
+
+.summary-left h2{
+
+    color:#0f172a;
+
+    font-size:30px;
+
+}
+
+.summary-right{
+
+    font-size:42px;
+
+}
+
+.blue{
+
+    border-left:6px solid #2563eb;
+
+    color:#2563eb;
+
+}
+
+.green{
+
+    border-left:6px solid #16a34a;
+
+    color:#16a34a;
+
+}
+
+.orange{
+
+    border-left:6px solid #f59e0b;
+
+    color:#f59e0b;
+
+}
+
+.red{
+
+    border-left:6px solid #ef4444;
+
+    color:#ef4444;
+
+}

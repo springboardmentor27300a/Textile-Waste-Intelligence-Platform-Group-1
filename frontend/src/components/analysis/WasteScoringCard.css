@@ -1,0 +1,198 @@
+.waste-score-card {
+
+    background: #ffffff;
+
+    border-radius: 18px;
+
+    padding: 24px;
+
+    margin-top: 30px;
+
+    box-shadow: 0 8px 25px rgba(0,0,0,.08);
+
+}
+
+.waste-score-card h3{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    color:#2563eb;
+
+    margin-bottom:25px;
+
+    font-size:22px;
+
+}
+
+/* ==========================
+   Score Grid
+========================== */
+
+.score-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+    gap:18px;
+
+}
+
+.score-item{
+
+    background:#f8fafc;
+
+    border-radius:14px;
+
+    padding:18px;
+
+    transition:.25s;
+
+}
+
+.score-item:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+}
+
+.score-item span{
+
+    display:block;
+
+    color:#64748b;
+
+    font-size:13px;
+
+    margin-bottom:10px;
+
+}
+
+.score-item strong{
+
+    font-size:30px;
+
+    font-weight:700;
+
+    color:#111827;
+
+}
+
+/* ==========================
+   Progress Bar
+========================== */
+
+.progress{
+
+    margin-top:12px;
+
+    height:8px;
+
+    background:#e5e7eb;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+}
+
+.progress-fill{
+
+    height:100%;
+
+    background:linear-gradient(
+        90deg,
+        #22c55e,
+        #16a34a
+    );
+
+    border-radius:20px;
+
+}
+
+/* ==========================
+   Circular Economy Box
+========================== */
+
+.circularity-box{
+
+    margin-top:30px;
+
+    background:#eff6ff;
+
+    border-left:6px solid #2563eb;
+
+    border-radius:16px;
+
+    padding:22px;
+
+    display:flex;
+
+    gap:18px;
+
+    align-items:center;
+
+}
+
+.circularity-box svg{
+
+    font-size:42px;
+
+    color:#2563eb;
+
+}
+
+.circularity-box h4{
+
+    margin:0;
+
+    color:#2563eb;
+
+    font-size:15px;
+
+}
+
+.circularity-box h3{
+
+    margin:5px 0;
+
+    color:#111827;
+
+    font-size:22px;
+
+}
+
+.circularity-box p{
+
+    margin:0;
+
+    color:#475569;
+
+    line-height:1.5;
+
+}
+.score-level{
+
+    display:inline-block;
+
+    margin-top:8px;
+
+    padding:4px 12px;
+
+    border-radius:20px;
+
+    background:#dcfce7;
+
+    color:#166534;
+
+    font-size:12px;
+
+    font-weight:600;
+
+}

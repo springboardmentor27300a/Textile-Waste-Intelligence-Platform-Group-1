@@ -1,0 +1,75 @@
+.circular-card{
+
+    background:#fff;
+
+    margin-top:30px;
+
+    padding:24px;
+
+    border-radius:18px;
+
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+
+}
+
+.circular-card h3{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    color:#16a34a;
+
+    margin-bottom:22px;
+
+}
+
+.circular-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+    gap:18px;
+
+}
+
+.metric-card{
+
+    background:#f8fafc;
+
+    padding:18px;
+
+    border-radius:14px;
+
+    transition:.25s;
+
+}
+
+.metric-card:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+}
+
+.metric-card span{
+
+    display:block;
+
+    color:#64748b;
+
+    margin-bottom:10px;
+
+}
+
+.metric-card strong{
+
+    font-size:28px;
+
+    color:#111827;
+
+}

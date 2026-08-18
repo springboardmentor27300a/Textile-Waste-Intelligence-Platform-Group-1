@@ -1,0 +1,137 @@
+.welcome-banner{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:40px;
+
+    padding:35px;
+
+    border-radius:24px;
+
+    margin-bottom:30px;
+
+    background:linear-gradient(135deg,#2563eb,#0f766e);
+
+    color:white;
+
+    overflow:hidden;
+
+}
+
+.welcome-content{
+
+    flex:2;
+
+}
+
+.welcome-badge{
+
+    display:inline-block;
+
+    padding:8px 14px;
+
+    background:rgba(255,255,255,.15);
+
+    border-radius:30px;
+
+    margin-bottom:20px;
+
+    font-size:14px;
+
+}
+
+.welcome-content h1{
+
+    font-size:40px;
+
+    margin-bottom:15px;
+
+}
+
+.welcome-content span{
+
+    color:#fde68a;
+
+}
+
+.welcome-content p{
+
+    line-height:1.8;
+
+    max-width:650px;
+
+    opacity:.95;
+
+}
+
+.primary-btn{
+
+    margin-top:25px;
+
+    background:white;
+
+    color:#2563eb;
+
+    border:none;
+
+    padding:14px 24px;
+
+    border-radius:12px;
+
+    font-weight:600;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.primary-btn:hover{
+
+    transform:translateY(-3px);
+
+}
+
+.welcome-right{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+.welcome-card{
+
+    background:rgba(255,255,255,.15);
+
+    backdrop-filter:blur(15px);
+
+    border-radius:18px;
+
+    padding:30px;
+
+    text-align:center;
+
+    min-width:220px;
+
+}
+
+.leaf-icon{
+
+    font-size:55px;
+
+    margin-bottom:20px;
+
+}

@@ -1,0 +1,249 @@
+/* =========================================
+   Complete Profile Page
+========================================= */
+
+.register-container {
+    min-height: calc(100vh - 150px);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 50px 20px;
+
+    background: #f4f8fb;
+}
+
+
+/* =========================================
+   Form Card
+========================================= */
+
+.register-form {
+    width: 100%;
+    max-width: 500px;
+
+    background: #ffffff;
+
+    padding: 40px;
+
+    border-radius: 18px;
+
+    border: 1px solid #e2e8f0;
+
+    box-shadow:
+        0 12px 35px rgba(15, 52, 80, 0.12);
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================
+   Heading
+========================================= */
+
+.register-form h2 {
+    margin: 0 0 10px;
+
+    text-align: center;
+
+    color: #102a43;
+
+    font-size: 28px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================
+   Subtitle using h2::after
+========================================= */
+
+.register-form h2::after {
+    content:
+        "Your Google account has been verified. Complete your profile to continue.";
+
+    display: block;
+
+    margin: 12px auto 28px;
+
+    max-width: 400px;
+
+    color: #6b7c93;
+
+    font-size: 14px;
+
+    font-weight: 400;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================
+   Inputs & Select
+========================================= */
+
+.register-form input,
+.register-form select {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    height: 48px;
+
+    margin-bottom: 18px;
+
+    padding: 0 14px;
+
+    border: 1px solid #d9e2ec;
+
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: #102a43;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+
+/* =========================================
+   Placeholder
+========================================= */
+
+.register-form input::placeholder {
+    color: #8a9bad;
+}
+
+
+/* =========================================
+   Focus
+========================================= */
+
+.register-form input:focus,
+.register-form select:focus {
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+
+/* =========================================
+   Read Only Fields
+========================================= */
+
+.register-form input[readonly] {
+    background: #f1f5f9;
+
+    color: #475569;
+
+    cursor: default;
+}
+
+
+/* =========================================
+   Select
+========================================= */
+
+.register-form select {
+    cursor: pointer;
+
+    appearance: auto;
+}
+
+
+/* =========================================
+   Submit Button
+========================================= */
+
+.register-form button {
+    width: 100%;
+
+    height: 48px;
+
+    margin-top: 5px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: linear-gradient(
+        135deg,
+        #0f766e,
+        #2563eb
+    );
+
+    color: #ffffff;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+}
+
+
+.register-form button:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 8px 18px rgba(37, 99, 235, 0.22);
+}
+
+
+.register-form button:active {
+    transform: translateY(0);
+}
+
+
+.register-form button:focus {
+    outline: none;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.18);
+}
+
+
+/* =========================================
+   Mobile Responsive
+========================================= */
+
+@media (max-width: 600px) {
+
+    .register-container {
+        padding: 30px 15px;
+    }
+
+    .register-form {
+        padding: 28px 22px;
+
+        border-radius: 14px;
+    }
+
+    .register-form h2 {
+        font-size: 24px;
+    }
+
+    .register-form h2::after {
+        font-size: 13px;
+    }
+
+    .register-form input,
+    .register-form select,
+    .register-form button {
+        height: 46px;
+    }
+}

@@ -1,0 +1,59 @@
+.analysis-hero{
+
+    text-align:center;
+
+    margin-bottom:40px;
+
+}
+
+.hero-icon{
+
+    width:90px;
+
+    height:90px;
+
+    margin:auto;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:linear-gradient(135deg,#2563eb,#0f766e);
+
+    color:white;
+
+    font-size:40px;
+
+    margin-bottom:20px;
+
+    box-shadow:0 12px 30px rgba(37,99,235,.25);
+
+}
+
+.analysis-hero h1{
+
+    color:#1e40af;
+
+    font-size:42px;
+
+    margin-bottom:15px;
+
+}
+
+.analysis-hero p{
+
+    color:#64748b;
+
+    max-width:700px;
+
+    margin:auto;
+
+    font-size:18px;
+
+    line-height:1.8;
+
+}

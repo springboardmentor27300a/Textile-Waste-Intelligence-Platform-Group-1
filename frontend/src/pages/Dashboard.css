@@ -1,0 +1,746 @@
+/* ==================================================
+   DASHBOARD
+================================================== */
+
+.dashboard-container{
+    max-width:1400px;
+    margin:auto;
+    padding:40px 25px;
+    background:#f5f8fc;
+    min-height:100vh;
+}
+.dashboard-page{
+    max-width:1400px;
+    margin:auto;
+    padding:30px;
+}
+
+/* ==================================================
+   HERO
+================================================== */
+
+.dashboard-card{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:linear-gradient(135deg,#1565C0,#42A5F5);
+    color:white;
+    padding:35px 40px;
+    border-radius:20px;
+    margin-bottom:35px;
+    box-shadow:0 12px 25px rgba(0,0,0,.12);
+}
+
+.dashboard-card h1{
+    font-size:36px;
+    margin-bottom:10px;
+}
+
+.dashboard-card p{
+    opacity:.95;
+    margin-bottom:18px;
+    font-size:17px;
+}
+
+.role-chip{
+    display:inline-block;
+    background:rgba(255,255,255,.2);
+    padding:8px 18px;
+    border-radius:30px;
+    font-size:15px;
+    font-weight:600;
+}
+
+.date-box{
+    background:white;
+    color:#1565C0;
+    padding:18px 25px;
+    border-radius:15px;
+    font-weight:bold;
+    box-shadow:0 8px 18px rgba(0,0,0,.15);
+}
+
+/* ==================================================
+   KPI CARDS
+================================================== */
+
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:25px;
+    margin-bottom:35px;
+}
+
+.stat-card{
+    background:white;
+    border-radius:18px;
+    padding:30px;
+    text-align:center;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.stat-card:hover{
+    transform:translateY(-8px);
+}
+
+.stat-icon{
+    font-size:40px;
+    margin-bottom:18px;
+}
+
+.stat-card h3{
+    color:#666;
+    margin-bottom:15px;
+}
+
+.stat-card h2{
+    font-size:34px;
+    margin:0;
+}
+
+.inventory{
+    border-top:6px solid #1565C0;
+}
+
+.inventory .stat-icon{
+    color:#1565C0;
+}
+
+.quantity{
+    border-top:6px solid #2E7D32;
+}
+
+.quantity .stat-icon{
+    color:#2E7D32;
+}
+
+.fabric{
+    border-top:6px solid #FF9800;
+}
+
+.fabric .stat-icon{
+    color:#FF9800;
+}
+
+.today{
+    border-top:6px solid #8E24AA;
+}
+
+.today .stat-icon{
+    color:#8E24AA;
+}
+
+/* ==================================================
+   PROFILE
+================================================== */
+
+.profile-card{
+    background:white;
+    padding:30px;
+    border-radius:18px;
+    margin-bottom:35px;
+    box-shadow:0 10px 20px rgba(0,0,0,.08);
+}
+
+.profile-card h2{
+    color:#1565C0;
+    margin-bottom:25px;
+}
+.profile-card hr{
+    border:none;
+    border-top:1px solid #e5e7eb;
+    margin:20px 0;
+}
+.profile-card h3{
+    margin-bottom:18px;
+    color:#1f2937;
+    font-size:20px;
+}
+.profile-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:20px;
+}
+
+.profile-item{
+    background:#f8fafc;
+    border-left:4px solid #2563eb;
+    border-radius:10px;
+    padding:15px;
+}
+
+.profile-item label{
+    display:block;
+    font-size:13px;
+    color:#64748b;
+    margin-bottom:6px;
+}
+
+.profile-item p{
+    margin:0;
+    font-size:16px;
+    font-weight:600;
+}
+
+/* ==================================================
+   RECENT INVENTORY
+================================================== */
+
+.recent-card{
+    background:white;
+    border-radius:18px;
+    padding:30px;
+    margin-bottom:35px;
+    box-shadow:0 10px 20px rgba(0,0,0,.08);
+}
+
+.recent-card h2{
+    color:#1565C0;
+    margin-bottom:20px;
+}
+
+.recent-card table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.recent-card thead{
+    background:#1565C0;
+    color:white;
+}
+
+.recent-card th{
+    padding:15px;
+}
+
+.recent-card td{
+    padding:15px;
+    text-align:center;
+    border-bottom:1px solid #eee;
+}
+
+.recent-card tbody tr:hover{
+    background:#eef7ff;
+}
+
+/* ==================================================
+   BUTTON GROUP
+================================================== */
+
+.button-group{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    flex-wrap:wrap;
+    margin-top:35px;
+    margin-bottom:35px;
+}
+
+.profile-btn,
+.inventory-btn,
+.logout-btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    min-width:220px;
+    padding:15px 30px;
+    border:none;
+    border-radius:12px;
+    color:white;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.profile-btn{
+    background:#1565C0;
+}
+
+.profile-btn:hover{
+    background:#0D47A1;
+    transform:translateY(-3px);
+}
+
+.inventory-btn{
+    background:#2E7D32;
+}
+
+.inventory-btn:hover{
+    background:#1B5E20;
+    transform:translateY(-3px);
+}
+
+.logout-btn{
+    background:#E53935;
+}
+
+.logout-btn:hover{
+    background:#C62828;
+    transform:translateY(-3px);
+}
+
+/* ==================================================
+   MOBILE
+================================================== */
+
+@media(max-width:992px){
+
+.dashboard-card{
+    flex-direction:column;
+    text-align:center;
+    gap:20px;
+}
+
+.profile-grid{
+    grid-template-columns:1fr;
+}
+
+}
+
+@media(max-width:768px){
+
+.stats-grid{
+    grid-template-columns:1fr;
+}
+
+.dashboard-container{
+    padding:20px;
+}
+
+.dashboard-card h1{
+    font-size:28px;
+}
+
+.button-group{
+    flex-direction:column;
+}
+
+.profile-btn,
+.inventory-btn,
+.logout-btn{
+    width:100%;
+}
+
+.recent-card{
+    overflow-x:auto;
+}
+
+}
+
+.summary-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+
+    gap:24px;
+
+    margin-bottom:35px;
+
+}
+.section-title{
+
+    margin:40px 0 20px;
+
+}
+
+.section-title h2{
+
+    font-size:28px;
+
+    color:#0f172a;
+
+    margin-bottom:5px;
+
+}
+
+.section-title p{
+
+    color:#64748b;
+
+}
+.dashboard-container>*{
+    animation:fadeUp .5s ease;
+}
+
+@keyframes fadeUp{
+
+from{
+opacity:0;
+transform:translateY(20px);
+}
+
+to{
+opacity:1;
+transform:translateY(0);
+}
+
+}
+.empty-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 30px;
+    margin-top: 15px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 16px;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px dashed #d1d5db;
+}
+.dashboard-loading{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    min-height:70vh;
+    gap:18px;
+}
+
+.loader{
+    width:45px;
+    height:45px;
+    border:5px solid #ddd;
+    border-top:5px solid #2563eb;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+/* .profile-header{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    margin-bottom:20px;
+} */
+
+.profile-avatar{
+    font-size:70px;
+    color:#2563eb;
+    flex-shrink:0;
+}
+
+.profile-info{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.profile-info h2{
+    margin:0;
+    font-size:28px;
+    font-weight:700;
+    color:#1e3a8a;
+}
+
+.profile-info p{
+    margin-top:5px;
+    color:#64748b;
+    font-size:15px;
+}
+
+.profile-header h2{
+    margin:0;
+}
+
+.profile-header p{
+    margin:4px 0 0;
+    color:#666;
+}
+.section-title{
+    font-size:22px;
+    font-weight:700;
+    color:#1f2937;
+    margin:30px 0 18px;
+}
+.empty-card{
+    background:#fff;
+    border-radius:12px;
+    padding:30px;
+    text-align:center;
+    color:#6b7280;
+    font-size:16px;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+    border:1px dashed #d1d5db;
+}
+.dashboard-page{
+    max-width:1450px;
+    margin:auto;
+    padding:30px;
+}
+
+
+/* ==================================================
+   DASHBOARD WORKSPACES
+================================================== */
+
+.dashboard-workspaces {
+    margin: 45px 0;
+}
+
+.workspace-header {
+    margin-bottom: 22px;
+}
+
+.workspace-header h2 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.workspace-header p {
+    margin: 7px 0 0;
+    color: #64748b;
+    font-size: 15px;
+}
+
+/* Workspace Grid */
+
+.workspace-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+}
+
+/* Workspace Card */
+
+.workspace-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    background: #ffffff;
+
+    padding: 26px;
+
+    border-radius: 20px;
+
+    border: 1px solid #e5e7eb;
+
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.07);
+
+    cursor: pointer;
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        border-color 0.3s ease;
+}
+
+.workspace-card:hover {
+    transform: translateY(-5px);
+
+    box-shadow: 0 15px 32px rgba(15, 23, 42, 0.12);
+}
+
+/* Workspace Icon */
+
+.workspace-icon {
+    width: 64px;
+    height: 64px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 18px;
+
+    font-size: 30px;
+
+    transition: transform 0.3s ease;
+}
+
+.workspace-card:hover .workspace-icon {
+    transform: scale(1.08);
+}
+
+/* Content */
+
+.workspace-content {
+    flex: 1;
+}
+
+.workspace-content h3 {
+    margin: 0 0 7px;
+
+    font-size: 20px;
+    font-weight: 700;
+
+    color: #111827;
+}
+
+.workspace-content p {
+    margin: 0 0 14px;
+
+    color: #64748b;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+}
+
+/* Open Dashboard */
+
+.workspace-content span {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    transition: gap 0.25s ease;
+}
+
+.workspace-card:hover .workspace-content span {
+    gap: 11px;
+}
+
+/* ==================================================
+   RECYCLING FACILITY
+================================================== */
+
+.recycling-workspace {
+    border-left: 5px solid #16a34a;
+}
+
+.recycling-workspace .workspace-icon {
+    background: #ecfdf5;
+    color: #16a34a;
+}
+
+.recycling-workspace .workspace-content span {
+    color: #16a34a;
+}
+
+.recycling-workspace:hover {
+    border-color: #16a34a;
+}
+
+
+/* ==================================================
+   SUSTAINABILITY MANAGER
+================================================== */
+
+.sustainability-workspace {
+    border-left: 5px solid #2563eb;
+}
+
+.sustainability-workspace .workspace-icon {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.sustainability-workspace .workspace-content span {
+    color: #2563eb;
+}
+
+.sustainability-workspace:hover {
+    border-color: #2563eb;
+}
+
+
+/* ==================================================
+   MANUFACTURER
+================================================== */
+
+.manufacturer-workspace {
+    border-left: 5px solid #f59e0b;
+}
+
+.manufacturer-workspace .workspace-icon {
+    background: #fffbeb;
+    color: #d97706;
+}
+
+.manufacturer-workspace .workspace-content span {
+    color: #d97706;
+}
+
+.manufacturer-workspace:hover {
+    border-color: #f59e0b;
+}
+
+
+/* ==================================================
+   ADMIN
+================================================== */
+
+.admin-workspace {
+    border-left: 5px solid #7c3aed;
+}
+
+.admin-workspace .workspace-icon {
+    background: #f5f3ff;
+    color: #7c3aed;
+}
+
+.admin-workspace .workspace-content span {
+    color: #7c3aed;
+}
+
+.admin-workspace:hover {
+    border-color: #7c3aed;
+}
+
+
+/* ==================================================
+   RESPONSIVE
+================================================== */
+
+@media (max-width: 900px) {
+
+    .workspace-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .dashboard-workspaces {
+        margin: 35px 0;
+    }
+
+    .workspace-header h2 {
+        font-size: 24px;
+    }
+
+    .workspace-card {
+        padding: 20px;
+
+        gap: 15px;
+    }
+
+    .workspace-icon {
+        width: 54px;
+        height: 54px;
+
+        border-radius: 15px;
+
+        font-size: 25px;
+    }
+
+    .workspace-content h3 {
+        font-size: 18px;
+    }
+
+    .workspace-content p {
+        font-size: 13px;
+    }
+
+}

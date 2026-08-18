@@ -1,0 +1,543 @@
+/* =====================================
+   USER MANAGEMENT PAGE
+===================================== */
+
+.user-management-page {
+    min-height: calc(100vh - 80px);
+    background: #f5f8fc;
+    padding: 35px 6%;
+}
+
+
+/* =====================================
+   HEADER
+===================================== */
+
+.user-management-header {
+    max-width: 1100px;
+    margin: 0 auto 25px;
+
+    padding: 35px 40px;
+
+    border-radius: 20px;
+
+    background: linear-gradient(
+        135deg,
+        #253f91,
+        #2563eb,
+        #0f766e
+    );
+
+    color: white;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    box-shadow: 0 12px 30px rgba(37, 99, 235, 0.18);
+}
+
+.section-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.user-management-header h1 {
+    margin: 10px 0 8px;
+    font-size: 30px;
+}
+
+.user-management-header p {
+    margin: 0;
+    font-size: 14px;
+    opacity: 0.85;
+}
+
+.header-icon {
+    width: 60px;
+    height: 60px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 16px;
+
+    background: rgba(255,255,255,0.15);
+
+    font-size: 28px;
+}
+
+
+/* =====================================
+   STAT CARDS
+===================================== */
+
+.user-overview {
+    max-width: 1100px;
+    margin: 0 auto 25px;
+
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 15px;
+}
+
+.user-stat-card {
+    background: white;
+
+    padding: 22px;
+
+    border-radius: 15px;
+
+    border: 1px solid #e3e9f2;
+
+    box-shadow: 0 6px 18px rgba(15,23,42,0.06);
+}
+
+.user-stat-card span {
+    display: block;
+
+    font-size: 12px;
+    color: #64748b;
+}
+
+.user-stat-card strong {
+    display: block;
+
+    margin: 8px 0;
+
+    font-size: 27px;
+
+    color: #2563eb;
+}
+
+.user-stat-card small {
+    font-size: 10px;
+    color: #94a3b8;
+}
+
+
+/* =====================================
+   USERS SECTION
+===================================== */
+
+.users-section {
+    max-width: 1100px;
+    margin: 0 auto;
+
+    background: white;
+
+    border-radius: 18px;
+
+    border: 1px solid #e3e9f2;
+
+    box-shadow: 0 8px 22px rgba(15,23,42,0.06);
+
+    overflow: hidden;
+}
+
+.users-section-header {
+    padding: 25px 28px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    border-bottom: 1px solid #edf1f6;
+}
+
+.users-section-header h2 {
+    margin: 7px 0 5px;
+    font-size: 20px;
+}
+
+.users-section-header p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 12px;
+}
+
+
+/* =====================================
+   ADD USER BUTTON
+===================================== */
+
+.add-user-btn {
+    border: none;
+
+    background: #2563eb;
+
+    color: white;
+
+    padding: 11px 18px;
+
+    border-radius: 8px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.add-user-btn:hover {
+    background: #1d4ed8;
+}
+
+
+/* =====================================
+   TABLE
+===================================== */
+
+.users-table-wrapper {
+    overflow-x: auto;
+}
+
+.users-table {
+    width: 100%;
+
+    border-collapse: collapse;
+}
+
+.users-table th {
+    background: #f8fafc;
+
+    color: #64748b;
+
+    font-size: 11px;
+
+    text-align: left;
+
+    padding: 14px 20px;
+}
+
+.users-table td {
+    padding: 17px 20px;
+
+    border-top: 1px solid #edf1f6;
+
+    font-size: 12px;
+
+    color: #334155;
+}
+
+
+/* =====================================
+   BADGES
+===================================== */
+
+.role-badge {
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    padding: 5px 9px;
+
+    border-radius: 20px;
+
+    font-size: 10px;
+
+    font-weight: 600;
+}
+
+.status-badge {
+    background: #ecfdf5;
+
+    color: #16a34a;
+
+    padding: 5px 9px;
+
+    border-radius: 20px;
+
+    font-size: 10px;
+
+    font-weight: 600;
+}
+
+
+/* =====================================
+   MANAGE BUTTON
+===================================== */
+
+.manage-btn {
+    border: 1px solid #dbe3ef;
+
+    background: white;
+
+    color: #2563eb;
+
+    padding: 7px 13px;
+
+    border-radius: 7px;
+
+    font-size: 11px;
+
+    cursor: pointer;
+}
+
+.manage-btn:hover {
+    background: #eff6ff;
+}
+
+
+/* =====================================
+   MOBILE
+===================================== */
+
+@media (max-width: 900px) {
+
+    .user-overview {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .user-management-header {
+        padding: 28px;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .user-management-page {
+        padding: 20px;
+    }
+
+    .user-overview {
+        grid-template-columns: 1fr;
+    }
+
+    .users-section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+}
+.table-message {
+    text-align: center;
+    padding: 35px !important;
+    color: #64748b !important;
+}
+
+.table-message.error {
+    color: #dc2626 !important;
+}
+/* =========================================
+   USER MANAGEMENT MODAL
+========================================= */
+
+.user-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    padding: 20px;
+}
+
+.user-modal {
+    width: 100%;
+    max-width: 560px;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.2);
+    overflow: hidden;
+}
+
+.user-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 24px 28px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.user-modal-header h2 {
+    margin: 6px 0 0;
+    font-size: 24px;
+    color: #111827;
+}
+
+.modal-close-btn {
+    border: none;
+    background: #f3f4f6;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    color: #374151;
+}
+
+.modal-close-btn:hover {
+    background: #e5e7eb;
+}
+
+.user-details {
+    padding: 24px 28px;
+}
+
+.user-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 14px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.user-detail-row:last-child {
+    border-bottom: none;
+}
+
+.user-detail-row span {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.user-detail-row strong {
+    color: #111827;
+    font-size: 14px;
+    text-align: right;
+}
+
+.active-text {
+    color: #16a34a !important;
+}
+
+.user-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 18px 28px;
+    background: #f8fafc;
+    border-top: 1px solid #e5e7eb;
+}
+
+.cancel-btn {
+    border: none;
+    background: #2563eb;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.cancel-btn:hover {
+    background: #1d4ed8;
+}
+/* =========================================
+   ROLE MANAGEMENT
+========================================= */
+
+.role-select {
+    min-width: 220px;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #111827;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.role-select:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+.user-modal-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.role-message {
+    margin-right: auto;
+    color: #16a34a;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.save-role-btn {
+    border: none;
+    background: #16a34a;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.save-role-btn:hover {
+    background: #15803d;
+}
+
+.save-role-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+/* =========================================
+   USER STATUS
+========================================= */
+
+.status-badge.active {
+    color: #15803d;
+    background: #dcfce7;
+}
+
+.status-badge.inactive {
+    color: #b91c1c;
+    background: #fee2e2;
+}
+
+.active-text {
+    color: #15803d;
+}
+
+.inactive-text {
+    color: #b91c1c;
+}
+
+.activate-btn,
+.deactivate-btn {
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.activate-btn {
+    background: #16a34a;
+    color: white;
+}
+
+.activate-btn:hover {
+    background: #15803d;
+}
+
+.deactivate-btn {
+    background: #dc2626;
+    color: white;
+}
+
+.deactivate-btn:hover {
+    background: #b91c1c;
+}
+
+.activate-btn:disabled,
+.deactivate-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.status-message {
+    font-size: 13px;
+    font-weight: 600;
+}

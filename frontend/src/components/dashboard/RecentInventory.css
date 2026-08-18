@@ -1,0 +1,60 @@
+.recent-card{
+    margin-top:35px;
+    background:#ffffff;
+    border-radius:18px;
+    padding:25px;
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+}
+
+.recent-card h2{
+    margin-bottom:20px;
+    color:#1565C0;
+    font-size:24px;
+    font-weight:700;
+}
+
+.inventory-table{
+    width:100%;
+    border-collapse:collapse;
+    overflow:hidden;
+    border-radius:12px;
+}
+
+.inventory-table thead{
+    background:#f8fafc;
+}
+
+.inventory-table th{
+    color:#1f2937;
+    font-weight:700;
+    font-size:15px;
+    text-align:center;
+    padding:16px;
+}
+
+.inventory-table td{
+    text-align:center;
+    padding:16px;
+    border-top:1px solid #e5e7eb;
+}
+
+.inventory-table tbody tr:hover{
+    background:#f8fbff;
+}
+
+.fabric-badge{
+    display:inline-block;
+    background:#2563eb;
+    color:white;
+    padding:6px 14px;
+    border-radius:20px;
+    font-size:13px;
+    font-weight:600;
+}
+
+.empty-row{
+    text-align:center;
+    color:#64748b;
+    padding:25px;
+    font-style:italic;
+}

@@ -1,0 +1,11 @@
+.preview-card{
+    margin-top:25px;
+    text-align:center;
+}
+
+.preview-card img{
+    width:350px;
+    max-width:100%;
+    border-radius:15px;
+    box-shadow:0 8px 20px rgba(0,0,0,.15);
+}

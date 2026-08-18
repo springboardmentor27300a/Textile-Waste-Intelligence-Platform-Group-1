@@ -1,0 +1,18 @@
+{
+  "id": "textilenet",
+  "name": "TextileNet (Hugging Face)",
+  "purpose": "Deep Fiber Taxonomy & Fine-Grained Material Identification",
+  "size": "760,949 Images",
+  "classes": [
+    "33 Fiber Taxonomies",
+    "27 Fabric Structural Weaves",
+    "PET Polyester",
+    "Organic Cotton",
+    "Flax Linen",
+    "Silk",
+    "Wool",
+    "Polyamide Nylon"
+  ],
+  "status": "Active (760K Model Feature Centroids Loaded)",
+  "description": "Comprehensive open-access fiber dataset from Hugging Face containing 760K+ high-resolution textile microscopic patch images for state-of-the-art material recognition."
+}

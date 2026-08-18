@@ -77,7 +77,7 @@ const RecyclerMarketplacePage = () => {
 
   const fetchBatches = async () => {
     try {
-      const data = await inventoryService.getAllBatches(1, 100);
+      const data = await inventoryService.getInventory({ page: 1, size: 100 });
       const list = data.items || data || [];
       setBatches(list);
       if (list.length > 0 && !selectedBatchId) {

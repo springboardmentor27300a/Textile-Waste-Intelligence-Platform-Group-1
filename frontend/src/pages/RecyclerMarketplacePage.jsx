@@ -649,6 +649,18 @@ const RecyclerMarketplacePage = () => {
                 />
               </div>
 
+              <div>
+                <label className="block text-slate-700 font-bold mb-1">Contact Phone Number</label>
+                <input
+                  type="text"
+                  required
+                  value={newRecycler.phone_number}
+                  onChange={(e) => setNewRecycler({...newRecycler, phone_number: e.target.value})}
+                  placeholder="+91 98250 11223"
+                  className="w-full p-2.5 rounded-xl border border-slate-200 font-semibold"
+                />
+              </div>
+
               <button
                 type="submit"
                 disabled={addLoading}

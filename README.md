@@ -204,7 +204,9 @@ Analysis History
      ↓
 Reports & Exports
 
-```
+---
+
+## 🏗️ Project Structure
 
 ```text
 Textile_Waste_Intelligence_System/

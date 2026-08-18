@@ -20,7 +20,10 @@ import {
   ArrowRight,
   TrendingUp,
   AlertCircle,
-  Award
+  Award,
+  Copy,
+  ExternalLink,
+  Send
 } from 'lucide-react';
 
 const RecyclerMarketplacePage = () => {
@@ -42,6 +45,11 @@ const RecyclerMarketplacePage = () => {
   const [loadingRecyclers, setLoadingRecyclers] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
+  // Modal State for Contact Facility
+  const [contactModalRecycler, setContactModalRecycler] = useState(null);
+  const [copiedEmail, setCopiedEmail] = useState(false);
+  const [copiedMessage, setCopiedMessage] = useState(false);
+
   // Modal State for Add Recycler
   const [showAddModal, setShowAddModal] = useState(false);
   const [newRecycler, setNewRecycler] = useState({
@@ -57,9 +65,7 @@ const RecyclerMarketplacePage = () => {
     rating: 4.8
   });
   const [addLoading, setAddLoading] = useState(false);
-  const [addSuccess, setAddSuccess] = useState('');
 
-  // Allow all logged-in platform accounts (Operator, Manager, Admin, Manufacturer, Demo User) to register recyclers
   const canAddRecycler = true;
 
   useEffect(() => {
@@ -119,7 +125,6 @@ const RecyclerMarketplacePage = () => {
   const handleCreateRecyclerSubmit = async (e) => {
     e.preventDefault();
     setAddLoading(true);
-    setAddSuccess('');
     setErrorMsg('');
 
     try {
@@ -137,7 +142,6 @@ const RecyclerMarketplacePage = () => {
       };
 
       await recyclerService.createRecycler(payload);
-      setAddSuccess('New Recycler registered successfully!');
       setShowAddModal(false);
       fetchRecyclers();
       if (selectedBatchId) fetchMatches(selectedBatchId);
@@ -147,6 +151,24 @@ const RecyclerMarketplacePage = () => {
     } finally {
       setAddLoading(false);
     }
+  };
+
+  const copyToClipboard = (text, type) => {
+    navigator.clipboard.writeText(text);
+    if (type === 'email') {
+      setCopiedEmail(true);
+      setTimeout(() => setCopiedEmail(false), 2000);
+    } else {
+      setCopiedMessage(true);
+      setTimeout(() => setCopiedMessage(false), 2000);
+    }
+  };
+
+  const generateDraftMessage = (recycler) => {
+    if (!selectedBatchDetails) {
+      return `Dear ${recycler.name} Sourcing Team,\n\nWe are reaching out from the Textile Waste Intelligence Platform to inquire about recycling partnership terms for our textile waste streams.\n\nPlease share your current material acceptance requirements and batch pricing.\n\nBest regards,\n${user?.full_name || 'Sustainability Manager'}`;
+    }
+    return `Dear ${recycler.name} Sourcing Team,\n\nWe would like to submit Waste Batch #${selectedBatchDetails.id} for recycling processing at your facility in ${recycler.location}.\n\nBatch Parameters:\n- Material: ${selectedBatchDetails.fabric_type}\n- Quantity: ${selectedBatchDetails.quantity} kg\n- Physical Condition: ${selectedBatchDetails.condition}\n- Waste Category: ${selectedBatchDetails.waste_category || 'Recyclable'}\n\nPlease confirm availability and logistics scheduling.\n\nBest regards,\n${user?.full_name || 'Sustainability Manager'}\nTextile Waste Intelligence Platform`;
   };
 
   return (
@@ -352,16 +374,23 @@ const RecyclerMarketplacePage = () => {
                       <div className="pt-2 border-t border-slate-100 flex justify-between items-center text-xs font-semibold">
                         <div className="space-y-0.5">
                           <span className="text-slate-400 text-[10px] font-bold block">Contact Email</span>
-                          <a href={`mailto:${r.contact_email}`} className="text-primary-600 hover:underline font-bold">
-                            {r.contact_email}
-                          </a>
+                          <button 
+                            type="button" 
+                            onClick={() => setContactModalRecycler(r)}
+                            className="text-primary-600 hover:text-primary-700 font-extrabold flex items-center space-x-1 cursor-pointer"
+                          >
+                            <Mail className="h-3.5 w-3.5" />
+                            <span>{r.contact_email}</span>
+                          </button>
                         </div>
-                        <a 
-                          href={`mailto:${r.contact_email}?subject=Textile%20Waste%20Batch%20%23${selectedBatchId}%20Inquiry`}
-                          className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl shadow-sm transition-all text-xs"
+                        <button 
+                          type="button"
+                          onClick={() => setContactModalRecycler(r)}
+                          className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl shadow-sm transition-all text-xs cursor-pointer flex items-center space-x-1.5"
                         >
-                          Send Inquiry
-                        </a>
+                          <Send className="h-3.5 w-3.5" />
+                          <span>Contact Facility</span>
+                        </button>
                       </div>
 
                     </div>
@@ -428,16 +457,114 @@ const RecyclerMarketplacePage = () => {
                   </div>
                 </div>
 
-                <a
-                  href={`mailto:${r.contact_email}`}
-                  className="w-full flex items-center justify-center space-x-1.5 bg-slate-900 hover:bg-primary-600 text-white font-bold py-2.5 rounded-xl text-xs transition-all shadow-sm cursor-pointer"
+                <button
+                  type="button"
+                  onClick={() => setContactModalRecycler(r)}
+                  className="w-full flex items-center justify-center space-x-2 bg-slate-900 hover:bg-primary-600 text-white font-bold py-2.5 rounded-xl text-xs transition-all shadow-sm cursor-pointer"
                 >
                   <Mail className="h-4 w-4" />
-                  <span>Contact Facility</span>
-                </a>
+                  <span>Contact Facility Details & Mail</span>
+                </button>
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* CONTACT FACILITY EMAIL MODAL */}
+      {contactModalRecycler && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-3xl max-w-lg w-full border border-slate-200 shadow-2xl p-8 space-y-6 relative max-h-[90vh] overflow-y-auto">
+            
+            {/* Modal Header */}
+            <div className="flex justify-between items-start border-b border-slate-100 pb-4">
+              <div className="space-y-1">
+                <span className="text-[10px] font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                  Verified Recycling Facility
+                </span>
+                <h3 className="text-xl font-black text-slate-900">{contactModalRecycler.name}</h3>
+                <p className="text-xs text-slate-500 font-semibold flex items-center space-x-1">
+                  <MapPin className="h-3.5 w-3.5 text-slate-400" />
+                  <span>{contactModalRecycler.location}</span>
+                </p>
+              </div>
+              <button 
+                onClick={() => setContactModalRecycler(null)} 
+                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Email Address Highlight Card */}
+            <div className="p-5 bg-gradient-to-br from-slate-900 to-primary-950 text-white rounded-2xl space-y-3 shadow-md">
+              <span className="text-[10px] font-bold text-slate-300 uppercase tracking-wider block">Official Facility Contact Email</span>
+              <div className="flex items-center justify-between bg-white/10 p-3 rounded-xl border border-white/20">
+                <div className="flex items-center space-x-2.5 font-mono text-sm font-bold text-emerald-300 truncate">
+                  <Mail className="h-4 w-4 text-emerald-400 flex-shrink-0" />
+                  <span className="truncate">{contactModalRecycler.contact_email}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => copyToClipboard(contactModalRecycler.contact_email, 'email')}
+                  className="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-lg text-xs transition-all flex items-center space-x-1 cursor-pointer flex-shrink-0"
+                >
+                  {copiedEmail ? <CheckCircle className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                  <span>{copiedEmail ? 'Copied!' : 'Copy Email'}</span>
+                </button>
+              </div>
+
+              {contactModalRecycler.phone_number && (
+                <div className="flex items-center space-x-2 text-xs font-semibold text-slate-300 pt-1">
+                  <Phone className="h-3.5 w-3.5 text-slate-400" />
+                  <span>Phone: {contactModalRecycler.phone_number}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Pre-formatted Inquiry Email Draft */}
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider block">Pre-filled Sourcing Inquiry Draft</span>
+                <button
+                  type="button"
+                  onClick={() => copyToClipboard(generateDraftMessage(contactModalRecycler), 'message')}
+                  className="text-xs font-bold text-primary-600 hover:text-primary-700 flex items-center space-x-1 cursor-pointer"
+                >
+                  {copiedMessage ? <CheckCircle className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+                  <span>{copiedMessage ? 'Draft Copied!' : 'Copy Message Draft'}</span>
+                </button>
+              </div>
+
+              <textarea
+                readOnly
+                rows={7}
+                value={generateDraftMessage(contactModalRecycler)}
+                className="w-full p-3.5 rounded-2xl border border-slate-200 text-xs font-mono bg-slate-50 text-slate-800 leading-relaxed focus:outline-none"
+              />
+            </div>
+
+            {/* Launch Mail Client Button */}
+            <div className="flex gap-3 pt-2">
+              <a
+                href={`mailto:${contactModalRecycler.contact_email}?subject=${encodeURIComponent(`Textile Waste Sourcing Inquiry ${selectedBatchDetails ? `- Batch #${selectedBatchDetails.id}` : ''}`)}&body=${encodeURIComponent(generateDraftMessage(contactModalRecycler))}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 rounded-xl text-xs transition-all flex items-center justify-center space-x-2 shadow-md shadow-primary-200 cursor-pointer"
+              >
+                <ExternalLink className="h-4 w-4" />
+                <span>Open Mail Client (Gmail / Outlook)</span>
+              </a>
+              <button
+                type="button"
+                onClick={() => setContactModalRecycler(null)}
+                className="px-5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl text-xs transition-all cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+
+          </div>
         </div>
       )}
 

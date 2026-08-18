@@ -23,6 +23,7 @@ const Sidebar = () => {
     }
 
     baseLinks.push({ to: '/datasets', label: 'Dataset Catalog', icon: Database });
+    baseLinks.push({ to: '/recycling-methods', label: 'Recycling Catalog', icon: BookOpen });
     baseLinks.push({ to: '/calculator', label: 'Impact Calculator', icon: Leaf });
     
     if (role === 'Administrator') {

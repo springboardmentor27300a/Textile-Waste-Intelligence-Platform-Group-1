@@ -67,3 +67,5 @@ backend/weavecycle.db
 # Uploaded images
 backend/uploads/
 backend/kaggle_env/
+
+VITE_API_URL=http://13.51.163.81:8000/api/v1

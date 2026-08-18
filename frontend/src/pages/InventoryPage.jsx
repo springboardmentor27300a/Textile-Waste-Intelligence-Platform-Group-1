@@ -345,7 +345,7 @@ const InventoryPage = () => {
         virginWater: 60.0,
         recycledWater: 8.5,
         yieldPct: 88,
-        flakePriceUsd: 1.45,
+        flakePriceInr: 120.0,
         offtakers: "Non-Woven Automotive Fabrics, Spun Yarn Mills, Packaging Pellets",
         certifications: "Global Recycled Standard (GRS v4.0), RCS Blended, OEKO-TEX Standard 100 Class I",
         dppId: `DPP-PET-2026-0${selectedBatch.id}`,
@@ -367,7 +367,7 @@ const InventoryPage = () => {
         virginWater: 10000.0,
         recycledWater: 450.0,
         yieldPct: 92,
-        flakePriceUsd: 2.20,
+        flakePriceInr: 180.0,
         offtakers: "Carded Yarn Spinners, Circular Denim Mills, Home Textiles",
         certifications: "GOTS v6.0, GRS Certified, OEKO-TEX Standard 100",
         dppId: `DPP-COT-2026-0${selectedBatch.id}`,
@@ -389,7 +389,7 @@ const InventoryPage = () => {
         virginWater: 1800.0,
         recycledWater: 120.0,
         yieldPct: 84,
-        flakePriceUsd: 6.80,
+        flakePriceInr: 565.0,
         offtakers: "Prato Mechanical Felt Mills, Acoustic Insulation, Carpet Yarns",
         certifications: "Responsible Wool Standard (RWS), GRS Certified",
         dppId: `DPP-WOL-2026-0${selectedBatch.id}`,
@@ -411,7 +411,7 @@ const InventoryPage = () => {
         virginWater: 4500.0,
         recycledWater: 280.0,
         yieldPct: 86,
-        flakePriceUsd: 1.80,
+        flakePriceInr: 150.0,
         offtakers: "Solvent Depolymerization Plants, Non-Woven Padding",
         certifications: "Recycled Claim Standard (RCS), GRS Blended",
         dppId: `DPP-BLN-2026-0${selectedBatch.id}`,
@@ -423,7 +423,7 @@ const InventoryPage = () => {
     }[fabKey];
 
     const totalFlakeYieldKg = Math.round(qty * (specs.yieldPct / 100));
-    const totalEconomicValueUsd = (totalFlakeYieldKg * specs.flakePriceUsd).toFixed(2);
+    const totalEconomicValueInr = Math.round(totalFlakeYieldKg * specs.flakePriceInr).toLocaleString('en-IN');
     const co2SavedTotal = ((specs.virginCo2 - specs.recycledCo2) * qty).toFixed(1);
     const energySavedTotal = ((specs.virginEnergy - specs.recycledEnergy) * qty).toFixed(1);
     const waterSavedTotal = Math.round((specs.virginWater - specs.recycledWater) * qty);
@@ -819,11 +819,11 @@ const InventoryPage = () => {
               </tr>
               <tr>
                 <td class="details-label">Market Unit Valuation</td>
-                <td class="details-val" style="color: #b45309;">$${specs.flakePriceUsd.toFixed(2)} USD / kg (Hot-Washed rPET Flakes)</td>
+                <td class="details-val" style="color: #b45309;">₹${specs.flakePriceInr.toFixed(2)} INR / kg (Hot-Washed rPET Flakes)</td>
               </tr>
               <tr>
                 <td class="details-label">Total Estimated Batch Valuation</td>
-                <td class="details-val" style="color: #059669; font-size: 12px;">$${totalEconomicValueUsd} USD</td>
+                <td class="details-val" style="color: #059669; font-size: 12px;">₹${totalEconomicValueInr} INR</td>
               </tr>
               <tr>
                 <td class="details-label">Primary Offtaker Channels</td>

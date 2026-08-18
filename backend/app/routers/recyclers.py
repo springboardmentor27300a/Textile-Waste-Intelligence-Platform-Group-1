@@ -214,8 +214,8 @@ def delete_recycler(
     current_user: User = Depends(get_current_user)
 ):
     user_role = current_user.role.name if current_user and current_user.role else ""
-    if user_role != "Administrator":
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only Administrators can delete recyclers.")
+    if user_role not in ["Administrator", "Recycling Facility Operator"]:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only Administrators and Facility Operators can delete recyclers.")
 
     recycler = db.query(Recycler).filter(Recycler.id == recycler_id).first()
     if not recycler:

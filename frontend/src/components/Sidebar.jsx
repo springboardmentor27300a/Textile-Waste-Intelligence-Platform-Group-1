@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Boxes, User, BarChart3, Leaf, Database, Camera, TrendingUp, BookOpen, Users } from 'lucide-react';
+import { LayoutDashboard, Boxes, User, BarChart3, Leaf, Database, Camera, TrendingUp, BookOpen, Users, Building2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../services/api';
 
@@ -22,6 +22,7 @@ const Sidebar = () => {
       baseLinks.push({ to: '/sustainability', label: 'Sustainability', icon: TrendingUp });
     }
 
+    baseLinks.push({ to: '/recyclers', label: 'Recycler Matching', icon: Building2 });
     baseLinks.push({ to: '/datasets', label: 'Dataset Catalog', icon: Database });
     baseLinks.push({ to: '/recycling-methods', label: 'Recycling Catalog', icon: BookOpen });
     baseLinks.push({ to: '/calculator', label: 'Impact Calculator', icon: Leaf });

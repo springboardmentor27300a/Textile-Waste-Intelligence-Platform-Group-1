@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database.db import engine, Base
-from app.routers import auth, inventory, datasets, classification, sustainability, recommendation, impact, circular, dashboard, reports
+from app.routers import auth, inventory, datasets, classification, sustainability, recommendation, impact, circular, dashboard, reports, recyclers
 
 # Create database tables automatically if they don't exist
 Base.metadata.create_all(bind=engine)
@@ -35,6 +35,8 @@ app.include_router(circular.router)
 app.include_router(circular.router_analytics)
 app.include_router(dashboard.router)
 app.include_router(reports.router)
+app.include_router(recyclers.router)
+app.include_router(recyclers.router_batches)
 
 @app.get("/")
 def read_root():

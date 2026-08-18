@@ -203,33 +203,3 @@ Sustainability Analysis
 Analysis History
      ↓
 Reports & Exports
-
-```
-
-## 🏗️ Project Structure
-
-```text
-Textile_Waste_Intelligence_System/
-│
-├── backend/
-│   ├── app/
-│   │   ├── routes/
-│   │   ├── models.py
-│   │   ├── schemas.py
-│   │   ├── database.py
-│   │   └── main.py
-│   ├── sample_images/
-│   ├── uploads/
-│   ├── requirements.txt
-│   └── .env
-│
-├── frontend/
-│   ├── src/
-│   ├── public/
-│   ├── package.json
-│   └── .env
-│
-├── datasets/
-├── docs/
-├── docker-compose.yml
-└── README.md

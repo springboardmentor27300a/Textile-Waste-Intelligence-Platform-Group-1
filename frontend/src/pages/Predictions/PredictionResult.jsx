@@ -68,7 +68,7 @@ export default function PredictionResult() {
     };
   }, []);
 
-  const API_BASE = 'http://localhost:8000';
+  const API_BASE = "http://ec2-user@ip-172-31-42-12:8000";
 
 
   useEffect(() => {

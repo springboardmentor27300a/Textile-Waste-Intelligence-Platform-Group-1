@@ -227,7 +227,7 @@ const SustainabilityCalculatorPage = () => {
             </div>
             <div class="card" style="border-left: 4px solid #f59e0b;">
               <div class="title">Material Value Preserved</div>
-              <div class="val">$${results.value.toLocaleString()}</div>
+              <div class="val">₹${Math.round(results.value * 83.5).toLocaleString('en-IN')} INR</div>
             </div>
             <div class="card" style="border-left: 4px solid #6366f1;">
               <div class="title">Landfill Diverted</div>
@@ -447,8 +447,8 @@ const SustainabilityCalculatorPage = () => {
                     <Scale className="h-5 w-5" />
                   </div>
                   <div>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Value Preserved</span>
-                    <span className="text-base font-extrabold text-slate-800">${results.value.toLocaleString()}</span>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Value Preserved (₹ INR)</span>
+                    <span className="text-base font-extrabold text-slate-800">₹{Math.round(results.value * 83.5).toLocaleString('en-IN')}</span>
                   </div>
                 </div>
 

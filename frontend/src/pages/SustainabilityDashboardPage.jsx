@@ -694,9 +694,9 @@ This ESG transcript has been compiled automatically and is certified compliant w
         {/* Card 7: Resource Preserved Value */}
         <div className="bg-white rounded-3xl border border-slate-200/80 p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
           <div className="space-y-2">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Value Saved</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Value Saved (₹ INR)</span>
             <h3 className="text-3xl font-black text-slate-800">
-              ${data.value_saved_usd?.toLocaleString() || 0}
+              ₹{Math.round(data.value_saved_inr || data.value_saved_usd * 83.5 || 0).toLocaleString('en-IN')}
             </h3>
             <p className="text-xs text-slate-400 font-semibold">Economic virgin material offsets</p>
           </div>

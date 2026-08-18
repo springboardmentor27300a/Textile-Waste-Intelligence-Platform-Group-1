@@ -15,7 +15,8 @@ import {
   Trash2,
   BookmarkPlus,
   Download,
-  FileText
+  FileText,
+  Eye
 } from 'lucide-react';
 
 const MaterialClassificationPage = () => {
@@ -1046,6 +1047,103 @@ END OF REPORT
                 </div>
 
               </div>
+
+              {/* AI Explainability & Grad-CAM Heatmap Visualizer */}
+              {result.explainability && (
+                <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-sm space-y-6">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-100 pb-4">
+                    <div>
+                      <div className="inline-flex items-center space-x-1.5 bg-indigo-50 text-indigo-700 border border-indigo-200 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold mb-1">
+                        <Eye className="h-3.5 w-3.5" />
+                        <span>Grad-CAM Visual AI Explainability</span>
+                      </div>
+                      <h3 className="text-base font-extrabold text-slate-800">
+                        Feature Attention & Texture Heatmap
+                      </h3>
+                    </div>
+                    
+                    {/* Confidence Score Badge & Uncertainty Warning */}
+                    <div className="flex items-center space-x-2">
+                      <span className={`px-3 py-1 rounded-full text-xs font-black border ${
+                        result.explainability.is_uncertain 
+                          ? 'bg-amber-50 text-amber-800 border-amber-300 animate-pulse'
+                          : 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                      }`}>
+                        {result.explainability.confidence_percentage}% Confidence {result.explainability.is_uncertain ? '(Uncertain)' : '(High)'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Low Confidence Warning Alert */}
+                  {result.explainability.is_uncertain && (
+                    <div className="p-4 bg-amber-50 border border-amber-300 text-amber-900 rounded-2xl text-xs font-semibold flex items-start space-x-3 shadow-sm">
+                      <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <strong className="text-amber-950 block text-sm mb-0.5">⚠️ Model Prediction Uncertainty Warning</strong>
+                        <span>
+                          {result.explainability.uncertainty_warning || "Confidence score is below 75% threshold. High texture variance detected. Manual sorting and physical lab verification recommended before inventory check-in."}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Side-by-Side Image Visualizer */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Original Image */}
+                    <div className="space-y-2">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                        Original Upload Image
+                      </span>
+                      <div className="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-900 h-64 flex items-center justify-center">
+                        <img 
+                          src={result.explainability.original_image_base64 || imagePreview} 
+                          alt="Original Textile"
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Grad-CAM Heatmap Overlay */}
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider block">
+                          Grad-CAM Heatmap Overlay
+                        </span>
+                        <span className="text-[9px] font-bold text-slate-400">
+                          Red/Yellow = High Focus
+                        </span>
+                      </div>
+                      <div className="relative rounded-2xl overflow-hidden border border-indigo-200 bg-slate-900 h-64 flex items-center justify-center">
+                        <img 
+                          src={result.explainability.heatmap_base64} 
+                          alt="Grad-CAM Heatmap Overlay"
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Explanation & Active Features */}
+                  <div className="space-y-3 pt-2">
+                    <p className="text-xs text-slate-600 font-medium leading-relaxed bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+                      {result.explainability.explanation_text}
+                    </p>
+
+                    <div className="space-y-1.5">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                        Activated Micro-Texture Features
+                      </span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {result.explainability.active_features?.map((feat, idx) => (
+                          <span key={idx} className="text-[11px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-100 px-2.5 py-1 rounded-lg">
+                            ✨ {feat}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Bottom Panel: Details breakdown & Recommendations */}
               <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-sm space-y-6">

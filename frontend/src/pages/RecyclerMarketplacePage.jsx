@@ -59,7 +59,8 @@ const RecyclerMarketplacePage = () => {
   const [addLoading, setAddLoading] = useState(false);
   const [addSuccess, setAddSuccess] = useState('');
 
-  const canAddRecycler = user?.role?.name === 'Administrator' || user?.role?.name === 'Recycling Facility Operator' || user?.role?.name === 'Textile Manufacturer';
+  // Allow all logged-in platform accounts (Operator, Manager, Admin, Manufacturer, Demo User) to register recyclers
+  const canAddRecycler = true;
 
   useEffect(() => {
     fetchBatches();

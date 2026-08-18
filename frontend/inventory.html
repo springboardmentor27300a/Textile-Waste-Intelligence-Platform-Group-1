@@ -66,6 +66,9 @@
       <a href="image-analysis.html" class="nav-item">
         <span class="nav-icon">🔬</span> Image Analysis
       </a>
+      <a href="sustainability.html" class="nav-item">
+        <span class="nav-icon">🌱</span> Sustainability
+      </a>
       <a href="reports.html"        class="nav-item">
         <span class="nav-icon">📈</span> Reports
       </a>
@@ -225,10 +228,17 @@
           </select>
         </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Location / Warehouse</label>
-        <input class="form-control" id="f-location" placeholder="e.g. Warehouse A, Cold Storage" />
-      </div>
+        <div class="form-row">
+          <div class="form-group" style="flex:1;">
+            <label class="form-label">Location / Warehouse</label>
+            <input class="form-control" id="f-location" placeholder="e.g. Warehouse A, Cold Storage" />
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label class="form-label">Supplier</label>
+            <input class="form-control" id="f-supplier" list="supplier-options" placeholder="Select or type new..." autocomplete="off" />
+            <datalist id="supplier-options"></datalist>
+          </div>
+        </div>
       <div style="display:flex; gap:var(--space-sm); margin-top:var(--space-lg);">
         <button type="submit" class="btn btn-primary" style="flex:1;" id="modal-submit-btn">Save Batch</button>
         <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
@@ -246,10 +256,22 @@
   let filtered     = [];
   let page         = 0;
   const PAGE_SIZE  = 15;
+  let allSuppliers = [];
 
   async function loadInventory() {
     try {
-      allInventory = await api.getInventory();
+      [allInventory, allSuppliers] = await Promise.all([
+        api.getInventory(),
+        api.getSuppliers().catch(() => [])
+      ]);
+      
+      const datalist = document.getElementById('supplier-options');
+      datalist.innerHTML = '';
+      allSuppliers.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.name;
+        datalist.appendChild(opt);
+      });
     } catch {
       allInventory = [];
     }
@@ -374,6 +396,7 @@
     document.getElementById('f-grade').value    = item.grade || 'A';
     document.getElementById('f-status').value   = item.status || 'active';
     document.getElementById('f-location').value = item.location || '';
+    document.getElementById('f-supplier').value = item.supplier?.name || '';
     document.getElementById('modal-submit-btn').textContent = 'Update Batch';
     document.getElementById('inv-modal').classList.add('open');
   }
@@ -384,20 +407,41 @@
     document.getElementById('inv-modal').classList.remove('open');
   }
 
-  async function submitInventory(e) {
-    e.preventDefault();
-    const editId = document.getElementById('edit-id').value;
-    const data = {
-      batch_code:    document.getElementById('f-batch').value,
-      material_type: document.getElementById('f-material').value,
-      quantity_kg:   parseFloat(document.getElementById('f-qty').value),
-      color:         document.getElementById('f-color').value,
-      grade:         document.getElementById('f-grade').value,
-      status:        document.getElementById('f-status').value,
-      location:      document.getElementById('f-location').value,
-    };
+    async function submitInventory(e) {
+      e.preventDefault();
+      const editId = document.getElementById('edit-id').value;
+      const supplierVal = document.getElementById('f-supplier').value.trim();
+      
+      let finalSupplierId = null;
+      if (supplierVal) {
+        const existing = allSuppliers.find(s => s.name.toLowerCase() === supplierVal.toLowerCase());
+        if (existing) {
+          finalSupplierId = existing.id;
+        } else {
+          try {
+            const newSupp = await api.createSupplier({ name: supplierVal });
+            finalSupplierId = newSupp.id;
+            allSuppliers.push(newSupp);
+          } catch(e) {
+            console.error("Failed to create new supplier", e);
+            showToast('Failed to create new supplier', 'error');
+            return;
+          }
+        }
+      }
 
-    try {
+      const data = {
+        batch_code:    document.getElementById('f-batch').value,
+        material_type: document.getElementById('f-material').value,
+        quantity_kg:   parseFloat(document.getElementById('f-qty').value),
+        color:         document.getElementById('f-color').value,
+        grade:         document.getElementById('f-grade').value,
+        status:        document.getElementById('f-status').value,
+        location:      document.getElementById('f-location').value,
+        supplier_id:   finalSupplierId,
+      };
+  
+      try {
       if (editId) {
         await api.updateInventory(editId, data);
         showToast('Inventory batch updated!', 'success');

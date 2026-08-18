@@ -179,6 +179,7 @@ def get_report(
     # ── 5. Assemble and return report ─────────────────────────────────────────
     return TextileReport(
         image_id=record.id,
+        inventory_id=record.inventory_id,
         user_sequence_num=record.user_sequence_num,
         image_url=record.file_url,
         original_name=record.original_name,

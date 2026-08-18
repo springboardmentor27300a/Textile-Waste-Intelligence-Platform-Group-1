@@ -67,6 +67,12 @@
       .analysis-grid { grid-template-columns: 1fr; }
     }
 
+    /* M3 sections live in print-area for the combined Download Report.
+       They are hidden on screen (Image Analysis page) — visible only when printing. */
+    @media screen {
+      .m3-report-section { display: none !important; }
+    }
+
     /* AI UX Polish Styles */
     .fade-slide-up {
       animation: fadeSlideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
@@ -273,6 +279,9 @@
       <a href="image-analysis.html" class="nav-item active">
         <span class="nav-icon">🔬</span> Image Analysis
       </a>
+      <a href="sustainability.html" class="nav-item">
+        <span class="nav-icon">🌱</span> Sustainability
+      </a>
       <a href="reports.html"        class="nav-item">
         <span class="nav-icon">📈</span> Reports
       </a>
@@ -299,7 +308,7 @@
     <div class="topbar no-print">
       <div>
         <h1 class="page-title">Image Analysis Pipeline</h1>
-        <p class="page-subtitle">End-to-end AI classification and sustainability reporting</p>
+        <p class="page-subtitle">AI material classification &amp; waste assessment</p>
       </div>
       <div class="topbar-actions">
         <button class="btn btn-secondary" onclick="resetPipeline()">🔄 New Analysis</button>
@@ -400,9 +409,10 @@
       <section class="step-panel" id="step-results">
         <div class="glass-card card-padding hidden" id="success-panel" style="text-align:center;">
           <h2 class="text-primary mb-sm" style="font-size:1.8rem;">🎉 Analysis Complete</h2>
-          <p class="text-secondary mb-lg">Your textile waste has been fully analyzed. Scroll below to review the complete AI Sustainability Report.</p>
-          <div class="flex gap-md justify-center">
-            <button class="btn btn-primary" onclick="window.print()">📄 Download Report</button>
+          <p class="text-secondary mb-lg">Material &amp; waste classification is ready. View the full sustainability report or download the complete AI report below.</p>
+          <div class="flex gap-md justify-center flex-wrap">
+            <button class="btn btn-primary" id="btn-view-sustainability" onclick="goToSustainability()" style="font-size:1rem;">🌱 View Sustainability Report</button>
+            <button class="btn btn-secondary" onclick="window.print()">📄 Download Full Report</button>
             <button class="btn btn-secondary" onclick="resetPipeline()">🔄 Analyze Another Image</button>
             <button class="btn btn-secondary" onclick="window.print()">🖨️ Print Report</button>
           </div>
@@ -476,33 +486,35 @@
             </div>
           </div>
 
+          <!-- Section 4–7: Milestone 3 data — hidden on screen, visible when printing the combined report.
+               These sections are rendered by generateReport() and surfaced on sustainability.html for on-screen viewing. -->
           <!-- Section 4: Recycling Recommendation -->
-          <div class="report-section">
+          <div class="report-section m3-report-section">
             <h3>4. Recycling Recommendation</h3>
             <div id="rep-recs" class="grid-2"></div>
           </div>
 
           <!-- Section 5: Environmental Impact -->
-          <div class="report-section">
+          <div class="report-section m3-report-section">
             <h3>5. Environmental Impact</h3>
             <div class="kpi-grid" id="rep-env"></div>
           </div>
 
           <!-- Section 6: Sustainability Analysis -->
-          <div class="report-section">
+          <div class="report-section m3-report-section">
             <h3>6. Sustainability Analysis</h3>
             <div class="kpi-grid" id="rep-sus"></div>
           </div>
 
           <!-- Section 6b: Sustainability Benchmark -->
-          <div class="report-section">
+          <div class="report-section m3-report-section">
             <h3>6b. Sustainability Benchmark</h3>
             <p class="text-secondary mb-sm" style="font-size:0.85rem;">How this inventory item compares to platform-wide averages.</p>
             <div class="kpi-grid" id="rep-bench"></div>
           </div>
 
           <!-- Section 7: Circular Economy Insights -->
-          <div class="report-section">
+          <div class="report-section m3-report-section">
             <h3>7. Circular Economy Insights</h3>
             <div id="rep-circ" class="info-card">
               <p class="text-secondary">Platform circularity averages applied to this item's specific waste category.</p>
@@ -609,6 +621,13 @@
   document.addEventListener('DOMContentLoaded', () => {
     loadInventoryOptions();
 
+    const params    = new URLSearchParams(window.location.search);
+    const imgId     = params.get('image_id');
+    const autoPrint = params.get('auto_print') === '1';
+    if (imgId) {
+      loadHistoricalReport(imgId, autoPrint);
+    }
+
     const zone = document.getElementById('upload-zone');
     const inp  = document.getElementById('file-input');
 
@@ -626,6 +645,85 @@
     });
   });
 
+  async function loadHistoricalReport(id, autoPrint = false) {
+    try {
+      const img = await api.getImage(id);
+      selectImage(img.id, img.file_url);
+      
+      const report = await api.getReport(id);
+      
+      state.materialData = {
+        material: report.material,
+        confidence: report.material_confidence,
+      };
+      state.wasteData = {
+        category: report.waste_category,
+        handling: report.waste_handling,
+        disposal: report.waste_disposal,
+        recyclability_assessment: report.recyclability_score ? `${report.recyclability_score}/100` : 'N/A'
+      };
+      
+      const apiErrors = [];
+      
+      // Load milestone 3 data if an inventory was linked to this image
+      if (report.inventory_id) {
+        state.inventoryId = report.inventory_id;
+        try {
+          state.susData = await api.fetchSustainabilityMetric(report.inventory_id);
+        } catch (e) { apiErrors.push(`Sustainability fetch failed: ${e.message}`); }
+        
+        try {
+          state.benchData = await api.fetchBenchmark(report.inventory_id);
+        } catch (e) { apiErrors.push(`Benchmark fetch failed: ${e.message}`); }
+        
+        try {
+          state.envData = await api.fetchEnvironmentalReport(report.inventory_id);
+        } catch (e) { apiErrors.push(`Environmental report fetch failed: ${e.message}`); }
+        
+        try {
+          state.recsData = await api.fetchRecommendations(report.inventory_id);
+        } catch (e) { apiErrors.push(`Recommendations fetch failed: ${e.message}`); }
+      } else {
+        apiErrors.push('No inventory item was linked when this image was analyzed — sustainability, environmental, and benchmark data unavailable.');
+      }
+      
+      // Always fetch circular analytics
+      try {
+        state.circData = await api.fetchCircularAnalytics();
+      } catch (e) { apiErrors.push(`Circular analytics fetch failed: ${e.message}`); }
+      
+      document.getElementById('step-1').style.display = 'none';
+      
+      const stepResults = document.getElementById('step-results');
+      if (stepResults) stepResults.classList.add('active');
+
+      const successPanel = document.getElementById('success-panel');
+      successPanel.classList.remove('hidden');
+      successPanel.classList.add('fade-slide-up');
+
+      const printArea = document.getElementById('print-area');
+      printArea.classList.remove('hidden');
+      printArea.classList.add('fade-slide-up');
+
+      generateReport(apiErrors);
+
+      // Save the full pipeline state so sustainability.html can read it.
+      SessionBridge.save(state);
+      
+      showToast('Historical report loaded.', 'success');
+      printArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      // Auto-print support: triggered when sustainability.html's Download Report
+      // button opens image-analysis.html?image_id=X&auto_print=1
+      if (autoPrint) {
+        setTimeout(() => window.print(), 800);
+      }
+    } catch (e) {
+      console.error('[loadHistoricalReport] Failed to load historical report:', e);
+      showToast('Could not load historical report.', 'error');
+    }
+  }
+
   // ── UI helpers ────────────────────────────────────────────────────────────
   function setProcessingStatus(progressPct, statusText) {
     const bar = document.getElementById('processing-progress-bar');
@@ -635,7 +733,18 @@
   }
 
   function resetPipeline() {
+    SessionBridge.clear();
     window.location.reload();
+  }
+
+  function goToSustainability() {
+    // State is already saved in sessionStorage; pass inventory_id and image_id as URL params
+    // as a fallback for direct links / bookmarks.
+    const params = new URLSearchParams();
+    if (state.inventoryId) params.append('inventory_id', state.inventoryId);
+    if (state.imageId) params.append('image_id', state.imageId);
+    const qs = params.toString();
+    window.location.href = `sustainability.html${qs ? '?' + qs : ''}`;
   }
 
   // ── Step 1: Upload ────────────────────────────────────────────────────────
@@ -769,9 +878,16 @@
         state.recsData = null;
       }
 
-      // ── Steps D–H: Sustainability chain (requires inventory) ───────────────
       if (state.inventoryId) {
         const invId = state.inventoryId;
+        
+        // Link inventory to the image permanently
+        try {
+          await api.linkInventory(state.imageId, invId);
+          console.log('[Pipeline] Inventory linked successfully');
+        } catch (e) {
+          console.warn('[Pipeline] Failed to link inventory to image:', e);
+        }
 
         // D: Calculate sustainability metrics (POST — creates the record)
         setProcessingStatus(48, '🌱 Calculating sustainability metrics...');
@@ -843,12 +959,12 @@
 
       // ── Step J: Build final report ─────────────────────────────────────────
       setProcessingStatus(95, '📄 Preparing final AI Sustainability Report...');
-      generateReport(apiErrors);
 
-      setProcessingStatus(100, '✅ Analysis Complete');
-
-      // Show results
+      // Always show results panels — even if generateReport() fails internally
       processingPanel.classList.add('hidden');
+
+      const stepResults = document.getElementById('step-results');
+      if (stepResults) stepResults.classList.add('active');
 
       const successPanel = document.getElementById('success-panel');
       successPanel.classList.remove('hidden');
@@ -857,9 +973,33 @@
       const printArea = document.getElementById('print-area');
       printArea.classList.remove('hidden');
       printArea.classList.add('fade-slide-up');
+
+      // Render the report — wrapped so a JS error in the renderer is visible
+      try {
+        generateReport(apiErrors);
+      } catch (renderErr) {
+        console.error('[Pipeline] generateReport() threw:', renderErr);
+        const errorBanner = document.getElementById('api-error-banner');
+        if (errorBanner) {
+          errorBanner.innerHTML += `
+            <div style="background:rgba(244,63,94,0.15); border:1px solid rgba(244,63,94,0.4); padding:1rem; border-radius:8px; margin-bottom:1rem;">
+              <div style="color:var(--color-danger); font-weight:bold; margin-bottom:0.5rem;">⚠️ Report render error (partial data may still be displayed below):</div>
+              <div style="font-size:0.85rem; color:var(--color-text-secondary);">${renderErr.message}</div>
+            </div>`;
+        }
+      }
+
+      setProcessingStatus(100, '✅ Analysis Complete');
       printArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-      showToast(apiErrors.length === 0 ? 'Analysis completed successfully!' : 'Analysis completed with some warnings.', apiErrors.length === 0 ? 'success' : 'warning');
+      // Save full state to sessionStorage so sustainability.html can read it.
+      SessionBridge.save(state);
+
+      if (apiErrors.length === 0) {
+        showToast('Analysis completed successfully!', 'success');
+      } else {
+        showToast('Analysis complete. Some optional data could not be loaded — see the report for details.', 'error');
+      }
 
       btn.innerHTML = '✨ Analyze Image';
       btn.disabled  = false;
@@ -917,8 +1057,9 @@
     const repMat     = document.getElementById('rep-mat');
     const repMatConf = document.getElementById('rep-mat-conf');
     const repMatDesc = document.getElementById('rep-mat-desc');
-    if (repMat)     repMat.textContent     = mat ? mat.material : '—';
-    if (repMatConf) repMatConf.textContent = mat ? `${mat.confidence.toFixed(1)}% confidence` : '—';
+    if (repMat)     repMat.textContent     = mat ? (mat.material || '—') : '—';
+    // Guard: confidence may be 0 (falsy) so only default to '—' if mat itself is missing
+    if (repMatConf) repMatConf.textContent = mat ? `${(typeof mat.confidence === 'number' ? mat.confidence : parseFloat(mat.confidence) || 0).toFixed(1)}% confidence` : '—';
     if (repMatDesc) {
       if (mat) {
         repMatDesc.innerHTML = `
@@ -935,12 +1076,13 @@
     // 3. Waste Assessment
     //    Fields from WasteClassifyResponse: material, category, confidence, handling, disposal, recyclability_assessment, reuse_potential
     const waste       = state.wasteData;
-    const catMeta     = waste ? getCatMeta(waste.category) : {};
+    // Defensive guard: getCatMeta crashes if category is undefined — use fallback object
+    const catMeta     = (waste && waste.category) ? getCatMeta(waste.category) : { handling: '—', disposal: '—', urgency: '—' };
     const repWaste    = document.getElementById('rep-waste');
     const repWasteConf = document.getElementById('rep-waste-conf');
     const repHandling = document.getElementById('rep-handling');
     const repUrgency  = document.getElementById('rep-urgency');
-    if (repWaste)     repWaste.textContent     = waste ? waste.category : '—';
+    if (repWaste)     repWaste.textContent     = waste ? (waste.category || '—') : '—';
     if (repWasteConf) repWasteConf.textContent = waste ? (waste.recyclability_assessment || catMeta.handling || '—') : '—';
     if (repHandling)  repHandling.textContent  = waste ? (waste.handling || catMeta.handling || '—') : '—';
     if (repUrgency)   repUrgency.textContent   = waste ? (waste.disposal || catMeta.disposal || '—') : '—';
@@ -953,11 +1095,15 @@
         ? state.recsData.recommendations
         : [];
       if (recs.length > 0) {
-        repRecs.innerHTML = recs.map((r, i) => `
+        repRecs.innerHTML = recs.map((r, i) => {
+          const title = typeof r === 'object' ? r.recommendation : 'Recommendation';
+          const desc = typeof r === 'object' ? (r.description || r.reason) : r;
+          return `
           <div class="info-card" style="background:rgba(255,255,255,0.02);">
-            <div class="fw-bold text-primary mb-sm">${i + 1}. Recommendation</div>
-            <div class="text-secondary" style="font-size:0.85rem;">${r}</div>
-          </div>`).join('');
+            <div class="fw-bold text-primary mb-sm">${i + 1}. ${title}</div>
+            <div class="text-secondary" style="font-size:0.85rem;">${desc}</div>
+          </div>`;
+        }).join('');
       } else {
         repRecs.innerHTML = '<div class="text-secondary">No recommendations available.</div>';
       }

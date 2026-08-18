@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sustainability Manager — Textile Waste Intelligence Platform</title>
+  <meta name="description" content="Sustainability manager dashboard: carbon reduction reports, waste diversion analytics, ESG reporting and sustainability metrics." />
+  <link rel="stylesheet" href="css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <style>
+    .sm-grid-charts { display:grid; grid-template-columns:1fr 1fr; gap:var(--space-lg); margin-bottom:var(--space-xl); }
+    .sm-grid-bottom  { display:grid; grid-template-columns:2fr 1fr; gap:var(--space-lg); margin-bottom:var(--space-xl); }
+    .chart-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:var(--space-lg); }
+    .chart-title  { font-size:1rem; font-weight:700; }
+    .chart-subtitle { font-size:0.75rem; color:var(--color-text-muted); margin-top:2px; }
+    .stat-row { display:flex; align-items:center; justify-content:space-between; padding:0.65rem 0; border-bottom:1px solid rgba(52,211,153,0.06); font-size:0.85rem; }
+    .stat-row:last-child { border-bottom:none; }
+    .stat-label { color:var(--color-text-secondary); } .stat-val { color:var(--color-text-primary); font-weight:600; }
+    .esg-card { padding:var(--space-lg); border-radius:var(--radius-md); background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); margin-bottom:10px; }
+    .esg-icon { font-size:1.5rem; margin-bottom:6px; }
+    .esg-title { font-size:0.82rem; font-weight:600; color:var(--color-text-primary); margin-bottom:4px; }
+    .esg-val  { font-size:1.3rem; font-weight:800; color:var(--color-primary); line-height:1; }
+    .esg-sub  { font-size:0.72rem; color:var(--color-text-muted); margin-top:3px; }
+    .esg-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .rep-row { display:flex; align-items:center; justify-content:space-between; padding:0.75rem 0; border-bottom:1px solid rgba(255,255,255,0.04); font-size:0.83rem; }
+    .rep-row:last-child { border-bottom:none; }
+    .rating-badge { display:inline-block; padding:3px 10px; border-radius:999px; font-size:0.72rem; font-weight:700; }
+    .rating-excellent { background:rgba(52,211,153,0.15); color:#34d399; }
+    .rating-good  { background:rgba(14,165,233,0.15); color:#38bdf8; }
+    .rating-fair  { background:rgba(245,158,11,0.15); color:#fbbf24; }
+    .rating-poor  { background:rgba(244,63,94,0.15); color:#fb7185; }
+    .circ-kpi { text-align:center; padding:1rem 0.5rem; }
+    .circ-val { font-size:1.4rem; font-weight:800; color:var(--color-primary); font-family:var(--font-heading); }
+    .circ-label { font-size:0.72rem; color:var(--color-text-muted); margin-top:3px; text-transform:uppercase; letter-spacing:0.04em; }
+    .empty-hint { text-align:center; padding:1.5rem; color:var(--color-text-muted); font-size:0.83rem; }
+    @media (max-width:1100px) { .sm-grid-charts { grid-template-columns:1fr; } .sm-grid-bottom { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">&#x1F33F;</div>
+      <div class="logo-text">TexWaste Intel <span>Textile Waste Intelligence</span></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">My Dashboard</div>
+      <a href="sustainability-manager.html" class="nav-item active" id="role-dashboard-nav">
+        <span class="nav-icon">&#x1F331;</span> Sustainability Mgr
+      </a>
+      <div class="nav-section-title" style="margin-top:0.75rem;">Platform</div>
+      <a href="dashboard.html"      class="nav-item"><span class="nav-icon">&#x1F4CA;</span> Overview</a>
+      <a href="inventory.html"      class="nav-item"><span class="nav-icon">&#x1F4E6;</span> Inventory</a>
+      <a href="waste-records.html"  class="nav-item"><span class="nav-icon">&#x1F5C2;&#xFE0F;</span> Waste Records</a>
+      <a href="image-analysis.html" class="nav-item"><span class="nav-icon">&#x1F52C;</span> Image Analysis</a>
+      <a href="sustainability.html" class="nav-item"><span class="nav-icon">&#x1F343;</span> Sustainability</a>
+      <a href="reports.html"        class="nav-item"><span class="nav-icon">&#x1F4C8;</span> Reports</a>
+      <div class="nav-section-title" style="margin-top:0.75rem;">Account</div>
+      <a href="#" class="nav-item" id="logout-btn"><span class="nav-icon">&#x1F6AA;</span> Sign Out</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-pill">
+        <div class="user-avatar" id="sidebar-avatar">S</div>
+        <div class="user-info">
+          <div class="user-name" id="sidebar-user-name">Loading&hellip;</div>
+          <div class="user-role" id="sidebar-user-role">Sustainability Manager</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="topbar">
+      <div>
+        <h1 class="page-title">Sustainability Manager Dashboard</h1>
+        <p class="page-subtitle" id="sm-date">Loading&hellip;</p>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-secondary" onclick="loadAll()">&#x1F504; Refresh</button>
+        <button class="btn btn-primary"   onclick="window.location.href='sustainability.html'">&#x1F31F; Full Report</button>
+      </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+      <div class="glass-card kpi-card emerald">
+        <div class="kpi-icon emerald">&#x1F4CA;</div>
+        <div class="kpi-value" id="kpi-score">&#x2014;</div>
+        <div class="kpi-label">Avg Sustainability Score</div>
+        <div class="kpi-delta up">&#x2191; Across all analyses</div>
+      </div>
+      <div class="glass-card kpi-card sky">
+        <div class="kpi-icon sky">&#x1F4A8;</div>
+        <div class="kpi-value" id="kpi-co2">&#x2014;</div>
+        <div class="kpi-label">CO&#x2082; Saved (kg)</div>
+        <div class="kpi-delta up">&#x2191; Total carbon avoided</div>
+      </div>
+      <div class="glass-card kpi-card amber">
+        <div class="kpi-icon amber">&#x1F4A7;</div>
+        <div class="kpi-value" id="kpi-water">&#x2014;</div>
+        <div class="kpi-label">Water Saved (L)</div>
+        <div class="kpi-delta up">&#x2191; Total water conserved</div>
+      </div>
+      <div class="glass-card kpi-card rose">
+        <div class="kpi-icon rose">&#x1F4DD;</div>
+        <div class="kpi-value" id="kpi-reports">&#x2014;</div>
+        <div class="kpi-label">Env. Reports Generated</div>
+        <div class="kpi-delta up">Environmental assessments</div>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="sm-grid-charts">
+      <div class="glass-card card-padding">
+        <div class="chart-header">
+          <div><div class="chart-title">Sustainability Scores by Material</div><div class="chart-subtitle">Average score per material type across all analyses</div></div>
+        </div>
+        <div class="chart-container"><canvas id="scoreChart"></canvas></div>
+      </div>
+      <div class="glass-card card-padding">
+        <div class="chart-header">
+          <div><div class="chart-title">Environmental Rating Distribution</div><div class="chart-subtitle">Breakdown of environmental ratings across reports</div></div>
+        </div>
+        <div class="chart-container" style="max-height:200px;"><canvas id="ratingChart"></canvas></div>
+        <div id="rating-legend" style="margin-top:1rem;"></div>
+      </div>
+    </div>
+
+    <!-- Circular Economy KPIs -->
+    <div class="glass-card card-padding" style="margin-bottom:var(--space-xl);" id="circ-panel">
+      <div class="chart-header">
+        <div><div class="chart-title">&#x267B;&#xFE0F; Circular Economy Overview</div><div class="chart-subtitle">Platform-wide circular economy analytics</div></div>
+        <a href="sustainability.html" class="btn btn-secondary" style="font-size:0.8rem;">Deep Dive &#x2192;</a>
+      </div>
+      <div id="circ-kpis" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;">
+        <div class="empty-hint" style="grid-column:1/-1;">Loading circular economy data&hellip;</div>
+      </div>
+    </div>
+
+    <!-- Bottom: Reports + ESG -->
+    <div class="sm-grid-bottom">
+      <!-- Recent Environmental Reports -->
+      <div class="glass-card card-padding">
+        <div class="chart-header">
+          <div><div class="chart-title">&#x1F4C4; Recent Environmental Reports</div><div class="chart-subtitle">Latest environmental impact assessments</div></div>
+        </div>
+        <div id="env-reports-list"><div class="empty-hint">Loading&hellip;</div></div>
+      </div>
+
+      <!-- ESG Summary Panel -->
+      <div class="glass-card card-padding">
+        <div class="chart-header">
+          <div><div class="chart-title">&#x1F3AF; ESG Summary</div><div class="chart-subtitle">Environmental, Social &amp; Governance metrics</div></div>
+        </div>
+        <div class="esg-grid" id="esg-grid">
+          <div class="esg-card">
+            <div class="esg-icon">&#x1F4A8;</div>
+            <div class="esg-title">Carbon Impact</div>
+            <div class="esg-val" id="esg-co2">&#x2014;</div>
+            <div class="esg-sub">kg CO&#x2082; avoided</div>
+          </div>
+          <div class="esg-card">
+            <div class="esg-icon">&#x1F4A7;</div>
+            <div class="esg-title">Water Stewardship</div>
+            <div class="esg-val" id="esg-water">&#x2014;</div>
+            <div class="esg-sub">litres conserved</div>
+          </div>
+          <div class="esg-card">
+            <div class="esg-icon">&#x267B;&#xFE0F;</div>
+            <div class="esg-title">Circularity</div>
+            <div class="esg-val" id="esg-circ">&#x2014;</div>
+            <div class="esg-sub">avg circularity score</div>
+          </div>
+          <div class="esg-card">
+            <div class="esg-icon">&#x1F3C6;</div>
+            <div class="esg-title">Landfill Diversion</div>
+            <div class="esg-val" id="esg-landfill">&#x2014;</div>
+            <div class="esg-sub">% diverted from landfill</div>
+          </div>
+        </div>
+        <div style="margin-top:1rem;padding:0.75rem;background:rgba(52,211,153,0.07);border-radius:var(--radius-sm);border:1px solid rgba(52,211,153,0.2);">
+          <div style="font-size:0.78rem;color:var(--color-text-muted);margin-bottom:4px;">Overall Platform Rating</div>
+          <div style="font-size:1rem;font-weight:700;color:var(--color-primary);" id="esg-rating">Loading&hellip;</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Waste Diversion Analytics -->
+    <div class="glass-card card-padding" style="margin-bottom:var(--space-xl);">
+      <div class="chart-header">
+        <div><div class="chart-title">&#x1F4C9; Waste Diversion Analytics</div><div class="chart-subtitle">Total waste diverted from landfill by disposal method</div></div>
+      </div>
+      <div class="chart-container"><canvas id="diversionChart"></canvas></div>
+    </div>
+  </main>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  /* Role guard: analyst only */
+  if (!requireRole(['analyst'])) { /* handled */ }
+
+  document.getElementById('sm-date').textContent =
+    new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  let scoreChart=null, ratingChart=null, diversionChart=null;
+  const PAL=['rgba(52,211,153,.85)','rgba(14,165,233,.85)','rgba(245,158,11,.85)','rgba(244,63,94,.85)','rgba(139,92,246,.85)','rgba(251,113,133,.85)','rgba(34,211,238,.85)'];
+  const TT={backgroundColor:'rgba(8,20,28,.95)',borderColor:'rgba(52,211,153,.3)',borderWidth:1,titleColor:'#f0fdf4',bodyColor:'#94a3b8'};
+  const fmt = n => typeof n==='number' ? Number(n).toLocaleString(undefined,{maximumFractionDigits:1}) : '—';
+
+  async function loadSustainabilityMetrics() {
+    try {
+      const metrics = await api.fetchAllSustainabilityMetrics();
+      if (!metrics.length) {
+        document.getElementById('kpi-score').textContent = '—';
+        return;
+      }
+      // Avg sustainability score
+      const avgScore = metrics.reduce((s,m)=>s+m.sustainability_score,0)/metrics.length;
+      document.getElementById('kpi-score').textContent = avgScore.toFixed(1)+'/100';
+
+      // Group by material, compute avg scores for chart
+      const byMat = {};
+      metrics.forEach(m => {
+        if (!byMat[m.material]) byMat[m.material] = {sum:0,count:0};
+        byMat[m.material].sum   += m.sustainability_score;
+        byMat[m.material].count += 1;
+      });
+      const matLabels = Object.keys(byMat);
+      const matVals   = matLabels.map(k => +(byMat[k].sum/byMat[k].count).toFixed(1));
+
+      if(scoreChart) scoreChart.destroy();
+      scoreChart = new Chart(document.getElementById('scoreChart'),{
+        type:'bar',
+        data:{labels:matLabels, datasets:[{
+          label:'Avg Score',
+          data:matVals,
+          backgroundColor:PAL.slice(0,matLabels.length),
+          borderRadius:6, borderSkipped:false,
+        }]},
+        options:{
+          responsive:true, maintainAspectRatio:false, indexAxis:'y',
+          plugins:{legend:{display:false},tooltip:TT},
+          scales:{
+            x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#64748b',font:{size:10}},min:0,max:100},
+            y:{grid:{display:false},ticks:{color:'#94a3b8',font:{size:10}}}
+          }
+        }
+      });
+    } catch { document.getElementById('kpi-score').textContent='—'; }
+  }
+
+  async function loadEnvironmentalReports() {
+    try {
+      const reports = await api.listEnvironmentalReports();
+      document.getElementById('kpi-reports').textContent = reports.length;
+
+      if (!reports.length) {
+        document.getElementById('env-reports-list').innerHTML = '<div class="empty-hint">No environmental reports yet. Run the AI pipeline to generate them.</div>';
+        return;
+      }
+
+      // Rating distribution chart
+      const ratingCount = {};
+      reports.forEach(r => { ratingCount[r.environmental_rating] = (ratingCount[r.environmental_rating]||0)+1; });
+      const rLabels = Object.keys(ratingCount);
+      const rVals   = rLabels.map(k=>ratingCount[k]);
+      const RCOLS   = rLabels.map(r=>{
+        if(r&&r.toLowerCase().includes('excellent')) return 'rgba(52,211,153,.85)';
+        if(r&&(r.toLowerCase().includes('very good')||r.toLowerCase().includes('good'))) return 'rgba(14,165,233,.85)';
+        if(r&&r.toLowerCase().includes('fair')) return 'rgba(245,158,11,.85)';
+        return 'rgba(244,63,94,.85)';
+      });
+      if(ratingChart) ratingChart.destroy();
+      ratingChart = new Chart(document.getElementById('ratingChart'),{
+        type:'doughnut',
+        data:{labels:rLabels,datasets:[{data:rVals,backgroundColor:RCOLS,borderWidth:2,borderColor:'#050d12'}]},
+        options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{display:false},tooltip:TT}}
+      });
+      document.getElementById('rating-legend').innerHTML = rLabels.map((l,i)=>
+        `<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:.75rem;">
+          <span style="width:10px;height:10px;border-radius:50%;background:${RCOLS[i]};flex-shrink:0;"></span>
+          <span style="color:#94a3b8;flex:1;">${l||'Unrated'}</span>
+          <span style="color:#f0fdf4;font-weight:600;">${rVals[i]}</span>
+        </div>`).join('');
+
+      // Recent reports list
+      const top = reports.slice(0,6);
+      const ratingClass = r => {
+        if(!r)return 'rating-fair';
+        const l=r.toLowerCase();
+        if(l.includes('excellent'))return 'rating-excellent';
+        if(l.includes('very good')||l.includes('good'))return 'rating-good';
+        if(l.includes('fair'))return 'rating-fair';
+        return 'rating-poor';
+      };
+      document.getElementById('env-reports-list').innerHTML = top.map(r=>`
+        <div class="rep-row">
+          <div>
+            <div style="font-weight:600;font-size:.85rem;color:var(--color-text-primary);">
+              Inv #${r.inventory_id} Assessment
+            </div>
+            <div style="font-size:.75rem;color:var(--color-text-muted);margin-top:2px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+              ${r.summary||'Environmental impact assessment'}
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <span class="rating-badge ${ratingClass(r.environmental_rating)}">${r.environmental_rating||'Assessed'}</span>
+            <div style="font-size:.72rem;color:var(--color-text-muted);margin-top:4px;">${r.report_generated_at?new Date(r.report_generated_at).toLocaleDateString():'Recent'}</div>
+          </div>
+        </div>`).join('');
+    } catch {
+      document.getElementById('kpi-reports').textContent='—';
+      document.getElementById('env-reports-list').innerHTML='<div class="empty-hint">Failed to load environmental reports.</div>';
+    }
+  }
+
+  async function loadCircularAnalytics() {
+    try {
+      let circ;
+      try { circ = await api.fetchCircularAnalytics(); }
+      catch { circ = await api.generateCircularAnalytics(); }
+      if (!circ||!circ.statistics) throw new Error('No data');
+      const st = circ.statistics;
+      document.getElementById('kpi-co2').textContent   = fmt(st.total_co2_saved);
+      document.getElementById('kpi-water').textContent = fmt(st.total_water_saved);
+      // ESG panel
+      document.getElementById('esg-co2').textContent     = fmt(st.total_co2_saved);
+      document.getElementById('esg-water').textContent   = fmt(st.total_water_saved);
+      document.getElementById('esg-circ').textContent    = st.average_circularity_score?.toFixed(1)||'—';
+      document.getElementById('esg-landfill').textContent= st.average_landfill_diversion?.toFixed(1)||'—';
+      document.getElementById('esg-rating').textContent  = circ.overall_rating||'—';
+      // Circular KPIs strip
+      const kpis = [
+        {label:'Total Analyses', val: st.total_analyses||'—'},
+        {label:'Resource Recovery (kg)', val: fmt(st.total_resource_recovery)},
+        {label:'Avg Sus. Score', val: st.average_sustainability_score?.toFixed(1)||'—'},
+        {label:'Avg Circularity', val: st.average_circularity_score?.toFixed(1)||'—'},
+        {label:'Platform Rating', val: circ.overall_rating||'—'},
+      ];
+      document.getElementById('circ-kpis').innerHTML = kpis.map(k=>`
+        <div class="circ-kpi">
+          <div class="circ-val">${k.val}</div>
+          <div class="circ-label">${k.label}</div>
+        </div>`).join('');
+    } catch {
+      document.getElementById('kpi-co2').textContent = '—';
+      document.getElementById('kpi-water').textContent = '—';
+      document.getElementById('esg-rating').textContent = 'Run analyses first';
+      document.getElementById('circ-kpis').innerHTML='<div class="empty-hint" style="grid-column:1/-1;">No circular analytics yet. Run sustainability analyses first.</div>';
+    }
+  }
+
+  async function loadWasteDiversion() {
+    try {
+      const data = await api.getAnalytics(new Date().getFullYear());
+      const disposal = data.by_disposal||{};
+      const labels = Object.keys(disposal).map(k=>k.replace(/_/g,' '));
+      const vals   = Object.values(disposal);
+      if(!labels.length){document.getElementById('diversionChart').parentElement.innerHTML='<div class="empty-hint">No waste diversion data yet.</div>';return;}
+      if(diversionChart) diversionChart.destroy();
+      diversionChart = new Chart(document.getElementById('diversionChart'),{
+        type:'bar',
+        data:{labels,datasets:[{
+          label:'Waste (kg)',
+          data:vals,
+          backgroundColor:PAL.slice(0,labels.length),
+          borderRadius:6,borderSkipped:false,
+        }]},
+        options:{
+          responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{display:false},tooltip:TT},
+          scales:{
+            x:{grid:{display:false},ticks:{color:'#94a3b8',font:{size:10}}},
+            y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#64748b',font:{size:10}},beginAtZero:true}
+          }
+        }
+      });
+    } catch { document.getElementById('diversionChart').parentElement.innerHTML='<div class="empty-hint">Failed to load diversion data.</div>'; }
+  }
+
+  async function loadAll() {
+    await Promise.all([
+      loadSustainabilityMetrics(),
+      loadEnvironmentalReports(),
+      loadCircularAnalytics(),
+      loadWasteDiversion(),
+    ]);
+  }
+  document.addEventListener('DOMContentLoaded', loadAll);
+</script>
+</body>
+</html>

@@ -7,6 +7,7 @@ from app.models.sustainability_metric import SustainabilityMetric              #
 from app.models.recycling_recommendation import RecyclingRecommendation        # Milestone 4
 from app.models.environmental_report import EnvironmentalReport                # Milestone 4 — Environmental Impact
 from app.models.circular_economy import CircularEconomyAnalytics               # Milestone 3 — Circular Economy Analytics Engine
+from app.models.notification import Notification
 
 __all__ = [
     "User", "UserRole",
@@ -18,4 +19,5 @@ __all__ = [
     "RecyclingRecommendation",                             # Milestone 4
     "EnvironmentalReport",                                  # Milestone 4 — Environmental Impact
     "CircularEconomyAnalytics",                             # Milestone 3 — Circular Economy Analytics Engine
+    "Notification",
 ]

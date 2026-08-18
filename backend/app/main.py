@@ -13,6 +13,7 @@ from app.routers.sustainability import router as sustainability_router  # Milest
 from app.routers.recommendation import router as recommendation_router  # Milestone 4
 from app.routers.environmental import router as environmental_router    # Milestone 4 — Environmental Impact Assessment
 from app.routers.circular_analytics import router as circular_analytics_router  # Milestone 3 — Circular Economy Analytics Engine
+from app.routers import admin                                           # Milestone 4 - Admin
 # from app.routers.upload_router import router as upload_router          # Image Upload Module (Disabled due to route conflict)
 
 app = FastAPI(
@@ -46,6 +47,9 @@ app.include_router(sustainability_router)                               # Milest
 app.include_router(recommendation_router)                               # Milestone 4
 app.include_router(environmental_router)                                # Milestone 4 — Environmental Impact Assessment
 app.include_router(circular_analytics_router)                           # Milestone 3 — Circular Economy Analytics Engine
+app.include_router(admin.router)                                        # Milestone 4 - Admin User Management
+from app.routers import notifications                                   # Import locally to avoid issues
+app.include_router(notifications.router)                                # Milestone 4 - Notification & Alerts
 # app.include_router(upload_router)                                       # Image Upload Module (Disabled due to route conflict)
 
 # ── Static Files: serve uploaded textile images ───────────────────────────────

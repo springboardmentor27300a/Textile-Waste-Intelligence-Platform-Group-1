@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
 from typing import Optional
 from datetime import datetime
 from app.models.user import UserRole
@@ -26,8 +26,15 @@ class UserOut(BaseModel):
     is_active: bool
     created_at: Optional[datetime]
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
+
+
+class UserRoleUpdate(BaseModel):
+    role: UserRole
+
+
+class UserStatusUpdate(BaseModel):
+    is_active: bool
 
 
 class Token(BaseModel):
@@ -144,3 +151,27 @@ class DashboardStats(BaseModel):
     recycling_rate: float
     active_suppliers: int
     recent_waste_records: int
+
+
+# ── Notification Schemas ──────────────────────────────────────────────────────
+
+from app.models.notification import NotificationType
+
+class NotificationCreate(BaseModel):
+    title: str
+    message: str
+    type: NotificationType = NotificationType.info
+    role_target: Optional[UserRole] = None
+    user_id: Optional[int] = None
+
+class NotificationOut(BaseModel):
+    id: int
+    user_id: Optional[int]
+    role_target: Optional[UserRole]
+    type: NotificationType
+    title: str
+    message: str
+    is_read: bool
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)

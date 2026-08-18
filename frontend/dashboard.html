@@ -103,6 +103,9 @@
       <a href="image-analysis.html" class="nav-item">
         <span class="nav-icon">🔬</span> Image Analysis
       </a>
+      <a href="sustainability.html" class="nav-item">
+        <span class="nav-icon">🌱</span> Sustainability
+      </a>
       <a href="reports.html"        class="nav-item">
         <span class="nav-icon">📈</span> Reports
       </a>
@@ -255,6 +258,50 @@
 
     <div class="divider"></div>
 
+    <!-- ── Milestone 4: Recent Activity ──────────────────────────────────── -->
+    <div style="margin-bottom: var(--space-lg);">
+      <h2 style="font-size:1.25rem;font-weight:700;display:flex;align-items:center;gap:8px;">
+        <span>⚡</span> Recent Activity
+      </h2>
+      <p style="font-size:0.85rem;color:var(--color-text-muted);margin-top:2px;">
+        Latest AI recycling recommendations and environmental impact assessments
+      </p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-lg); margin-bottom: var(--space-xl);">
+      <!-- Recent Recommendations -->
+      <div class="glass-card card-padding">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Recent Recommendations</div>
+            <div class="chart-subtitle">Latest AI recycling strategies</div>
+          </div>
+        </div>
+        <div id="recent-recommendations" style="max-height: 280px; overflow-y: auto;">
+          <div class="flex items-center gap-md" style="justify-content:center;height:120px;">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Environmental Reports -->
+      <div class="glass-card card-padding">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Recent Environmental Impact</div>
+            <div class="chart-subtitle">Latest sustainability assessments</div>
+          </div>
+        </div>
+        <div id="recent-environmental" style="max-height: 280px; overflow-y: auto;">
+          <div class="flex items-center gap-md" style="justify-content:center;height:120px;">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
     <!-- ── Sustainability Overview ────────────────────────────────────────── -->
     <div style="margin-bottom: var(--space-lg);">
       <h2 style="font-size:1.25rem;font-weight:700;display:flex;align-items:center;gap:8px;">
@@ -328,7 +375,7 @@
 
       document.getElementById('kpi-inventory').textContent  = fmt(stats.total_inventory_kg) || '0';
       document.getElementById('kpi-recycling').textContent  = (stats.recycling_rate || 0) + '%';
-      document.getElementById('kpi-suppliers').textContent  = stats.active_suppliers || '0';
+      document.getElementById('kpi-suppliers').textContent  = suppliers ? suppliers.length : (stats.active_suppliers || '0');
       document.getElementById('kpi-waste').textContent      = fmt(stats.total_waste_kg) || '0';
 
       if (suppliers && suppliers.length > 0) {
@@ -347,6 +394,7 @@
     await loadCharts();
     await loadInventorySummary();
     await loadSustainabilityOverview();
+    await loadRecentActivity();
   }
 
   async function loadCharts() {
@@ -597,8 +645,57 @@
     }
   }
 
+  async function loadRecentActivity() {
+    try {
+      const [recs, envs] = await Promise.all([
+        api.listRecommendations().catch(() => []),
+        api.listEnvironmentalReports().catch(() => []),
+      ]);
+      
+      const recsContainer = document.getElementById('recent-recommendations');
+      if (recs && recs.length > 0) {
+        recsContainer.innerHTML = recs.slice(0, 5).map(r => `
+          <div class="supplier-card" style="margin-bottom: 8px;">
+            <div>
+              <div class="fw-bold text-primary" style="font-size: 0.95rem;">${r.recommendation}</div>
+              <div class="text-secondary" style="font-size: 0.8rem;">Inv #${r.inventory_id} · ${r.material_type} · ${r.waste_category}</div>
+            </div>
+            <div style="text-align: right;">
+              <span style="padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; background: ${r.priority === 'High' ? 'rgba(244,63,94,0.1)' : r.priority === 'Medium' ? 'rgba(251,191,36,0.1)' : 'rgba(52,211,153,0.1)'}; color: ${r.priority === 'High' ? 'var(--color-danger)' : r.priority === 'Medium' ? 'var(--color-warning)' : 'var(--color-primary)'};">${r.priority}</span>
+              <div style="font-size: 0.7rem; color: var(--color-text-muted); margin-top: 4px;">${r.created_at ? new Date(r.created_at).toLocaleDateString() : 'Recent'}</div>
+            </div>
+          </div>
+        `).join('');
+      } else {
+        recsContainer.innerHTML = '<div class="text-secondary text-center py-4">No recommendations available yet.</div>';
+      }
+
+      const envContainer = document.getElementById('recent-environmental');
+      if (envs && envs.length > 0) {
+        envContainer.innerHTML = envs.slice(0, 5).map(e => `
+          <div class="supplier-card" style="margin-bottom: 8px;">
+            <div>
+              <div class="fw-bold text-accent" style="font-size: 0.95rem;">${e.environmental_rating} Rating</div>
+              <div class="text-secondary" style="font-size: 0.8rem;">Inv #${e.inventory_id}</div>
+              <div class="text-secondary" style="font-size: 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px;">${e.summary}</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 0.7rem; color: var(--color-text-muted); margin-top: 4px;">${e.report_generated_at ? new Date(e.report_generated_at).toLocaleDateString() : 'Recent'}</div>
+            </div>
+          </div>
+        `).join('');
+      } else {
+        envContainer.innerHTML = '<div class="text-secondary text-center py-4">No environmental reports available yet.</div>';
+      }
+
+    } catch (err) {
+      document.getElementById('recent-recommendations').innerHTML = '<div class="text-secondary text-center py-4">Failed to load recent activity.</div>';
+      document.getElementById('recent-environmental').innerHTML = '<div class="text-secondary text-center py-4">Failed to load recent activity.</div>';
+    }
+  }
+
   function renderSuppliers(suppliers) {
-    const flags = { Bangladesh:'🇧🇩', India:'🇮🇳', Vietnam:'🇻🇳', China:'🇨🇳', Turkey:'🇹🇷', Peru:'🇵🇪', Morocco:'🇲🇦' };
+    const flags = { Bangladesh:'🇧🇩', India:'🇮🇳', Vietnam:'🇻🇳', China:'🇨🇳', Turkey:'🇹🇷', Peru:'🇵🇪', Morocco:'🇲🇦', UK:'🇬🇧' };
     const sorted = [...suppliers].sort((a,b) => b.waste_rating - a.waste_rating).slice(0,5);
     document.getElementById('suppliers-list').innerHTML = sorted.map(s => `
       <div class="supplier-card">

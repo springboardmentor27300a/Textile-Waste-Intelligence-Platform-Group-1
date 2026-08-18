@@ -24,7 +24,7 @@ def list_waste_records(
     current_user: User = Depends(get_current_user),
 ):
     """List waste records with optional filters."""
-    query = db.query(WasteRecord).filter(WasteRecord.recorded_by_id == current_user.id)
+    query = db.query(WasteRecord)
     if waste_type:
         query = query.filter(WasteRecord.waste_type == waste_type)
     if disposal_method:
@@ -55,7 +55,7 @@ def get_analytics(
     current_user: User = Depends(get_current_user),
 ):
     """Return aggregated waste analytics."""
-    query = db.query(WasteRecord).filter(WasteRecord.recorded_by_id == current_user.id)
+    query = db.query(WasteRecord)
     if year:
         query = query.filter(WasteRecord.period_year == year)
 
@@ -111,13 +111,13 @@ def dashboard_stats(
     from app.models.inventory import Inventory
     from app.models.supplier import Supplier
 
-    total_inv_kg = db.query(func.sum(Inventory.quantity_kg)).filter(Inventory.created_by_id == current_user.id).scalar() or 0
-    total_inv_items = db.query(func.count(Inventory.id)).filter(Inventory.created_by_id == current_user.id).scalar() or 0
-    total_waste_kg = db.query(func.sum(WasteRecord.quantity_kg)).filter(WasteRecord.recorded_by_id == current_user.id).scalar() or 0
+    total_inv_kg = db.query(func.sum(Inventory.quantity_kg)).scalar() or 0
+    total_inv_items = db.query(func.count(Inventory.id)).scalar() or 0
+    total_waste_kg = db.query(func.sum(WasteRecord.quantity_kg)).scalar() or 0
     active_suppliers = db.query(func.count(Supplier.id)).scalar() or 0
-    recent_records = db.query(func.count(WasteRecord.id)).filter(WasteRecord.recorded_by_id == current_user.id).scalar() or 0
+    recent_records = db.query(func.count(WasteRecord.id)).scalar() or 0
 
-    all_waste = db.query(WasteRecord).filter(WasteRecord.recorded_by_id == current_user.id).all()
+    all_waste = db.query(WasteRecord).all()
     if all_waste and total_waste_kg > 0:
         total_recycled = sum(r.quantity_kg * (r.recycled_percentage / 100) for r in all_waste)
         recycling_rate = round((total_recycled / total_waste_kg) * 100, 2)

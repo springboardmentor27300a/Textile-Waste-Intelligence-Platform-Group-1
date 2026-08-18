@@ -287,7 +287,17 @@
         <h2 class="login-heading">Welcome back</h2>
         <p class="login-subheading">Sign in to your account to continue</p>
 
+        <div class="role-demo">
+          <div class="role-demo-title">One-Click Demo Access</div>
+          <div class="role-pills">
+            <button type="button" class="role-pill" data-role="auditor" onclick="loginDemo('auditor@test.com')">Recycling Operator</button>
+            <button type="button" class="role-pill" data-role="analyst" onclick="loginDemo('analyst@test.com')">Sustainability Manager</button>
+            <button type="button" class="role-pill" data-role="supplier" onclick="loginDemo('supplier@test.com')">Textile Manufacturer</button>
+            <button type="button" class="role-pill" data-role="admin" onclick="loginDemo('admin@test.com')">Admin</button>
+          </div>
+        </div>
 
+        <div class="divider-text">OR SIGN IN WITH EMAIL</div>
 
         <form id="login-form" novalidate>
           <div class="form-group">
@@ -325,6 +335,13 @@
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
   <script>
+    // Demo Login Helper
+    function loginDemo(email) {
+      document.getElementById('email').value = email;
+      document.getElementById('password').value = 'password';
+      document.getElementById('login-btn').click();
+    }
+
     // Toggle password visibility
     document.getElementById('toggle-pw').addEventListener('click', () => {
       const pw = document.getElementById('password');
@@ -347,7 +364,8 @@
       try {
         const res = await api.login({ email, password });
         saveAuth(res.access_token, res.user);
-        window.location.href = 'dashboard.html';
+        // Route to role-specific dashboard (getRoleDashboard defined in auth.js)
+        window.location.href = getRoleDashboard(res.user.role);
       } catch (err) {
         errEl.textContent    = err.message || 'Invalid credentials. Please try again.';
         errEl.style.display  = 'block';
@@ -363,3 +381,4 @@
   </script>
 </body>
 </html>
+

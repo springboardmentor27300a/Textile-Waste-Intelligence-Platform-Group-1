@@ -81,6 +81,9 @@
       <a href="image-analysis.html" class="nav-item">
         <span class="nav-icon">🔬</span> Image Analysis
       </a>
+      <a href="sustainability.html" class="nav-item">
+        <span class="nav-icon">🌱</span> Sustainability
+      </a>
       <a href="reports.html"        class="nav-item active">
         <span class="nav-icon">📈</span> Reports
       </a>
@@ -109,9 +112,10 @@
         <h1 class="page-title">Reports & AI History</h1>
         <p class="page-subtitle">Historical AI analysis reports and deep-dive analytics</p>
       </div>
-      <div class="topbar-actions">
-        <button class="btn btn-primary" onclick="window.print()">🖨 Print Report</button>
-      </div>
+        <div class="topbar-actions" style="display:flex; gap:0.5rem;">
+          <button class="btn btn-secondary" onclick="exportToExcel()">📊 Export Excel</button>
+          <button class="btn btn-primary" onclick="exportToPDF()">📄 Export PDF</button>
+        </div>
     </div>
 
     <!-- AI Report History -->
@@ -234,35 +238,10 @@
     <h3 style="margin-bottom:var(--space-lg); font-size:1rem; color:var(--color-text-secondary); font-weight:600; letter-spacing:0.06em; text-transform:uppercase; font-size:0.75rem;">
       🤖 Automated Insights
     </h3>
-    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:var(--space-lg);">
-
-      <div class="glass-card insight-card">
-        <div class="insight-icon">♻️</div>
-        <div>
-          <div class="insight-title">High Recycling Performance</div>
-          <div class="insight-body">Your overall recycling rate of 76.3% exceeds the global textile industry average of 58%. Wool and silk batches show the highest diversion rates.</div>
-          <span class="insight-tag tag-good">↑ Above Target</span>
-        </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:var(--space-lg);" id="automated-insights-container">
+      <div class="glass-card insight-card" style="grid-column: 1/-1; justify-content: center; padding: 3rem;">
+        <div class="spinner"></div>
       </div>
-
-      <div class="glass-card insight-card">
-        <div class="insight-icon">⚠️</div>
-        <div>
-          <div class="insight-title">Dye Waste Concern</div>
-          <div class="insight-body">Chemical and dye waste disposal via landfill has increased by 12% this quarter. Consider partnering with specialist recyclers for hazardous textile waste.</div>
-          <span class="insight-tag tag-warning">⚠ Action Needed</span>
-        </div>
-      </div>
-
-      <div class="glass-card insight-card">
-        <div class="insight-icon">📦</div>
-        <div>
-          <div class="insight-title">Inventory Efficiency</div>
-          <div class="insight-body">Cotton accounts for 43% of total inventory. Polyester batches show higher waste-to-inventory ratios. Recommend Grade B polyester reallocation.</div>
-          <span class="insight-tag tag-warning">🔍 Review Suggested</span>
-        </div>
-      </div>
-
     </div>
 
   </main>
@@ -270,6 +249,8 @@
 
 <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 <script>
   requireAuth();
 
@@ -301,6 +282,7 @@
         renderMonthlyChart(analytics.monthly_trend);
         renderRadarChart(analytics.by_waste_type);
         renderCO2Chart(analytics.monthly_trend);
+        await loadAutomatedInsights(analytics);
       } else {
         throw new Error("No data");
       }
@@ -309,6 +291,85 @@
     }
     renderMaterialRecycleChart();
     loadAIHistory();
+  }
+
+  async function loadAutomatedInsights(analytics) {
+    const container = document.getElementById('automated-insights-container');
+    if (!container) return;
+
+    try {
+      let circ = null;
+      try { circ = await api.fetchCircularAnalytics(); } catch(e) {}
+
+      const insights = [];
+
+      if (analytics && analytics.recycling_rate !== undefined) {
+        const rate = analytics.recycling_rate;
+        let icon, title, body, tag, tagClass;
+        if (rate >= 60) {
+          icon = '♻️'; title = 'High Recycling Performance';
+          body = `Your overall recycling rate of ${rate}% is excellent. Most of your waste is successfully diverted from landfills.`;
+          tag = '↑ Above Target'; tagClass = 'tag-good';
+        } else if (rate >= 30) {
+          icon = '⚖️'; title = 'Moderate Recycling Performance';
+          body = `Your overall recycling rate is ${rate}%. There is room for improvement in material sorting and recovery.`;
+          tag = '→ On Track'; tagClass = 'tag-warning';
+        } else {
+          icon = '⚠️'; title = 'Low Recycling Performance';
+          body = `Your overall recycling rate is only ${rate}%. Please review your waste management processes to reduce landfill use.`;
+          tag = '⚠ Action Needed'; tagClass = 'tag-bad';
+        }
+        insights.push({ icon, title, body, tag, tagClass });
+      }
+
+      if (analytics && analytics.top_waste_type) {
+        const top = analytics.top_waste_type.replace(/_/g, ' ');
+        insights.push({
+          icon: '📦',
+          title: 'Primary Waste Category',
+          body: `The majority of your textile waste falls under the "${top}" category. Prioritizing specialized recycling channels for this stream will maximize resource recovery.`,
+          tag: '🔍 Key Observation',
+          tagClass: 'tag-warning'
+        });
+      }
+
+      if (circ && circ.statistics && circ.statistics.total_co2_saved > 0) {
+        insights.push({
+          icon: '🌍',
+          title: 'Positive Climate Impact',
+          body: `Your circular practices have successfully saved ${fmt(circ.statistics.total_co2_saved)} kg of CO₂ and ${fmt(circ.statistics.total_water_saved)} L of water across all analyzed inventory.`,
+          tag: '⭐ Milestone Achieved',
+          tagClass: 'tag-good'
+        });
+      } else if (circ && circ.generated_insights && circ.generated_insights.length > 0) {
+        insights.push({
+          icon: '💡',
+          title: 'AI Circular Insight',
+          body: circ.generated_insights[0],
+          tag: '💡 Smart Suggestion',
+          tagClass: 'tag-good'
+        });
+      }
+
+      if (insights.length === 0) {
+        container.innerHTML = '<div style="grid-column: 1/-1;" class="text-secondary text-center py-4">No insights available yet. Run more analyses to generate automated insights.</div>';
+        return;
+      }
+
+      container.innerHTML = insights.map(ins => `
+        <div class="glass-card insight-card">
+          <div class="insight-icon">${ins.icon}</div>
+          <div>
+            <div class="insight-title">${ins.title}</div>
+            <div class="insight-body">${ins.body}</div>
+            <span class="insight-tag ${ins.tagClass}">${ins.tag}</span>
+          </div>
+        </div>
+      `).join('');
+      
+    } catch (err) {
+      container.innerHTML = '<div style="grid-column: 1/-1;" class="text-secondary text-center py-4">Failed to load automated insights.</div>';
+    }
   }
 
   async function loadAIHistory() {
@@ -325,37 +386,120 @@
       const reports = await Promise.all(
         imagesRes.images.map(img => api.getReport(img.id).catch(() => null))
       );
-      
       const validReports = reports.filter(r => r !== null);
+      window.currentReportsData = validReports;
       
       if (validReports.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-secondary">No AI analysis history found.</td></tr>';
         return;
       }
 
-      tbody.innerHTML = validReports.map(r => `
-        <tr onclick="viewReport('${r.image_id}')">
+      tbody.innerHTML = validReports.map(r => {
+        const cat = r.waste_category || '—';
+        const badgeStyle = cat === 'Recyclable' ? 'background:rgba(52,211,153,0.15);color:#34d399;' :
+                           cat === 'Reusable' ? 'background:rgba(96,165,250,0.15);color:#60a5fa;' :
+                           cat === 'Upcyclable' ? 'background:rgba(192,132,252,0.15);color:#c084fc;' :
+                           cat === 'Repairable' ? 'background:rgba(251,191,36,0.15);color:#fbbf24;' :
+                           cat === 'Compostable' ? 'background:rgba(52,211,153,0.08);color:#6ee7b7;' :
+                           'background:rgba(148,163,184,0.15);color:#94a3b8;';
+        return `
+        <tr onclick="viewReport('${r.image_id}')" style="cursor:pointer;">
           <td style="color:var(--color-text-secondary);">${new Date(r.generated_at).toLocaleDateString()}</td>
           <td>
             <div style="width:40px;height:40px;border-radius:4px;overflow:hidden;background:#000;">
-              <img src="${r.image_url}" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\'></svg>'"/>
+              <img src="${r.image_url}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='📷'"/>
             </div>
           </td>
           <td class="fw-bold">${r.material || '—'}</td>
-          <td><span class="badge ${r.waste_category==='Recyclable'?'badge-active':'badge-reserved'}">${r.waste_category || '—'}</span></td>
+          <td><span style="padding:3px 10px;border-radius:999px;font-size:0.78rem;font-weight:600;${badgeStyle}">${cat}</span></td>
           <td>${r.recyclability_score ? (r.recyclability_score+'/100') : '—'}</td>
-          <td><button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); viewReport('${r.image_id}')">View Report</button></td>
-        </tr>
-      `).join('');
+          <td>
+            <div style="display:flex; gap:0.5rem;">
+              <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); viewReport('${r.image_id}')">View</button>
+              <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteAnalysis('${r.image_id}')">Delete</button>
+            </div>
+          </td>
+        </tr>`
+      }).join('');
     } catch (e) {
       document.getElementById('ai-history-body').innerHTML = '<tr><td colspan="6" class="text-center py-4 text-danger">Failed to load history</td></tr>';
     }
   }
 
+  function exportToExcel() {
+    if (!window.currentReportsData || window.currentReportsData.length === 0) {
+      showToast('No data available to export', 'error');
+      return;
+    }
+    const headers = ['Date', 'Image ID', 'Material', 'Waste Category', 'Recyclability Score'];
+    const rows = window.currentReportsData.map(r => [
+      new Date(r.generated_at).toLocaleDateString(),
+      r.image_id,
+      r.material || 'N/A',
+      r.waste_category || 'N/A',
+      r.recyclability_score || 'N/A'
+    ]);
+    const csvContent = [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", "AI_Analysis_Report.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast('Exported to Excel (CSV)', 'success');
+  }
+
+  function exportToPDF() {
+    if (!window.currentReportsData || window.currentReportsData.length === 0) {
+      showToast('No data available to export', 'error');
+      return;
+    }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+    doc.text('AI Analysis History Report', 14, 22);
+    doc.setFontSize(11);
+    doc.text('Generated on: ' + new Date().toLocaleDateString(), 14, 30);
+
+    const headers = [['Date', 'Image ID', 'Material', 'Waste Category', 'Score']];
+    const data = window.currentReportsData.map(r => [
+      new Date(r.generated_at).toLocaleDateString(),
+      r.image_id,
+      r.material || 'N/A',
+      r.waste_category || 'N/A',
+      r.recyclability_score || 'N/A'
+    ]);
+
+    doc.autoTable({
+      startY: 36,
+      head: headers,
+      body: data,
+      theme: 'grid',
+      headStyles: { fillColor: [15, 118, 110] } // Teal color
+    });
+
+    doc.save('AI_Analysis_Report.pdf');
+    showToast('Exported to PDF', 'success');
+  }
+
+  async function deleteAnalysis(id) {
+    if (!confirm('Are you sure you want to delete this analysis record? This action cannot be undone.')) return;
+    try {
+      await api.deleteImage(id);
+      showToast('Analysis record deleted successfully', 'success');
+      // Refresh both the table and the KPIs
+      await loadReports();
+    } catch (err) {
+      showToast(err.message || 'Failed to delete record', 'error');
+    }
+  }
+
   function viewReport(id) {
-    // Navigate to Image Analysis with image ID or show inline.
-    // For simplicity, we just alert or route to the image analysis page.
-    window.location.href = `image-analysis.html?image_id=${id}`;
+    // Navigate to Image Analysis with image ID. Include a timestamp to force the browser to bypass its cache and load the latest fixes!
+    window.location.href = `image-analysis.html?image_id=${id}&v=${Date.now()}`;
   }
 
   function updateKPIs(a) {
@@ -394,6 +538,8 @@
       banner.innerHTML = `<p class="text-primary fw-bold mb-sm" style="font-size:1.1rem;">🌱 No analyses have been completed yet.</p><p class="text-secondary" style="font-size:0.9rem;">Upload your first textile image in the <a href="image-analysis.html" style="color:var(--color-primary);text-decoration:underline;">Image Analysis Pipeline</a> to generate reports.</p>`;
       grid.parentNode.insertBefore(banner, grid);
     }
+    
+    document.getElementById('automated-insights-container').innerHTML = '<div style="grid-column: 1/-1;" class="text-secondary text-center py-4">No insights available yet. Upload your first textile image in the Image Analysis Pipeline to begin generating insights.</div>';
   }
 
   function renderMonthlyChart(monthly) {

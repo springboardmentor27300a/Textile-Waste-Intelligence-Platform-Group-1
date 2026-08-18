@@ -81,6 +81,7 @@ class RecyclabilityResponse(BaseModel):
 
 class TextileReport(BaseModel):
     image_id:           int
+    inventory_id:       Optional[int] = None
     user_sequence_num:  Optional[int] = None
     image_url:          str
     original_name:      str

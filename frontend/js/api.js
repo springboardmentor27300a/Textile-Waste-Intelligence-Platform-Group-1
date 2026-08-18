@@ -23,11 +23,14 @@ async function apiFetch(endpoint, options = {}) {
   if (response.status === 401) {
     localStorage.removeItem("twi_token");
     localStorage.removeItem("twi_user");
-    if (!window.location.pathname.endsWith("index.html") && window.location.pathname !== "/") {
-      window.location.href = "index.html";
+    
+    // Instead of silent redirect, show a toast and throw a clear error
+    if (typeof showToast === 'function') {
+      showToast("Session expired — please log in again", "error");
     }
-    const err = await response.json().catch(() => ({ detail: "Unauthorized" }));
-    throw new Error(err.detail || "Invalid email or password");
+    
+    // Throw error so the pipeline stops and shows it in the UI instead of navigating away
+    throw new Error("Session expired — please log in again");
   }
 
   if (!response.ok) {
@@ -91,6 +94,7 @@ const api = {
   },
   listImages:   ()    => apiFetch("/image"),
   getImage:     (id)  => apiFetch(`/image/${id}`),
+  linkInventory: (id, invId) => apiFetch(`/image/${id}/link-inventory?inventory_id=${invId}`, { method: "POST" }),
   deleteImage:  (id)  => apiFetch(`/image/${id}`, { method: "DELETE" }),
   analyzeImage: (id)  => apiFetch(`/image/analyze/${id}`, { method: "POST" }),
 
@@ -124,6 +128,11 @@ const api = {
   fetchEnvironmentalReport:      (id) => apiFetch(`/api/environmental/${id}`),
   generateCircularAnalytics:     () => apiFetch("/api/circular-analytics/generate", { method: "POST" }),
   fetchCircularAnalytics:        () => apiFetch("/api/circular-analytics/latest"),
+
+  // ── Milestone 4: Dashboards ──────────────────────────────────────────────
+  listRecommendations:           () => apiFetch("/api/recommendation"),
+  listEnvironmentalReports:      () => apiFetch("/api/environmental"),
+  getCurrentUser:                () => apiFetch("/api/auth/me"),
 
   // ── Generate endpoints (POST to create data before GET can retrieve it) ──
   // These MUST be called before their corresponding GET/fetch endpoints.

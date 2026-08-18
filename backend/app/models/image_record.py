@@ -20,10 +20,12 @@ class TextileImage(Base):
     mime_type       = Column(String, default="image/jpeg")
 
     uploaded_by_id  = Column(Integer, ForeignKey("users.id"), nullable=True)
+    inventory_id    = Column(Integer, ForeignKey("inventory.id"), nullable=True)
     uploaded_at     = Column(DateTime(timezone=True), server_default=func.now())
 
     # Relationship
     uploader = relationship("User", foreign_keys=[uploaded_by_id])
+    inventory = relationship("Inventory")
 
     @property
     def user_sequence_num(self):

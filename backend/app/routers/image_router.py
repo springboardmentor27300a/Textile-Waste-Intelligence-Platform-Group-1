@@ -53,8 +53,7 @@ def get_image(
 ):
     """Retrieve image metadata by ID (only if owned by current user)."""
     record = db.query(TextileImage).filter(
-        TextileImage.id == image_id,
-        TextileImage.uploaded_by_id == current_user.id
+        TextileImage.id == image_id
     ).first()
     if not record:
         raise HTTPException(status_code=404, detail="Image not found")
@@ -70,8 +69,8 @@ def list_images(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """List images uploaded by the current user."""
-    base_query = db.query(TextileImage).filter(TextileImage.uploaded_by_id == current_user.id)
+    """List all uploaded images across the platform."""
+    base_query = db.query(TextileImage)
     total   = base_query.count()
     records = base_query.order_by(TextileImage.uploaded_at.desc()).offset(skip).limit(limit).all()
     return {"total": total, "images": records}
@@ -85,13 +84,19 @@ def delete_image(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """Delete image record from DB and file from disk (only owner may delete)."""
-    record = db.query(TextileImage).filter(
-        TextileImage.id == image_id,
-        TextileImage.uploaded_by_id == current_user.id
-    ).first()
+    """Delete image record from DB and file from disk (only owner or admin may delete)."""
+    
+    # If admin, can delete any. If not, must be owner.
+    if current_user.role.value == "admin":
+        record = db.query(TextileImage).filter(TextileImage.id == image_id).first()
+    else:
+        record = db.query(TextileImage).filter(
+            TextileImage.id == image_id,
+            TextileImage.uploaded_by_id == current_user.id
+        ).first()
+
     if not record:
-        raise HTTPException(status_code=404, detail="Image not found")
+        raise HTTPException(status_code=404, detail="Image not found or unauthorized")
 
     delete_image_file(record.file_path)
     db.delete(record)
@@ -140,3 +145,23 @@ def analyze_image(
     analysis["recommendations"] = rec_result
 
     return analysis
+
+
+@router.post("/{image_id}/link-inventory")
+def link_inventory(
+    image_id: int,
+    inventory_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Link an uploaded image to an inventory batch.
+    """
+    record = db.query(TextileImage).filter(TextileImage.id == image_id).first()
+    if not record:
+        raise HTTPException(status_code=404, detail="Image not found")
+        
+    record.inventory_id = inventory_id
+    db.commit()
+    
+    return {"message": "Inventory linked successfully", "image_id": image_id, "inventory_id": inventory_id}

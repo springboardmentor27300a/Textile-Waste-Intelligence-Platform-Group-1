@@ -20,8 +20,8 @@ def list_inventory(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """List all inventory records (filtered by current user)."""
-    query = db.query(Inventory).filter(Inventory.created_by_id == current_user.id)
+    """List all inventory records."""
+    query = db.query(Inventory)
     if material_type:
         query = query.filter(Inventory.material_type.ilike(f"%{material_type}%"))
     if status:
@@ -38,17 +38,15 @@ def get_summary(
 ):
     """Return aggregated inventory statistics."""
     from sqlalchemy import func
-    total_kg = db.query(func.sum(Inventory.quantity_kg)).filter(Inventory.created_by_id == current_user.id).scalar() or 0
-    total_items = db.query(func.count(Inventory.id)).filter(Inventory.created_by_id == current_user.id).scalar() or 0
+    total_kg = db.query(func.sum(Inventory.quantity_kg)).scalar() or 0
+    total_items = db.query(func.count(Inventory.id)).scalar() or 0
     by_material = (
         db.query(Inventory.material_type, func.sum(Inventory.quantity_kg))
-        .filter(Inventory.created_by_id == current_user.id)
         .group_by(Inventory.material_type)
         .all()
     )
     by_status = (
         db.query(Inventory.status, func.count(Inventory.id))
-        .filter(Inventory.created_by_id == current_user.id)
         .group_by(Inventory.status)
         .all()
     )
@@ -66,9 +64,9 @@ def get_inventory(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    item = db.query(Inventory).filter(Inventory.id == inventory_id, Inventory.created_by_id == current_user.id).first()
+    item = db.query(Inventory).filter(Inventory.id == inventory_id).first()
     if not item:
-        raise HTTPException(status_code=404, detail="Inventory item not found or you don't have permission")
+        raise HTTPException(status_code=404, detail="Inventory item not found")
     return item
 
 
@@ -97,9 +95,9 @@ def update_inventory(
     current_user: User = Depends(require_admin_or_analyst),
 ):
     """Update an inventory record."""
-    item = db.query(Inventory).filter(Inventory.id == inventory_id, Inventory.created_by_id == current_user.id).first()
+    item = db.query(Inventory).filter(Inventory.id == inventory_id).first()
     if not item:
-        raise HTTPException(status_code=403, detail="Inventory item not found or you don't have permission")
+        raise HTTPException(status_code=403, detail="Inventory item not found")
     for field, value in data.model_dump(exclude_unset=True).items():
         setattr(item, field, value)
     db.commit()
@@ -114,8 +112,8 @@ def delete_inventory(
     current_user: User = Depends(require_admin),
 ):
     """Delete an inventory record (Admin only)."""
-    item = db.query(Inventory).filter(Inventory.id == inventory_id, Inventory.created_by_id == current_user.id).first()
+    item = db.query(Inventory).filter(Inventory.id == inventory_id).first()
     if not item:
-        raise HTTPException(status_code=403, detail="Inventory item not found or you don't have permission")
+        raise HTTPException(status_code=403, detail="Inventory item not found")
     db.delete(item)
     db.commit()

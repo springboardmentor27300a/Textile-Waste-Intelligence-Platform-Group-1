@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sustainability Report — Textile Waste Intelligence Platform</title>
+  <meta name="description" content="Milestone 3 sustainability analysis: recycling recommendations, environmental impact, sustainability score, benchmark, and circular economy insights." />
+  <link rel="stylesheet" href="css/main.css" />
+  <style>
+    .result-value {
+      font-size: 1.8rem; font-weight: 800; color: var(--color-text-primary);
+      margin-bottom: var(--space-xs); font-family: var(--font-heading);
+    }
+    .info-card {
+      background: var(--color-bg-input); padding: var(--space-lg);
+      border-radius: var(--radius-md); border: 1px solid var(--color-border);
+    }
+    .report-section { margin-bottom: var(--space-xl); }
+    .report-section h3 {
+      color: var(--color-accent); font-size: 1.1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding-bottom: 8px; margin-bottom: var(--space-md);
+    }
+    .score-ring-wrap {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: var(--space-xl);
+    }
+    .score-ring {
+      width: 140px; height: 140px; border-radius: 50%;
+      background: conic-gradient(var(--color-primary) 0%, rgba(52,211,153,0.12) 0%);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 30px rgba(52,211,153,0.15);
+    }
+    .score-ring-inner {
+      width: 100px; height: 100px; border-radius: 50%;
+      background: var(--color-bg-card);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .score-number { font-size: 2rem; font-weight: 800; color: var(--color-primary); line-height: 1; }
+    .score-sub    { font-size: 0.65rem; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+    .fade-slide-up {
+      animation: fadeSlideUp 0.6s cubic-bezier(0.4,0,0.2,1) forwards; opacity: 0;
+    }
+    @keyframes fadeSlideUp {
+      from { opacity:0; transform:translateY(20px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .sus-loading {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: var(--space-2xl); gap: var(--space-lg);
+      color: var(--color-primary); font-size: 1.1rem; font-weight: 500;
+    }
+    .back-link {
+      display: inline-flex; align-items: center; gap: var(--space-sm);
+      color: var(--color-text-secondary); font-size: 0.9rem;
+      text-decoration: none; margin-bottom: var(--space-md);
+      transition: color var(--transition-base);
+    }
+    .back-link:hover { color: var(--color-primary); }
+    .bench-metric { display: flex; gap: 1.5rem; margin-top: 6px; flex-wrap: wrap; }
+    .bench-metric-item { display: flex; flex-direction: column; }
+    .bench-metric-key  { font-size: 0.72rem; color: var(--color-text-secondary); text-transform: uppercase; }
+    .bench-metric-val  { font-weight: 700; font-size: 1rem; }
+    .empty-state { text-align: center; padding: var(--space-2xl); color: var(--color-text-secondary); }
+    .empty-state .empty-icon { font-size: 3rem; margin-bottom: var(--space-md); }
+    .empty-state h3 { color: var(--color-text-primary); margin-bottom: var(--space-sm); }
+    @media (max-width:768px) {
+      .grid-2 { grid-template-columns:1fr; }
+      .grid-3 { grid-template-columns:1fr; }
+      .kpi-grid { grid-template-columns:1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar no-print" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">🌿</div>
+      <div class="logo-text">TexWaste Intel <span>Textile Waste Intelligence</span></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Main</div>
+      <a href="dashboard.html"      class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+      <a href="inventory.html"      class="nav-item"><span class="nav-icon">📦</span> Inventory</a>
+      <a href="waste-records.html"  class="nav-item"><span class="nav-icon">♻️</span> Waste Records</a>
+      <a href="image-analysis.html" class="nav-item"><span class="nav-icon">🔬</span> Image Analysis</a>
+      <a href="sustainability.html" class="nav-item active"><span class="nav-icon">🌱</span> Sustainability</a>
+      <a href="reports.html"        class="nav-item"><span class="nav-icon">📈</span> Reports</a>
+      <div class="nav-section-title" style="margin-top:1rem;">Account</div>
+      <a href="#" class="nav-item" id="logout-btn"><span class="nav-icon">🚪</span> Sign Out</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-pill">
+        <div class="user-avatar" id="sidebar-avatar">A</div>
+        <div class="user-info">
+          <div class="user-name" id="sidebar-user-name">Loading…</div>
+          <div class="user-role" id="sidebar-user-role">role</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content" style="max-width:1200px; margin-left:var(--sidebar-width);">
+
+    <div class="topbar no-print">
+      <div>
+        <h1 class="page-title">Sustainability Report</h1>
+        <p class="page-subtitle">Environmental impact, recycling &amp; circular economy</p>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-secondary" onclick="downloadFullReport()">📄 Download Full Report</button>
+        <a href="image-analysis.html" class="btn btn-secondary">🔬 New Analysis</a>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="sus-loading" class="glass-card card-padding hidden">
+      <div class="sus-loading">
+        <div class="spinner" style="width:36px;height:36px;border-width:4px;"></div>
+        <span id="sus-loading-text">Loading sustainability data…</span>
+      </div>
+    </div>
+
+    <!-- Error state -->
+    <div id="sus-error" class="glass-card card-padding hidden">
+      <div class="empty-state">
+        <div class="empty-icon">🌱</div>
+        <h3 id="sus-error-title">No Sustainability Data</h3>
+        <p id="sus-error-body" class="text-secondary" style="max-width:520px;margin:0 auto var(--space-lg);">
+          Run an Image Analysis with a linked Inventory item first to generate sustainability metrics.
+        </p>
+        <a href="image-analysis.html" class="btn btn-primary">🔬 Go to Image Analysis</a>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div id="sus-results" class="hidden">
+
+      <!-- Context banner -->
+      <div class="glass-card card-padding fade-slide-up" style="margin-bottom:var(--space-lg);" id="sus-context-banner">
+        <div class="flex justify-between items-center flex-wrap gap-md">
+          <div>
+            <a href="image-analysis.html" class="back-link">← Back to Image Analysis</a>
+            <div class="flex gap-lg flex-wrap" style="font-size:0.85rem;color:var(--color-text-secondary);">
+              <span>Image ID: <strong id="ctx-image-id" class="text-primary-light">—</strong></span>
+              <span>Inventory: <strong id="ctx-inventory-id" class="text-primary-light">—</strong></span>
+              <span>Generated: <strong id="ctx-date" class="text-primary-light">—</strong></span>
+            </div>
+          </div>
+          <div class="flex gap-sm flex-wrap">
+            <button class="btn btn-primary" onclick="downloadFullReport()" style="font-size:0.9rem;">📄 Download Full Report</button>
+            <button class="btn btn-secondary" onclick="window.print()" style="font-size:0.9rem;">🖨️ Print</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- API error banner -->
+      <div id="sus-api-error-banner"></div>
+
+      <!-- Section 1: Sustainability Score -->
+      <div class="glass-card card-padding report-section fade-slide-up" style="animation-delay:0.05s;">
+        <h3>1. Sustainability Score &amp; Circularity</h3>
+        <div class="grid-2">
+          <div class="score-ring-wrap">
+            <div class="score-ring" id="score-ring">
+              <div class="score-ring-inner">
+                <div class="score-number" id="sus-score-num">—</div>
+                <div class="score-sub">/ 100</div>
+              </div>
+            </div>
+            <div style="margin-top:var(--space-md);text-align:center;">
+              <div class="fw-bold" style="font-size:1.1rem;" id="sus-circularity">—</div>
+              <div class="text-secondary" style="font-size:0.8rem;">Circularity Level</div>
+            </div>
+          </div>
+          <div class="kpi-grid" id="sus-metric-cards"></div>
+        </div>
+      </div>
+
+      <!-- Section 2: Recommendations -->
+      <div class="glass-card card-padding report-section fade-slide-up" style="animation-delay:0.1s;">
+        <h3>2. Recycling, Reuse &amp; Upcycling Recommendations</h3>
+        <div id="sus-recs-grid" class="grid-2"></div>
+      </div>
+
+      <!-- Section 3: Environmental Impact -->
+      <div class="glass-card card-padding report-section fade-slide-up" style="animation-delay:0.15s;">
+        <h3>3. Environmental Impact</h3>
+        <div id="sus-env-grid" class="kpi-grid"></div>
+      </div>
+
+      <!-- Section 4: Benchmark -->
+      <div class="glass-card card-padding report-section fade-slide-up" style="animation-delay:0.2s;">
+        <h3>4. Sustainability Benchmark</h3>
+        <p class="text-secondary mb-md" style="font-size:0.85rem;">How this inventory item compares to platform-wide averages.</p>
+        <div id="sus-bench-grid" class="kpi-grid"></div>
+      </div>
+
+      <!-- Section 5: Circular Economy -->
+      <div class="glass-card card-padding report-section fade-slide-up" style="animation-delay:0.25s;">
+        <h3>5. Circular Economy Insights</h3>
+        <div id="sus-circ-card" class="info-card">
+          <p class="text-secondary mb-md">Platform circularity averages and AI-generated insights for circular textile recovery.</p>
+          <div id="sus-circ-grid" class="grid-3 mt-md"></div>
+          <div id="sus-circ-extras"></div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="report-section text-center text-secondary no-print"
+           style="font-size:0.85rem;border-top:1px solid rgba(255,255,255,0.06);padding-top:1.5rem;">
+        <div class="mb-sm">Textile Waste Intelligence Platform © 2026</div>
+        <div>Sustainability Report — Milestone 3 | Generated: <span id="sus-footer-date"></span></div>
+      </div>
+
+    </div><!-- /#sus-results -->
+
+  </main>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/shared-data.js"></script>
+<script>
+  requireAuth();
+
+  // Page state — only M3 data needed here; M2 data lives on image-analysis.html
+  const pageState = {
+    imageId:     null,
+    inventoryId: null,
+    recsData:    null,
+    envData:     null,
+    susData:     null,
+    benchData:   null,
+    circData:    null,
+  };
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
+  function showEl(id) { const e = document.getElementById(id); if (e) e.classList.remove('hidden'); }
+  function hideEl(id) { const e = document.getElementById(id); if (e) e.classList.add('hidden');    }
+  function setLoadTxt(t) { const e = document.getElementById('sus-loading-text'); if (e) e.textContent = t; }
+
+  function showError(title, body) {
+    hideEl('sus-loading'); hideEl('sus-results');
+    document.getElementById('sus-error-title').textContent = title;
+    document.getElementById('sus-error-body').textContent  = body;
+    showEl('sus-error');
+  }
+
+  // ── Download Full Report ─────────────────────────────────────────────────
+  // Reuses the existing combined report renderer in image-analysis.html via
+  // the ?auto_print=1 parameter. No duplicate rendering logic needed (Rule 9).
+  function downloadFullReport() {
+    if (pageState.imageId) {
+      window.open('image-analysis.html?image_id=' + pageState.imageId + '&auto_print=1', '_blank');
+    } else {
+      showToast('No image ID available — run a full analysis from Image Analysis first.', 'error');
+    }
+  }
+
+  // ── Init ──────────────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', async () => {
+    const params = new URLSearchParams(window.location.search);
+
+    // Priority 1: sessionStorage written by image-analysis.html after pipeline
+    const session = SessionBridge.load();
+
+    // Priority 2: ?inventory_id= URL param for direct access / deep-links
+    const urlInvId = params.get('inventory_id') ? parseInt(params.get('inventory_id'), 10) : null;
+
+    if (session && session.inventoryId) {
+      pageState.imageId     = session.imageId;
+      pageState.inventoryId = session.inventoryId;
+      // Pre-populate from cached session data to avoid redundant API calls
+      pageState.recsData  = session.recsData  || null;
+      pageState.envData   = session.envData   || null;
+      pageState.susData   = session.susData   || null;
+      pageState.benchData = session.benchData || null;
+      pageState.circData  = session.circData  || null;
+    } else if (urlInvId) {
+      pageState.inventoryId = urlInvId;
+      // image_id from URL param for Download Report support
+      if (params.get('image_id')) pageState.imageId = params.get('image_id');
+    } else {
+      showError(
+        'No Sustainability Data Found',
+        'Please run an Image Analysis with a linked Inventory item, then click "View Sustainability Report" to navigate here with data.'
+      );
+      return;
+    }
+
+    showEl('sus-loading'); hideEl('sus-error'); hideEl('sus-results');
+    await loadSustainabilityData();
+  });
+
+  // ── Load Data (read-only GET calls — no data creation) ───────────────────
+  async function loadSustainabilityData() {
+    const invId     = pageState.inventoryId;
+    const apiErrors = [];
+
+    if (!pageState.recsData) {
+      setLoadTxt('📋 Loading recycling recommendations…');
+      try { pageState.recsData = await api.fetchRecommendations(invId); }
+      catch (e) { apiErrors.push('Recommendations: ' + e.message); }
+    }
+
+    if (!pageState.envData) {
+      setLoadTxt('🌍 Loading environmental impact…');
+      try { pageState.envData = await api.fetchEnvironmentalReport(invId); }
+      catch (e) { apiErrors.push('Environmental report: ' + e.message); }
+    }
+
+    if (!pageState.susData) {
+      setLoadTxt('📊 Loading sustainability metrics…');
+      try { pageState.susData = await api.fetchSustainabilityMetric(invId); }
+      catch (e) { apiErrors.push('Sustainability metrics: ' + e.message); }
+    }
+
+    if (!pageState.benchData) {
+      setLoadTxt('📈 Loading benchmark data…');
+      try { pageState.benchData = await api.fetchBenchmark(invId); }
+      catch (e) { apiErrors.push('Benchmark: ' + e.message); }
+    }
+
+    if (!pageState.circData) {
+      setLoadTxt('🔁 Loading circular economy insights…');
+      try { pageState.circData = await api.fetchCircularAnalytics(); }
+      catch (e) { apiErrors.push('Circular analytics: ' + e.message); }
+    }
+
+    if (!pageState.susData && !pageState.envData && !pageState.recsData) {
+      showError(
+        'Sustainability Data Not Available',
+        'No sustainability records found for Inventory #' + invId + '. Run a full Image Analysis with this inventory item linked first.'
+      );
+      return;
+    }
+
+    hideEl('sus-loading');
+    renderPage(apiErrors);
+    showEl('sus-results');
+    if (apiErrors.length > 0) showToast('Some data could not be loaded — see banners in the report.', 'error');
+    else showToast('Sustainability data loaded successfully.', 'success');
+  }
+
+  // ── Render ────────────────────────────────────────────────────────────────
+  function renderPage(apiErrors) {
+    const d = new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'long', year:'numeric' });
+    const setTxt = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+    setTxt('ctx-date',       d);
+    setTxt('sus-footer-date', d);
+    setTxt('ctx-image-id',   pageState.imageId     ? '#' + pageState.imageId     : '—');
+    setTxt('ctx-inventory-id', pageState.inventoryId ? 'Inventory #' + pageState.inventoryId : '—');
+    
+    var backLink = document.querySelector('.back-link');
+    if (backLink && pageState.imageId) {
+      backLink.href = 'image-analysis.html?image_id=' + pageState.imageId;
+    }
+
+    // Error banner
+    const eb = document.getElementById('sus-api-error-banner');
+    if (eb && apiErrors.length > 0) {
+      eb.innerHTML = '<div style="background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.3);padding:1rem;border-radius:8px;margin-bottom:1rem;">' +
+        '<div style="color:var(--color-danger);font-weight:bold;margin-bottom:0.5rem;">⚠️ Some data could not be loaded:</div>' +
+        apiErrors.map(function(err){ return '<div style="font-size:0.85rem;color:var(--color-text-secondary);">' + err + '</div>'; }).join('') + '</div>';
+    }
+
+    // ── Section 1: Score ─────────────────────────────────────────────────
+    const s = pageState.susData;
+    if (s) {
+      const score = typeof s.sustainability_score === 'number' ? s.sustainability_score : parseFloat(s.sustainability_score) || 0;
+      setTxt('sus-score-num', score.toFixed(1));
+      setTxt('sus-circularity', s.circularity || '—');
+      const ring = document.getElementById('score-ring');
+      if (ring) {
+        const pct = Math.min(100, Math.max(0, score));
+        ring.style.background = 'conic-gradient(var(--color-primary) ' + pct + '%, rgba(52,211,153,0.12) ' + pct + '%)';
+      }
+      const cards = document.getElementById('sus-metric-cards');
+      if (cards) cards.innerHTML =
+        '<div class="info-card"><div class="kpi-label">CO\u2082 Saved</div>' +
+        '<div class="result-value text-primary">' + (s.co2_saved !== undefined ? s.co2_saved.toFixed(2) : 'N/A') + ' <small style="font-size:1rem;">kg</small></div></div>' +
+        '<div class="info-card"><div class="kpi-label">Water Saved</div>' +
+        '<div class="result-value text-accent">' + (s.water_saved !== undefined ? s.water_saved.toFixed(1) : 'N/A') + ' <small style="font-size:1rem;">L</small></div></div>' +
+        '<div class="info-card"><div class="kpi-label">Landfill Diverted</div>' +
+        '<div class="result-value">' + (s.landfill_diverted !== undefined ? s.landfill_diverted.toFixed(1) : 'N/A') + '<small style="font-size:1rem;">%</small></div></div>' +
+        '<div class="info-card"><div class="kpi-label">Resource Recovery</div>' +
+        '<div class="result-value">' + (s.resource_recovery !== undefined ? s.resource_recovery.toFixed(2) : 'N/A') + ' <small style="font-size:1rem;">kg</small></div></div>';
+    } else {
+      setTxt('sus-score-num', '—'); setTxt('sus-circularity', '—');
+      const cards = document.getElementById('sus-metric-cards');
+      if (cards) cards.innerHTML = '<div class="text-secondary">No sustainability metrics available.</div>';
+    }
+
+    // ── Section 2: Recommendations ───────────────────────────────────────
+    const recsGrid = document.getElementById('sus-recs-grid');
+    if (recsGrid) {
+      const recs = (pageState.recsData && pageState.recsData.recommendations && pageState.recsData.recommendations.length > 0)
+        ? pageState.recsData.recommendations : [];
+      if (recs.length > 0) {
+        recsGrid.innerHTML = recs.map(function(r, i) {
+          var title = typeof r === 'object' ? r.recommendation : 'Recommendation';
+          var desc = typeof r === 'object' ? (r.description || r.reason) : r;
+          return '<div class="info-card" style="background:rgba(52,211,153,0.03);border-color:rgba(52,211,153,0.15);">' +
+            '<div class="fw-bold text-primary mb-sm">' + (i + 1) + '. ' + title + '</div>' +
+            '<div class="text-secondary" style="font-size:0.85rem;line-height:1.6;">' + desc + '</div></div>';
+        }).join('');
+      } else {
+        recsGrid.innerHTML = '<div class="text-secondary">No recycling recommendations available for this inventory item.</div>';
+      }
+    }
+
+    // ── Section 3: Environmental Impact ──────────────────────────────────
+    const envGrid = document.getElementById('sus-env-grid');
+    if (envGrid) {
+      if (pageState.envData) {
+        const e = pageState.envData;
+        envGrid.innerHTML =
+          '<div class="info-card"><div class="kpi-label">CO\u2082 Saved</div>' +
+          '<div class="result-value text-primary">' + (e.co2_saved !== undefined ? e.co2_saved.toFixed(2) : 'N/A') + ' <small style="font-size:1rem;">kg</small></div>' +
+          '<div class="text-secondary" style="font-size:0.8rem;margin-top:4px;">' + (e.co2_benefit || '') + '</div></div>' +
+          '<div class="info-card"><div class="kpi-label">Water Saved</div>' +
+          '<div class="result-value text-accent">' + (e.water_saved !== undefined ? e.water_saved.toFixed(1) : 'N/A') + ' <small style="font-size:1rem;">L</small></div>' +
+          '<div class="text-secondary" style="font-size:0.8rem;margin-top:4px;">' + (e.water_benefit || '') + '</div></div>' +
+          '<div class="info-card"><div class="kpi-label">Landfill Diversion</div>' +
+          '<div class="result-value">' + (e.landfill_diversion !== undefined ? e.landfill_diversion.toFixed(1) : 'N/A') + '<small style="font-size:1rem;">%</small></div>' +
+          '<div class="text-secondary" style="font-size:0.8rem;margin-top:4px;">' + (e.landfill_benefit || '') + '</div></div>' +
+          '<div class="info-card"><div class="kpi-label">Resource Recovery</div>' +
+          '<div class="result-value">' + (e.resource_recovery !== undefined ? e.resource_recovery.toFixed(2) : 'N/A') + ' <small style="font-size:1rem;">kg</small></div>' +
+          '<div class="text-secondary" style="font-size:0.8rem;margin-top:4px;">' + (e.recovery_benefit || '') + '</div></div>' +
+          (e.environmental_rating ? '<div class="info-card" style="grid-column:1/-1;"><div class="kpi-label">Environmental Rating</div><div class="result-value text-primary">' + e.environmental_rating + '</div></div>' : '') +
+          (e.summary ? '<div class="info-card" style="grid-column:1/-1;"><div class="kpi-label">Summary</div><div class="text-secondary" style="font-size:0.9rem;line-height:1.6;">' + e.summary + '</div></div>' : '') +
+          (e.insights && e.insights.length > 0 ? '<div class="info-card" style="grid-column:1/-1;"><div class="kpi-label mb-sm">AI Insights</div>' +
+            e.insights.map(function(ins){ return '<div class="text-secondary" style="font-size:0.85rem;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);">\u2022 ' + ins + '</div>'; }).join('') + '</div>' : '');
+      } else {
+        envGrid.innerHTML = '<div class="text-secondary">No environmental impact data available. Link an inventory item and run a full analysis first.</div>';
+      }
+    }
+
+    // ── Section 4: Benchmark ─────────────────────────────────────────────
+    const benchGrid = document.getElementById('sus-bench-grid');
+    if (benchGrid) {
+      if (pageState.benchData && pageState.benchData.available) {
+        const b = pageState.benchData;
+        function renderMetric(label, m) {
+          if (!m) return '';
+          return '<div class="info-card"><div class="kpi-label">' + label + '</div>' +
+            '<div class="bench-metric">' +
+            '<div class="bench-metric-item"><span class="bench-metric-key">Current</span><span class="bench-metric-val text-primary">' + m.current.toFixed(2) + '</span></div>' +
+            '<div class="bench-metric-item"><span class="bench-metric-key">Platform Avg</span><span class="bench-metric-val">' + m.average.toFixed(2) + '</span></div>' +
+            '<div class="bench-metric-item"><span class="bench-metric-key">Status</span><span class="bench-metric-val" style="color:' +
+              (m.status === 'Above Average' ? 'var(--color-primary)' : m.status === 'Below Average' ? 'var(--color-danger)' : 'var(--color-text-primary)') +
+            '">' + m.status + '</span></div></div></div>';
+        }
+        benchGrid.innerHTML =
+          (b.overall_rating ? '<div class="info-card" style="grid-column:1/-1;"><div class="kpi-label">Overall Rating</div><div class="result-value text-primary">' + b.overall_rating + '</div>' +
+            '<div class="text-secondary" style="font-size:0.8rem;">Based on ' + b.record_count + ' platform records</div></div>' : '') +
+          renderMetric('CO\u2082 Savings vs. Avg', b.co2) +
+          renderMetric('Water Savings vs. Avg', b.water) +
+          renderMetric('Resource Recovery vs. Avg', b.resource_recovery) +
+          renderMetric('Landfill Diversion vs. Avg', b.landfill_diversion) +
+          renderMetric('Sustainability Score vs. Avg', b.sustainability_score);
+      } else if (pageState.benchData && !pageState.benchData.available) {
+        benchGrid.innerHTML = '<div class="text-secondary">' + (pageState.benchData.message || 'Benchmark unavailable \u2014 insufficient historical data.') + '</div>';
+      } else {
+        benchGrid.innerHTML = '<div class="text-secondary">No benchmark data available.</div>';
+      }
+    }
+
+    // ── Section 5: Circular Economy ──────────────────────────────────────
+    const circGrid   = document.getElementById('sus-circ-grid');
+    const circExtras = document.getElementById('sus-circ-extras');
+    if (circGrid) {
+      if (pageState.circData) {
+        const c  = pageState.circData;
+        const st = c.statistics || {};
+        const ins = c.generated_insights || [];
+        circGrid.innerHTML =
+          '<div class="text-center"><div class="fw-bold text-primary" style="font-size:1.5rem;">' + (st.average_circularity_score !== undefined ? st.average_circularity_score.toFixed(1) : 'N/A') + '%</div><div class="text-secondary" style="font-size:0.8rem;text-transform:uppercase;">Avg. Circularity Score</div></div>' +
+          '<div class="text-center"><div class="fw-bold text-accent" style="font-size:1.5rem;">' + (st.average_landfill_diversion !== undefined ? st.average_landfill_diversion.toFixed(1) : 'N/A') + '%</div><div class="text-secondary" style="font-size:0.8rem;text-transform:uppercase;">Avg. Landfill Diversion</div></div>' +
+          '<div class="text-center"><div class="fw-bold text-warning" style="font-size:1.5rem;">' + (st.total_items !== undefined ? st.total_items : 'N/A') + '</div><div class="text-secondary" style="font-size:0.8rem;text-transform:uppercase;">Total Items Analysed</div></div>' +
+          '<div class="text-center"><div class="fw-bold text-primary" style="font-size:1.5rem;">' + (st.total_co2_saved !== undefined ? st.total_co2_saved.toFixed(1) : 'N/A') + ' kg</div><div class="text-secondary" style="font-size:0.8rem;text-transform:uppercase;">Platform CO\u2082 Saved</div></div>' +
+          '<div class="text-center"><div class="fw-bold text-accent" style="font-size:1.5rem;">' + (st.total_water_saved !== undefined ? Math.round(st.total_water_saved) : 'N/A') + ' L</div><div class="text-secondary" style="font-size:0.8rem;text-transform:uppercase;">Platform Water Saved</div></div>' +
+          '<div class="text-center"><div class="fw-bold" style="font-size:1rem;">' + (c.most_common_material || 'N/A') + '</div><div class="text-secondary" style="font-size:0.8rem;text-transform:uppercase;">Most Common Material</div></div>';
+
+        if (circExtras) {
+          var extras = '';
+          if (c.overall_rating) extras += '<div class="mt-md"><div class="kpi-label">Overall Rating</div><div class="fw-bold text-primary">' + c.overall_rating + '</div></div>';
+          if (ins.length > 0) extras += '<div class="mt-md"><div class="kpi-label mb-sm">AI Circular Insights</div>' +
+            ins.slice(0, 5).map(function(i){ return '<div class="text-secondary" style="font-size:0.85rem;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);">\u2022 ' + i + '</div>'; }).join('') + '</div>';
+          if (c.summary) extras += '<div class="mt-md"><div class="kpi-label mb-sm">Circular Economy Summary</div><div class="text-secondary" style="font-size:0.85rem;line-height:1.6;">' + c.summary + '</div></div>';
+          circExtras.innerHTML = extras;
+        }
+      } else {
+        circGrid.innerHTML = '<div class="text-secondary">No circular economy data available.</div>';
+      }
+    }
+  }
+</script>
+</body>
+</html>

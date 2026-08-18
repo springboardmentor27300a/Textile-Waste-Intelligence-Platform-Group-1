@@ -6,10 +6,12 @@
 
 from app.schemas_module import (  # noqa: F401
     UserCreate, UserLogin, UserOut, Token, TokenData,
+    UserRoleUpdate, UserStatusUpdate,
     SupplierBase, SupplierCreate, SupplierOut,
     InventoryBase, InventoryCreate, InventoryUpdate, InventoryOut,
     WasteRecordBase, WasteRecordCreate, WasteRecordOut,
     WasteAnalytics, DashboardStats,
+    NotificationOut, NotificationCreate,
 )
 
 # Milestone 3 — Sustainability Intelligence Engine schemas

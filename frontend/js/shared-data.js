@@ -125,3 +125,21 @@ window.matIcon = matIcon;
 window.confLevel = confLevel;
 window.confCls = confCls;
 window.confLabel = confLabel;
+
+// ── SessionBridge ─────────────────────────────────────────────────────────────
+// Passes the full pipeline state between image-analysis.html → sustainability.html
+// via sessionStorage. Does not touch the backend.
+const _SESSION_KEY = 'twi_pipeline_state';
+const SessionBridge = {
+  /** Save the complete pipeline state object after analysis completes. */
+  save(state) {
+    try { sessionStorage.setItem(_SESSION_KEY, JSON.stringify(state)); } catch (e) { console.warn('SessionBridge.save failed', e); }
+  },
+  /** Load the saved state. Returns null if nothing is saved or JSON is invalid. */
+  load() {
+    try { const raw = sessionStorage.getItem(_SESSION_KEY); return raw ? JSON.parse(raw) : null; } catch (e) { return null; }
+  },
+  /** Clear saved state (call on resetPipeline). */
+  clear() { try { sessionStorage.removeItem(_SESSION_KEY); } catch (e) {} },
+};
+window.SessionBridge = SessionBridge;

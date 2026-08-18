@@ -1,0 +1,49 @@
+# Python / Virtual Environments
+backend/venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environment Variables
+.env
+.env.*
+
+# Databases
+*.db
+*.sqlite3
+
+# Uploads / Dynamic Data
+backend/app/uploads/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node / JS
+node_modules/
+dist/
+build/
+
+# Temporary / OS / Build Files
+.DS_Store
+Thumbs.db
+*.bak
+*.swp
+*.tmp
+*~
+
+# Temporary session scratch scripts
+backend/check_images.py
+backend/check_suppliers.py
+backend/check_users.py
+backend/check_users2.py
+backend/seed_suppliers.py
+backend/test_admin.py
+backend/test_apis.py
+backend/test_endpoints.py
+backend/test_notifications.py
+frontend/restore_auth.py

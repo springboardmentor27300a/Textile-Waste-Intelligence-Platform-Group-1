@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: textile-waste-platform:milestone4
+    container_name: textile-waste-platform
+    ports:
+      - "5000:5000"
+    environment:
+      # Override these in production (e.g. via a cloud provider's
+      # secrets manager or an `.env` file that is NOT committed).
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-change-me-in-production}
+      DATABASE_URL: ${DATABASE_URL:-sqlite:////app/backend/instance/textile_waste.db}
+    volumes:
+      # Persist the SQLite database + any generated artifacts across
+      # container restarts/redeploys.
+      - textile-waste-data:/app/backend/instance
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/api/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+volumes:
+  textile-waste-data:

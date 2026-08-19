@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>User Registration</title>
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body class="login-page">
+    <div class="login-card">
+      <h2>📝 User Registration</h2>
+
+      <form id="registerForm">
+        <!-- Full Name -->
+        <input type="text" id="full_name" placeholder="Full Name" required />
+
+        <!-- Email -->
+        <input type="email" id="email" placeholder="Email" required />
+
+        <!-- Password -->
+        <input type="password" id="password" placeholder="Password" required />
+
+        <!-- Phone -->
+        <input type="tel" id="phone" placeholder="Phone Number" required />
+
+        <!-- Company -->
+        <input
+          type="text"
+          id="company"
+          placeholder="Company / Organization"
+          required
+        />
+
+        <!-- Location -->
+        <input type="text" id="location" placeholder="Location" required />
+
+        <!-- Role -->
+        <input type="text" id="role" placeholder="Role" required />
+
+        <button type="submit">Register</button>
+      </form>
+
+      <br />
+
+      <p align="center">
+        Already have an account?
+
+        <a href="login.html">Login</a>
+      </p>
+    </div>
+
+    <script>
+      // ==========================================
+      // Backend URL
+      // ==========================================
+
+      const BASE_URL = "http://127.0.0.1:8000";
+
+      // ==========================================
+      // Registration
+      // ==========================================
+
+      document
+        .getElementById("registerForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          // ==========================================
+          // Create Registration Payload
+          // ==========================================
+
+          const payload = {
+            full_name: document.getElementById("full_name").value.trim(),
+
+            email: document.getElementById("email").value.trim(),
+
+            password: document.getElementById("password").value,
+
+            phone: document.getElementById("phone").value.trim(),
+
+            company: document.getElementById("company").value.trim(),
+
+            location: document.getElementById("location").value.trim(),
+
+            role: document.getElementById("role").value.trim(),
+          };
+
+          console.log("Registration Payload:", payload);
+
+          // ==========================================
+          // Send Request
+          // ==========================================
+
+          try {
+            const response = await fetch(`${BASE_URL}/auth/register`, {
+              method: "POST",
+
+              headers: {
+                "Content-Type": "application/json",
+              },
+
+              body: JSON.stringify(payload),
+            });
+
+            const data = await response.json();
+
+            // ==========================================
+            // SUCCESS
+            // ==========================================
+
+            if (response.ok) {
+              alert("Registration Successful!");
+
+              window.location.href = "login.html";
+            }
+
+            // ==========================================
+            // ERROR
+            // ==========================================
+            else {
+              let errorMessage = "Registration failed.";
+
+              if (Array.isArray(data.detail)) {
+                errorMessage = data.detail
+                  .map((error) => {
+                    const field = error.loc
+                      ? error.loc[error.loc.length - 1]
+                      : "Field";
+
+                    return `${field}: ${error.msg}`;
+                  })
+                  .join("\n");
+              } else if (typeof data.detail === "string") {
+                errorMessage = data.detail;
+              }
+
+              alert(errorMessage);
+            }
+          } catch (error) {
+            // ==========================================
+            // CONNECTION ERROR
+            // ==========================================
+
+            console.error("Registration Error:", error);
+
+            alert("Unable to connect to server.");
+          }
+        });
+    </script>
+  </body>
+</html>

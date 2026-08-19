@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Sustainability Dashboard</title>
+
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+
+  <body>
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header>
+      <div class="logo">
+        <h2>♻ AI-Powered Textile Waste Intelligence Platform</h2>
+      </div>
+
+      <nav>
+        <a href="dashboard.html">Dashboard</a>
+
+        <a href="inventory.html">Inventory</a>
+
+        <a href="users.html">History</a>
+
+        <a href="profile.html">Profile</a>
+
+        <!-- Logout -->
+        <a href="#" id="logoutBtn">Logout</a>
+      </nav>
+    </header>
+
+    <!-- =====================================================
+         HERO SECTION
+    ====================================================== -->
+
+    <section class="hero">
+      <h1>Sustainability Dashboard</h1>
+
+      <p>Real-Time Textile Waste Analytics and Environmental Insights</p>
+    </section>
+
+    <!-- =====================================================
+         DASHBOARD STATUS
+    ====================================================== -->
+
+    <section class="dashboard-status-container">
+      <div id="dashboardStatus" class="dashboard-status">
+        Loading dashboard data...
+      </div>
+
+      <div id="lastUpdated" class="last-updated">Last updated: --</div>
+    </section>
+
+    <!-- =====================================================
+         DASHBOARD SUMMARY CARDS
+    ====================================================== -->
+
+    <section class="dashboard-cards">
+      <!-- Total Predictions -->
+
+      <div class="dashboard-card">
+        <h3>🤖 Total Predictions</h3>
+
+        <h1 id="totalPredictions">0</h1>
+
+        <p>AI fabric predictions</p>
+      </div>
+
+      <!-- Carbon Saved -->
+
+      <div class="dashboard-card">
+        <h3>🌱 Total Carbon Saved</h3>
+
+        <h1 id="carbonSaved">0 kg</h1>
+
+        <p>Estimated CO₂ reduction</p>
+      </div>
+
+      <!-- Sustainability Score -->
+
+      <div class="dashboard-card">
+        <h3>⭐ Average Sustainability Score</h3>
+
+        <h1 id="averageScore">0</h1>
+
+        <p>Overall sustainability performance</p>
+      </div>
+
+      <!-- Waste Diversion -->
+
+      <div class="dashboard-card">
+        <h3>♻ Waste Diversion</h3>
+
+        <h1 id="wasteDiversion">N/A</h1>
+
+        <p>Waste diverted from disposal</p>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         ANALYTICS SECTION
+    ====================================================== -->
+
+    <section class="analytics-intro">
+      <h2>📊 Sustainability Analytics</h2>
+
+      <p>
+        Analyze fabric distribution, waste categories, and carbon savings
+        generated through textile waste management.
+      </p>
+    </section>
+
+    <!-- =====================================================
+         FABRIC & WASTE CHARTS
+    ====================================================== -->
+
+    <section class="charts">
+      <!-- Fabric Distribution -->
+
+      <div class="chart-card">
+        <h3>🧵 Fabric Distribution</h3>
+
+        <p>Distribution of predicted textile fabric types.</p>
+
+        <canvas id="fabricChart"></canvas>
+      </div>
+
+      <!-- Waste Category Distribution -->
+
+      <div class="chart-card">
+        <h3>♻ Waste Category Distribution</h3>
+
+        <p>Classification of textile waste by category.</p>
+
+        <canvas id="wasteChart"></canvas>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         CARBON ANALYSIS
+    ====================================================== -->
+
+    <section class="charts">
+      <div class="chart-card">
+        <h3>🌍 Carbon Footprint Analysis</h3>
+
+        <p>
+          Estimated carbon savings from textile waste recovery and recycling
+          activities.
+        </p>
+
+        <canvas id="carbonChart"></canvas>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         KEY INSIGHTS
+    ====================================================== -->
+
+    <section class="inventory-form dashboard-insights">
+      <h2>🌱 Sustainability Insights</h2>
+
+      <div class="prediction-grid">
+        <!-- AI Monitoring -->
+
+        <div class="prediction-item">
+          <label> 🤖 AI Monitoring </label>
+
+          <span> Continuous textile waste prediction and classification. </span>
+        </div>
+
+        <!-- Waste Management -->
+
+        <div class="prediction-item">
+          <label> ♻ Waste Management </label>
+
+          <span>
+            Waste is categorized for appropriate reuse, recycling, or disposal.
+          </span>
+        </div>
+
+        <!-- Environmental Benefit -->
+
+        <div class="prediction-item">
+          <label> 🌱 Environmental Benefit </label>
+
+          <span>
+            Carbon savings and environmental impact are estimated for
+            predictions.
+          </span>
+        </div>
+
+        <!-- Data Analytics -->
+
+        <div class="prediction-item">
+          <label> 📊 Data Analytics </label>
+
+          <span>
+            Historical prediction data is used for dashboard visualization.
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         REPORT SECTION
+    ====================================================== -->
+
+    <section class="report">
+      <h2>📄 Sustainability Report</h2>
+
+      <p>
+        Generate and download the sustainability analysis report based on
+        prediction data.
+      </p>
+
+      <button id="downloadReport">📄 Download Sustainability Report</button>
+    </section>
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer>
+      <p>© 2026 AI-Powered Textile Waste Intelligence Platform</p>
+    </footer>
+
+    <!-- =====================================================
+         MAIN JAVASCRIPT
+    ====================================================== -->
+
+    <script src="script.js"></script>
+
+    <!-- =====================================================
+         LOGOUT
+    ====================================================== -->
+
+    <script>
+      const logoutBtn = document.getElementById("logoutBtn");
+
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", function (event) {
+          event.preventDefault();
+
+          // Remove saved authentication data
+
+          localStorage.removeItem("token");
+
+          localStorage.removeItem("userid");
+
+          // Redirect to login page
+
+          window.location.href = "login.html";
+        });
+      }
+    </script>
+  </body>
+</html>

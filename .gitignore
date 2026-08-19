@@ -1,0 +1,6 @@
+.env
+venv311/
+__pycache__/
+*.pyc
+datasets/mnistdataset/fashion-mnist_train.csv
+datasets/mnistdataset/fashion-mnist_test.csv

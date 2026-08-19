@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Inventory Management</title>
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <!-- =========================================================
+         LOGIN PROTECTION
+    ========================================================== -->
+
+    <script>
+      if (!localStorage.getItem("token")) {
+        window.location.href = "login.html";
+      }
+    </script>
+
+    <!-- =========================================================
+         HEADER
+    ========================================================== -->
+
+    <header>
+      <div class="logo">
+        <h2>♻ AI-Powered Textile Waste Intelligence Platform</h2>
+      </div>
+
+      <nav>
+        <a href="dashboard.html">Dashboard</a>
+
+        <a href="inventory.html">Inventory</a>
+
+        <a href="users.html">History</a>
+
+        <a href="profile.html">Profile</a>
+
+        <a href="#" id="logoutBtn">Logout</a>
+      </nav>
+    </header>
+
+    <!-- =========================================================
+         HERO SECTION
+    ========================================================== -->
+
+    <section class="hero">
+      <h1>Inventory Management</h1>
+
+      <p>Add textile waste inventory using AI prediction.</p>
+    </section>
+
+    <!-- =========================================================
+         AI FABRIC PREDICTION
+    ========================================================== -->
+
+    <div class="inventory-form">
+      <h2>AI Fabric Prediction</h2>
+
+      <input type="file" id="fabricImage" accept="image/*" />
+
+      <br /><br />
+
+      <img id="previewImage" style="display: none" alt="Fabric Preview" />
+
+      <br /><br />
+
+      <button id="predictBtn" type="button">Predict Fabric</button>
+
+      <!-- Prediction Result -->
+
+      <div id="predictionResult">
+        <h2>Prediction Result</h2>
+
+        <p>
+          <b>Fabric :</b>
+          <span id="predictedFabric"></span>
+        </p>
+
+        <p>
+          <b>Confidence :</b>
+          <span id="confidence"></span>
+        </p>
+
+        <p>
+          <b>Waste Category :</b>
+          <span id="predictedCategory"></span>
+        </p>
+      </div>
+    </div>
+
+    <!-- =========================================================
+         ADD INVENTORY
+    ========================================================== -->
+
+    <div class="inventory-form">
+      <h2>Add Inventory</h2>
+
+      <form id="inventoryForm">
+        <!-- Batch ID -->
+
+        <div class="form-group">
+          <label for="batch_id"> Batch ID </label>
+
+          <input
+            type="text"
+            id="batch_id"
+            placeholder="Enter Batch ID"
+            required
+          />
+        </div>
+
+        <!-- Fabric Type -->
+
+        <div class="form-group">
+          <label for="fabric_type"> Fabric Type </label>
+
+          <input
+            type="text"
+            id="fabric_type"
+            placeholder="Enter fabric type"
+            required
+          />
+        </div>
+
+        <!-- Quantity -->
+
+        <div class="form-group">
+          <label for="quantity"> Quantity (kg) </label>
+
+          <input
+            type="number"
+            id="quantity"
+            placeholder="Enter quantity"
+            min="0"
+            required
+          />
+        </div>
+
+        <!-- Category -->
+
+        <div class="form-group">
+          <label for="category"> Category </label>
+
+          <input
+            type="text"
+            id="category"
+            placeholder="Enter waste category"
+            required
+          />
+        </div>
+
+        <!-- Submit -->
+
+        <button type="submit">Add Inventory</button>
+      </form>
+    </div>
+
+    <!-- =========================================================
+         FOOTER
+    ========================================================== -->
+
+    <footer>
+      <p>© 2026 AI-Powered Textile Waste Intelligence Platform</p>
+    </footer>
+
+    <!-- =========================================================
+         MAIN JAVASCRIPT
+    ========================================================== -->
+
+    <script src="script.js"></script>
+
+    <!-- =========================================================
+         LOGOUT
+    ========================================================== -->
+
+    <script>
+      const logoutBtn = document.getElementById("logoutBtn");
+
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", function (event) {
+          event.preventDefault();
+
+          localStorage.removeItem("token");
+
+          localStorage.removeItem("userid");
+
+          window.location.href = "login.html";
+        });
+      }
+    </script>
+  </body>
+</html>

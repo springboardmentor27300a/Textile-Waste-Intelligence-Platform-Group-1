@@ -1,0 +1,523 @@
+/* ==========================================
+   RESET
+========================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  background: #f4f7f9;
+  color: #333;
+}
+
+/* ==========================================
+   HEADER
+========================================== */
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #00695c;
+  color: white;
+  padding: 20px 50px;
+}
+
+.logo h2 {
+  font-size: 28px;
+}
+
+nav {
+  display: flex;
+  gap: 20px;
+}
+
+nav a {
+  text-decoration: none;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+nav a:hover {
+  color: #ffeb3b;
+}
+
+/* ==========================================
+   HERO
+========================================== */
+
+.hero {
+  background: #e0f2f1;
+  text-align: center;
+  padding: 70px 20px;
+}
+
+.hero h1 {
+  color: #00695c;
+  font-size: 42px;
+  margin-bottom: 15px;
+}
+
+.hero p {
+  font-size: 20px;
+  color: #444;
+}
+
+/* ==========================================
+   BUTTONS
+========================================== */
+
+.btn,
+button {
+  background: #00695c;
+
+  color: white;
+
+  border: none;
+
+  padding: 12px 24px;
+
+  border-radius: 6px;
+
+  cursor: pointer;
+
+  font-size: 16px;
+
+  transition: 0.3s;
+}
+
+.btn:hover,
+button:hover {
+  background: #004d40;
+}
+
+/* ==========================================
+   FORMS
+========================================== */
+
+.form-container {
+  width: 450px;
+
+  margin: 50px auto;
+
+  background: white;
+
+  padding: 35px;
+
+  border-radius: 10px;
+
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.form-container h2 {
+  text-align: center;
+
+  color: #00695c;
+
+  margin-bottom: 25px;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+
+  padding: 12px;
+
+  border: 1px solid #ccc;
+
+  border-radius: 6px;
+
+  outline: none;
+
+  font-size: 15px;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border: 1px solid #00695c;
+}
+
+/* ==========================================
+   LOGIN / REGISTER
+========================================== */
+
+.login-page {
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  height: 100vh;
+}
+
+.login-card {
+  width: 420px;
+
+  background: white;
+
+  padding: 35px;
+
+  border-radius: 12px;
+
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.login-card h2 {
+  text-align: center;
+
+  color: #00695c;
+
+  margin-bottom: 25px;
+}
+
+.login-card input {
+  width: 100%;
+
+  padding: 12px;
+
+  margin-bottom: 15px;
+
+  border: 1px solid #ccc;
+
+  border-radius: 6px;
+}
+
+.login-card button {
+  width: 100%;
+}
+/* ==========================================
+   FEATURE CARDS
+========================================== */
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 40px;
+}
+
+.card {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card h3 {
+  color: #00695c;
+  margin-bottom: 15px;
+}
+
+.card h2 {
+  font-size: 34px;
+  color: #222;
+  margin-bottom: 10px;
+}
+
+.card p {
+  color: #555;
+  font-size: 16px;
+}
+
+/* ==========================================
+   DASHBOARD CARDS
+========================================== */
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  padding: 30px 40px;
+}
+
+.dashboard-card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  transition: 0.3s;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+}
+
+.dashboard-card h3 {
+  color: #00695c;
+  margin-bottom: 15px;
+}
+
+.dashboard-card h1 {
+  font-size: 38px;
+  color: #222;
+}
+
+/* ==========================================
+   TABLES
+========================================== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  margin-top: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+table th {
+  background: #00695c;
+  color: white;
+  padding: 15px;
+}
+
+table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+table tr:nth-child(even) {
+  background: #f8f8f8;
+}
+
+table tr:hover {
+  background: #eef7f6;
+}
+
+/* ==========================================
+   INVENTORY FORM
+========================================== */
+
+.inventory-form {
+  width: 90%;
+  max-width: 700px;
+  margin: 40px auto;
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.inventory-form h2 {
+  color: #00695c;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* ==========================================
+   IMAGE PREVIEW
+========================================== */
+
+#previewImage {
+  display: none;
+  width: 250px;
+  margin: 20px auto;
+  border-radius: 10px;
+  border: 3px solid #00695c;
+}
+
+/* ==========================================
+   PREDICTION RESULT
+========================================== */
+
+#predictionResult {
+  display: none;
+  margin-top: 30px;
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+#predictionResult h2 {
+  color: #00695c;
+  margin-bottom: 20px;
+}
+
+#predictionResult p {
+  margin: 10px 0;
+  font-size: 17px;
+}
+/* ==========================================
+   CHARTS
+========================================== */
+
+.charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 30px;
+  padding: 20px 40px;
+}
+
+.chart-card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+
+.chart-card h3 {
+  color: #00695c;
+  margin-bottom: 20px;
+}
+
+.chart-card canvas {
+  max-width: 320px;
+  max-height: 320px;
+  width: 100% !important;
+  height: auto !important;
+  margin: auto;
+  display: block;
+}
+
+/* ==========================================
+   REPORT
+========================================== */
+
+.report {
+  text-align: center;
+  padding: 40px;
+}
+
+.report button {
+  padding: 15px 35px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 8px;
+}
+
+/* ==========================================
+   PROFILE
+========================================== */
+
+.profile-card {
+  width: 600px;
+  margin: 40px auto;
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.profile-card h2 {
+  text-align: center;
+  color: #00695c;
+  margin-bottom: 20px;
+}
+
+.profile-card p {
+  font-size: 18px;
+  margin: 15px 0;
+}
+
+/* ==========================================
+   HISTORY TABLE
+========================================== */
+
+.history-container {
+  padding: 40px;
+}
+
+.history-container table {
+  margin-top: 20px;
+}
+
+/* ==========================================
+   FOOTER
+========================================== */
+
+footer {
+  text-align: center;
+  background: #00695c;
+  color: white;
+  padding: 20px;
+  margin-top: 40px;
+}
+
+/* ==========================================
+   MOBILE RESPONSIVE
+========================================== */
+
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+
+    text-align: center;
+  }
+
+  nav {
+    flex-direction: column;
+
+    margin-top: 15px;
+  }
+
+  .hero h1 {
+    font-size: 32px;
+  }
+
+  .dashboard-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .features {
+    grid-template-columns: 1fr;
+  }
+
+  .charts {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-card canvas {
+    max-width: 250px;
+  }
+
+  .form-container,
+  .login-card,
+  .inventory-form,
+  .profile-card {
+    width: 95%;
+  }
+
+  table {
+    font-size: 14px;
+  }
+
+  table th,
+  table td {
+    padding: 8px;
+  }
+
+  .btn,
+  button {
+    width: 100%;
+  }
+}

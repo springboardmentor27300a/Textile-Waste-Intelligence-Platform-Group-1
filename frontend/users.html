@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Prediction History</title>
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <!-- =====================================================
+         LOGIN PROTECTION
+    ====================================================== -->
+
+    <script>
+      if (!localStorage.getItem("token")) {
+        window.location.href = "login.html";
+      }
+    </script>
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header>
+      <div class="logo">
+        <h2>♻ AI-Powered Textile Waste Intelligence Platform</h2>
+      </div>
+
+      <nav>
+        <a href="dashboard.html"> Dashboard </a>
+
+        <a href="inventory.html"> Inventory </a>
+
+        <a href="users.html"> History </a>
+
+        <a href="profile.html"> Profile </a>
+
+        <a href="#" id="logoutBtn"> Logout </a>
+      </nav>
+    </header>
+
+    <!-- =====================================================
+         HERO SECTION
+    ====================================================== -->
+
+    <section class="hero">
+      <h1>Prediction History</h1>
+
+      <p>View all AI fabric prediction records stored in the database.</p>
+    </section>
+
+    <!-- =====================================================
+         HISTORY TABLE
+    ====================================================== -->
+
+    <section class="history-container">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+
+            <th>Image Name</th>
+
+            <th>Fabric Type</th>
+
+            <th>Confidence</th>
+
+            <th>Waste Category</th>
+
+            <th>Carbon Saved</th>
+
+            <th>Sustainability Score</th>
+
+            <th>Environmental Impact</th>
+
+            <th>Date</th>
+          </tr>
+        </thead>
+
+        <tbody id="historyTable"></tbody>
+      </table>
+    </section>
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer>
+      <p>© 2026 AI-Powered Textile Waste Intelligence Platform</p>
+    </footer>
+
+    <!-- =====================================================
+         MAIN JAVASCRIPT
+    ====================================================== -->
+
+    <script src="script.js"></script>
+
+    <!-- =====================================================
+         LOGOUT
+    ====================================================== -->
+
+    <script>
+      const logoutBtn = document.getElementById("logoutBtn");
+
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", function (event) {
+          event.preventDefault();
+
+          localStorage.removeItem("token");
+
+          localStorage.removeItem("userid");
+
+          window.location.href = "login.html";
+        });
+      }
+    </script>
+  </body>
+</html>

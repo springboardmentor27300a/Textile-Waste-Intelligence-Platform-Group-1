@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>My Profile</title>
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <!-- =====================================================
+         LOGIN PROTECTION
+    ====================================================== -->
+
+    <script>
+      if (!localStorage.getItem("token")) {
+        window.location.href = "login.html";
+      }
+    </script>
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header>
+      <div class="logo">
+        <h2>♻ AI-Powered Textile Waste Intelligence Platform</h2>
+      </div>
+
+      <nav>
+        <a href="dashboard.html">Dashboard</a>
+
+        <a href="inventory.html">Inventory</a>
+
+        <a href="users.html">History</a>
+
+        <a href="profile.html">Profile</a>
+
+        <a href="#" id="logoutBtn">Logout</a>
+      </nav>
+    </header>
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <section class="hero">
+      <h1>My Profile</h1>
+
+      <p>Administrator Information</p>
+    </section>
+
+    <!-- =====================================================
+         PROFILE CARD
+    ====================================================== -->
+
+    <div class="profile-card">
+      <h2>User Details</h2>
+
+      <!-- Name -->
+
+      <p>
+        <strong>Name:</strong>
+
+        <span id="nameDisplay"> Administrator </span>
+
+        <input
+          type="text"
+          id="nameInput"
+          value="Administrator"
+          style="display: none"
+        />
+      </p>
+
+      <!-- Email -->
+
+      <p>
+        <strong>Email:</strong>
+
+        <span id="emailDisplay"> admin@gmail.com </span>
+
+        <input
+          type="email"
+          id="emailInput"
+          value="admin@gmail.com"
+          style="display: none"
+        />
+      </p>
+
+      <!-- Role -->
+
+      <p>
+        <strong>Role:</strong>
+
+        <span id="roleDisplay"> System Administrator </span>
+      </p>
+
+      <!-- Organization -->
+
+      <p>
+        <strong>Organization:</strong>
+
+        <span id="organizationDisplay">
+          Textile Waste Intelligence Platform
+        </span>
+
+        <input
+          type="text"
+          id="organizationInput"
+          value="Textile Waste Intelligence Platform"
+          style="display: none"
+        />
+      </p>
+
+      <!-- Status -->
+
+      <p>
+        <strong>Status:</strong>
+
+        <span> Active </span>
+      </p>
+
+      <br />
+
+      <!-- Edit Button -->
+
+      <button type="button" id="editProfileBtn">Edit Profile</button>
+
+      <!-- Save Button -->
+
+      <button type="button" id="saveProfileBtn" style="display: none">
+        Save Changes
+      </button>
+
+      <!-- Cancel Button -->
+
+      <button type="button" id="cancelProfileBtn" style="display: none">
+        Cancel
+      </button>
+
+      <p id="profileMessage" style="display: none"></p>
+    </div>
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer>
+      <p>© 2026 AI-Powered Textile Waste Intelligence Platform</p>
+    </footer>
+
+    <!-- =====================================================
+         PROFILE JAVASCRIPT
+    ====================================================== -->
+
+    <script>
+      // -----------------------------------------------------
+      // Elements
+      // -----------------------------------------------------
+
+      const editProfileBtn = document.getElementById("editProfileBtn");
+
+      const saveProfileBtn = document.getElementById("saveProfileBtn");
+
+      const cancelProfileBtn = document.getElementById("cancelProfileBtn");
+
+      const nameDisplay = document.getElementById("nameDisplay");
+
+      const emailDisplay = document.getElementById("emailDisplay");
+
+      const organizationDisplay = document.getElementById(
+        "organizationDisplay",
+      );
+
+      const nameInput = document.getElementById("nameInput");
+
+      const emailInput = document.getElementById("emailInput");
+
+      const organizationInput = document.getElementById("organizationInput");
+
+      const profileMessage = document.getElementById("profileMessage");
+
+      // -----------------------------------------------------
+      // Load saved profile
+      // -----------------------------------------------------
+
+      const savedName = localStorage.getItem("profileName");
+
+      const savedEmail = localStorage.getItem("profileEmail");
+
+      const savedOrganization = localStorage.getItem("profileOrganization");
+
+      if (savedName) {
+        nameDisplay.innerText = savedName;
+
+        nameInput.value = savedName;
+      }
+
+      if (savedEmail) {
+        emailDisplay.innerText = savedEmail;
+
+        emailInput.value = savedEmail;
+      }
+
+      if (savedOrganization) {
+        organizationDisplay.innerText = savedOrganization;
+
+        organizationInput.value = savedOrganization;
+      }
+
+      // -----------------------------------------------------
+      // Edit Profile
+      // -----------------------------------------------------
+
+      editProfileBtn.addEventListener("click", function () {
+        nameDisplay.style.display = "none";
+
+        emailDisplay.style.display = "none";
+
+        organizationDisplay.style.display = "none";
+
+        nameInput.style.display = "inline-block";
+
+        emailInput.style.display = "inline-block";
+
+        organizationInput.style.display = "inline-block";
+
+        editProfileBtn.style.display = "none";
+
+        saveProfileBtn.style.display = "inline-block";
+
+        cancelProfileBtn.style.display = "inline-block";
+      });
+
+      // -----------------------------------------------------
+      // Save Profile
+      // -----------------------------------------------------
+
+      saveProfileBtn.addEventListener("click", function () {
+        const name = nameInput.value.trim();
+
+        const email = emailInput.value.trim();
+
+        const organization = organizationInput.value.trim();
+
+        if (!name || !email || !organization) {
+          alert("Please fill all profile fields.");
+
+          return;
+        }
+
+        // Save locally
+
+        localStorage.setItem("profileName", name);
+
+        localStorage.setItem("profileEmail", email);
+
+        localStorage.setItem("profileOrganization", organization);
+
+        // Update display
+
+        nameDisplay.innerText = name;
+
+        emailDisplay.innerText = email;
+
+        organizationDisplay.innerText = organization;
+
+        // Switch back to display mode
+
+        nameDisplay.style.display = "inline";
+
+        emailDisplay.style.display = "inline";
+
+        organizationDisplay.style.display = "inline";
+
+        nameInput.style.display = "none";
+
+        emailInput.style.display = "none";
+
+        organizationInput.style.display = "none";
+
+        editProfileBtn.style.display = "inline-block";
+
+        saveProfileBtn.style.display = "none";
+
+        cancelProfileBtn.style.display = "none";
+
+        profileMessage.innerText = "Profile updated successfully!";
+
+        profileMessage.style.display = "block";
+
+        setTimeout(function () {
+          profileMessage.style.display = "none";
+        }, 3000);
+      });
+
+      // -----------------------------------------------------
+      // Cancel
+      // -----------------------------------------------------
+
+      cancelProfileBtn.addEventListener("click", function () {
+        nameInput.value = nameDisplay.innerText;
+
+        emailInput.value = emailDisplay.innerText;
+
+        organizationInput.value = organizationDisplay.innerText;
+
+        nameDisplay.style.display = "inline";
+
+        emailDisplay.style.display = "inline";
+
+        organizationDisplay.style.display = "inline";
+
+        nameInput.style.display = "none";
+
+        emailInput.style.display = "none";
+
+        organizationInput.style.display = "none";
+
+        editProfileBtn.style.display = "inline-block";
+
+        saveProfileBtn.style.display = "none";
+
+        cancelProfileBtn.style.display = "none";
+      });
+
+      // -----------------------------------------------------
+      // Logout
+      // -----------------------------------------------------
+
+      const logoutBtn = document.getElementById("logoutBtn");
+
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", function (event) {
+          event.preventDefault();
+
+          localStorage.removeItem("token");
+
+          localStorage.removeItem("userid");
+
+          window.location.href = "login.html";
+        });
+      }
+    </script>
+  </body>
+</html>

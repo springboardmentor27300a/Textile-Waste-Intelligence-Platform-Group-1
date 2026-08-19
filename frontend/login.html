@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Login</title>
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body class="login-page">
+    <div class="login-card">
+      <h2>🔐 User Login</h2>
+
+      <form id="loginForm">
+        <input type="email" id="email" placeholder="Enter Email" required />
+
+        <input
+          type="password"
+          id="password"
+          placeholder="Enter Password"
+          required
+        />
+
+        <button type="submit">Login</button>
+      </form>
+
+      <br />
+
+      <p align="center">
+        Don't have an account?
+
+        <a href="register.html"> Register </a>
+      </p>
+    </div>
+
+    <script>
+      const BASE_URL = "http://127.0.0.1:8000";
+
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const email = document.getElementById("email").value;
+
+          const password = document.getElementById("password").value;
+
+          try {
+            const response = await fetch(`${BASE_URL}/auth/login`, {
+              method: "POST",
+
+              headers: {
+                "Content-Type": "application/json",
+              },
+
+              body: JSON.stringify({
+                email,
+
+                password,
+              }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              alert("Login Successful");
+
+              localStorage.setItem("token", data.access_token);
+
+              window.location.href = "dashboard.html";
+            } else {
+              alert(data.detail);
+            }
+          } catch (error) {
+            alert("Unable to connect to server.");
+
+            console.log(error);
+          }
+        });
+    </script>
+  </body>
+</html>

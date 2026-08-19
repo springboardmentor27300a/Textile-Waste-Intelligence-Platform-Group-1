@@ -118,6 +118,87 @@
         </div>
     </div>
 
+    <!-- ── Reports & Export ─────────────────────────────────────────── -->
+    <h2 class="mb-md" style="font-size:1.2rem; margin-top:var(--space-xl);">📥 Reports & Export</h2>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr)); gap:var(--space-lg); margin-bottom:var(--space-xl);" id="export-cards">
+
+      <!-- Waste Classification -->
+      <div class="glass-card card-padding" style="border-left:3px solid #34d399;">
+        <div style="display:flex; align-items:flex-start; gap:var(--space-md); margin-bottom:var(--space-md);">
+          <div style="font-size:1.8rem; flex-shrink:0;">🔬</div>
+          <div>
+            <div style="font-weight:700; font-size:0.95rem; margin-bottom:4px;">Waste Classification</div>
+            <div style="font-size:0.78rem; color:var(--color-text-muted); line-height:1.5;">Classification results and material analysis from all uploaded images</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:0.5rem;">
+          <button id="btn-waste-class-xlsx" class="btn btn-secondary btn-sm" style="flex:1; font-size:0.78rem;" onclick="downloadReport('waste-classification','xlsx',this)">📊 Excel</button>
+          <button id="btn-waste-class-pdf"  class="btn btn-primary    btn-sm" style="flex:1; font-size:0.78rem;" onclick="downloadReport('waste-classification','pdf',this)">📄 PDF</button>
+        </div>
+      </div>
+
+      <!-- Recycling -->
+      <div class="glass-card card-padding" style="border-left:3px solid #38bdf8;">
+        <div style="display:flex; align-items:flex-start; gap:var(--space-md); margin-bottom:var(--space-md);">
+          <div style="font-size:1.8rem; flex-shrink:0;">♻️</div>
+          <div>
+            <div style="font-weight:700; font-size:0.95rem; margin-bottom:4px;">Recycling</div>
+            <div style="font-size:0.78rem; color:var(--color-text-muted); line-height:1.5;">Waste records, disposal methods, recycling outcomes and recommendations</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:0.5rem;">
+          <button id="btn-recycling-xlsx" class="btn btn-secondary btn-sm" style="flex:1; font-size:0.78rem;" onclick="downloadReport('recycling','xlsx',this)">📊 Excel</button>
+          <button id="btn-recycling-pdf"  class="btn btn-primary    btn-sm" style="flex:1; font-size:0.78rem;" onclick="downloadReport('recycling','pdf',this)">📄 PDF</button>
+        </div>
+      </div>
+
+      <!-- Sustainability -->
+      <div class="glass-card card-padding" style="border-left:3px solid #a3e635;">
+        <div style="display:flex; align-items:flex-start; gap:var(--space-md); margin-bottom:var(--space-md);">
+          <div style="font-size:1.8rem; flex-shrink:0;">🌱</div>
+          <div>
+            <div style="font-weight:700; font-size:0.95rem; margin-bottom:4px;">Sustainability</div>
+            <div style="font-size:0.78rem; color:var(--color-text-muted); line-height:1.5;">CO₂ savings, water savings, landfill diversion and sustainability scores</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:0.5rem;">
+          <button id="btn-sustain-xlsx" class="btn btn-secondary btn-sm" style="flex:1; font-size:0.78rem;" onclick="downloadReport('sustainability','xlsx',this)">📊 Excel</button>
+          <button id="btn-sustain-pdf"  class="btn btn-primary    btn-sm" style="flex:1; font-size:0.78rem;" onclick="downloadReport('sustainability','pdf',this)">📄 PDF</button>
+        </div>
+      </div>
+
+      <!-- Environmental Impact -->
+      <div class="glass-card card-padding" style="border-left:3px solid #fbbf24;">
+        <div style="display:flex; align-items:flex-start; gap:var(--space-md); margin-bottom:var(--space-md);">
+          <div style="font-size:1.8rem; flex-shrink:0;">🌍</div>
+          <div>
+            <div style="font-weight:700; font-size:0.95rem; margin-bottom:4px;">Environmental Impact</div>
+            <div style="font-size:0.78rem; color:var(--color-text-muted); line-height:1.5;">Environmental ratings, resource savings and impact summaries</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:0.5rem;">
+          <button id="btn-env-xlsx" class="btn btn-secondary btn-sm" style="flex:1; font-size:0.78rem;" onclick="downloadReport('environmental-impact','xlsx',this)">📊 Excel</button>
+          <button id="btn-env-pdf"  class="btn btn-primary    btn-sm" style="flex:1; font-size:0.78rem;" onclick="downloadReport('environmental-impact','pdf',this)">📄 PDF</button>
+        </div>
+      </div>
+
+      <!-- Circular Economy -->
+      <div class="glass-card card-padding" style="border-left:3px solid #c084fc;">
+        <div style="display:flex; align-items:flex-start; gap:var(--space-md); margin-bottom:var(--space-md);">
+          <div style="font-size:1.8rem; flex-shrink:0;">🔄</div>
+          <div>
+            <div style="font-weight:700; font-size:0.95rem; margin-bottom:4px;">Circular Economy</div>
+            <div style="font-size:0.78rem; color:var(--color-text-muted); line-height:1.5;">Circularity metrics, material lifecycle and reuse/recovery outcomes</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:0.5rem;">
+          <button id="btn-circular-xlsx" class="btn btn-secondary btn-sm" style="flex:1; font-size:0.78rem;" onclick="downloadReport('circular-economy','xlsx',this)">📊 Excel</button>
+          <button id="btn-circular-pdf"  class="btn btn-primary    btn-sm" style="flex:1; font-size:0.78rem;" onclick="downloadReport('circular-economy','pdf',this)">📄 PDF</button>
+        </div>
+      </div>
+
+    </div>
+
     <!-- AI Report History -->
     <h2 class="mb-md" style="font-size:1.2rem;">📋 AI Analysis History</h2>
     <div class="glass-card mb-xl">
@@ -253,6 +334,63 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 <script>
   requireAuth();
+
+  // ── Download Report Helper ────────────────────────────────────────
+  async function downloadReport(category, format, btn) {
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '⏳ Generating…';
+    try {
+      const token = localStorage.getItem('twi_token');
+      if (!token) { showToast('Please log in again', 'error'); return; }
+
+      const mimeMap = {
+        xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        pdf:  'application/pdf',
+      };
+      const extMap = { xlsx: '.xlsx', pdf: '.pdf' };
+      const nameMap = {
+        'waste-classification': 'Waste_Classification_Report',
+        'recycling':            'Recycling_Report',
+        'sustainability':       'Sustainability_Report',
+        'environmental-impact': 'Environmental_Impact_Report',
+        'circular-economy':     'Circular_Economy_Report',
+      };
+
+      const url = `/api/export/${category}/${format}?t=${Date.now()}`;
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Cache-Control': 'no-cache'
+        },
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail || `HTTP ${res.status}`);
+      }
+
+      const blob = await res.blob();
+      if (blob.size === 0) throw new Error('Empty file received');
+
+      const objUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = objUrl;
+      a.download = nameMap[category] + extMap[format];
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(objUrl);
+
+      showToast(`${nameMap[category].replace(/_/g,' ')} downloaded!`, 'success');
+    } catch (err) {
+      showToast(err.message || 'Download failed', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = originalText;
+    }
+  }
 
   let selectedYear = '2024';
   let monthlyChart, radarChart, materialChart, co2Chart;

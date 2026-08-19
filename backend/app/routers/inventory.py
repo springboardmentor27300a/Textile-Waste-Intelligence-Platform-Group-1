@@ -70,6 +70,10 @@ def get_inventory(
     return item
 
 
+from app.services.notification_service import NotificationService
+
+from sqlalchemy import func
+
 @router.post("", response_model=InventoryOut, status_code=201)
 def create_inventory(
     data: InventoryCreate,
@@ -77,13 +81,26 @@ def create_inventory(
     current_user: User = Depends(require_admin_or_analyst),
 ):
     """Create a new inventory batch record."""
-    existing = db.query(Inventory).filter(Inventory.batch_code == data.batch_code).first()
+    existing = db.query(Inventory).filter(func.lower(Inventory.batch_code) == data.batch_code.lower()).first()
     if existing:
+        # Generate a notification alert for the duplicate attempt
+        from app.models.notification import NotificationType
+        NotificationService._create_notification(
+            db=db,
+            title="Duplicate Batch Code",
+            message=f"Attempted to enter a batch code that already exists: {data.batch_code}",
+            n_type=NotificationType.alert,
+            user_id=current_user.id
+        )
         raise HTTPException(status_code=400, detail="Batch code already exists")
     item = Inventory(**data.model_dump(), created_by_id=current_user.id)
     db.add(item)
     db.commit()
     db.refresh(item)
+    
+    # Automatically trigger notifications
+    NotificationService.run_all_triggers(db)
+    
     return item
 
 
@@ -102,6 +119,10 @@ def update_inventory(
         setattr(item, field, value)
     db.commit()
     db.refresh(item)
+    
+    # Automatically trigger notifications
+    NotificationService.run_all_triggers(db)
+    
     return item
 
 

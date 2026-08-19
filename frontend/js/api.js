@@ -1,7 +1,7 @@
 /**
  * api.js — Centralized fetch wrapper for the Textile Waste API
  */
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "";
 
 function getToken() {
   return localStorage.getItem("twi_token");

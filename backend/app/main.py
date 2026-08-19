@@ -14,6 +14,7 @@ from app.routers.recommendation import router as recommendation_router  # Milest
 from app.routers.environmental import router as environmental_router    # Milestone 4 — Environmental Impact Assessment
 from app.routers.circular_analytics import router as circular_analytics_router  # Milestone 3 — Circular Economy Analytics Engine
 from app.routers import admin                                           # Milestone 4 - Admin
+from app.routers.export_reports import router as export_reports_router  # Reports & Export System
 # from app.routers.upload_router import router as upload_router          # Image Upload Module (Disabled due to route conflict)
 
 app = FastAPI(
@@ -27,7 +28,7 @@ app = FastAPI(
 # ── CORS Middleware ───────────────────────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5500", "http://127.0.0.1:5500", "http://localhost:8000", "http://127.0.0.1:8000", "null"],
+    allow_origins=["http://localhost:5500", "http://127.0.0.1:5500", "http://localhost:8000", "http://127.0.0.1:8000", "http://localhost:3000", "http://127.0.0.1:3000", "null"],
     allow_origin_regex=r".*",  # Allow all for local dev (bypasses Starlette * + credentials restriction)
     allow_credentials=True,
     allow_methods=["*"],
@@ -50,6 +51,7 @@ app.include_router(circular_analytics_router)                           # Milest
 app.include_router(admin.router)                                        # Milestone 4 - Admin User Management
 from app.routers import notifications                                   # Import locally to avoid issues
 app.include_router(notifications.router)                                # Milestone 4 - Notification & Alerts
+app.include_router(export_reports_router)                               # Reports & Export System
 # app.include_router(upload_router)                                       # Image Upload Module (Disabled due to route conflict)
 
 # ── Static Files: serve uploaded textile images ───────────────────────────────

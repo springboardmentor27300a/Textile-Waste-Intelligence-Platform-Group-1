@@ -34,6 +34,8 @@ def list_waste_records(
     return query.order_by(WasteRecord.recorded_at.desc()).offset(skip).limit(limit).all()
 
 
+from app.services.notification_service import NotificationService
+
 @router.post("/records", response_model=WasteRecordOut, status_code=201)
 def create_waste_record(
     data: WasteRecordCreate,
@@ -45,6 +47,10 @@ def create_waste_record(
     db.add(record)
     db.commit()
     db.refresh(record)
+    
+    # Automatically trigger notifications
+    NotificationService.run_all_triggers(db)
+    
     return record
 
 

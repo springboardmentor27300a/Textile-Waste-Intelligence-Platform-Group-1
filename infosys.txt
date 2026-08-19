@@ -1,0 +1,14 @@
+Infosys
+
+(.venv) (base) PS D:\Infosys_Springboard_V1> & "C:\Program Files\PostgreSQL\18\bin\psql.exe" -U postgres -h localhost
+Password for user postgres: Arpan@2001
+
+
+(.venv) (base) PS D:\Infosys_Springboard_V1> & "C:\Program Files\PostgreSQL\18\bin\psql.exe" -U textile_app -d textile_waste_db -h localhost
+Password for user textile_app: Arpan@2026
+
+
+arpan@example.com
+Password123
+
+backend start: python -m uvicorn app.main:app --reload

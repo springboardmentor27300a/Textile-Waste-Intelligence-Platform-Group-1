@@ -9,6 +9,12 @@ from app.routers.auth import router as auth_router
 # from app.routers.rbac_test import router as rbac_test_router
 from app.routers.organizations import router as organizations_router
 from app.routers.facilities import router as facilities_router
+from app.routers.waste_batches import router as waste_batches_router
+from app.routers.waste_images import router as waste_images_router
+from fastapi.middleware.cors import CORSMiddleware
+from app.routers.analysis import router as analysis_router
+
+
 
 app = FastAPI(
     title=f"{settings.app_name} API",
@@ -19,10 +25,24 @@ app = FastAPI(
     version=settings.app_version,
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(auth_router)
 # app.include_router(rbac_test_router)
 app.include_router(organizations_router)
 app.include_router(facilities_router)
+app.include_router(waste_batches_router)
+app.include_router(waste_images_router)
+app.include_router(analysis_router)
 
 @app.get("/")
 def root():

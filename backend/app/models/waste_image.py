@@ -54,11 +54,16 @@ class WasteImage(Base):
         nullable=False,
     )
 
+    # uploaded_at: Mapped[datetime] = mapped_column(
+    #     DateTime(timezone=True),
+    #     server_default=func.now(),
+    #     nullable=False,
+    # )
     uploaded_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False,
-    )
+    DateTime(timezone=True),
+    server_default=func.now(),
+    nullable=False,
+)
 
     batch: Mapped["WasteBatch"] = relationship(
         back_populates="images"

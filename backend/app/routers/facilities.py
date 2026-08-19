@@ -104,10 +104,10 @@ def get_facility(
             detail=str(exc),
         ) from exc
 
-
 @router.patch(
     "/{facility_id}",
     response_model=FacilityResponse,
+    status_code=status.HTTP_200_OK,
 )
 def update_facility(
     facility_id: int,

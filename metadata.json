@@ -1,0 +1,6 @@
+{
+  "name": "Textile Waste Intelligence Platform",
+  "description": "Enterprise circular textile intelligence system for material classification, waste inventory, circularity scoring, and environmental impact reporting.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

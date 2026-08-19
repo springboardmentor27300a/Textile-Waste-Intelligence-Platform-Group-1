@@ -1,0 +1,62 @@
+{
+  "features": {
+    "mean_color_rgb": [
+      55.2,
+      69.8,
+      109.6
+    ],
+    "brightness": 0.2745,
+    "saturation": 0.4969,
+    "color_std": 0.033,
+    "texture_roughness": 0.0365,
+    "texture_uniformity": 0.7282,
+    "edge_density": 0.0182,
+    "pattern_regularity": 0.9947,
+    "damage_score": 0.0938,
+    "contamination_score": 0.0174
+  },
+  "material": {
+    "predicted_material": "Nylon",
+    "confidence": 0.517,
+    "fiber_category": "Synthetic",
+    "blend_type": "Blended",
+    "fiber_composition": {
+      "Nylon": 70,
+      "Polyester": 30
+    },
+    "quality_estimate": "Excellent",
+    "quality_score": 0.782,
+    "candidates_ranked": [
+      {
+        "material": "Nylon",
+        "distance": 0.6363
+      },
+      {
+        "material": "Polyester",
+        "distance": 0.6455
+      },
+      {
+        "material": "Silk",
+        "distance": 0.7448
+      },
+      {
+        "material": "Rayon",
+        "distance": 0.7543
+      }
+    ],
+    "model": "nearest-centroid (Milestone 2 baseline, 10-class)"
+  },
+  "waste": {
+    "waste_category": "Reusable",
+    "recyclability_score": 84.3,
+    "reuse_potential": "High",
+    "contamination_detected": false,
+    "damage_detected": false,
+    "disposal_recommendation": "Clean and list for direct reuse/resale or donation; item is in wearable condition.",
+    "recommended_recycling_routes": [
+      "Donation",
+      "Fabric Reuse"
+    ],
+    "condition_hint_used": null
+  }
+}

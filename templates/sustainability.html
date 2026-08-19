@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sustainability — Textile Waste Intelligence Platform</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <div class="app-shell">
+    {% include "_sidebar.html" %}
+
+    <div class="main">
+      <div class="topbar">
+        <div>
+          <h2>Sustainability Intelligence</h2>
+          <div class="sub">Milestone 3 — Environmental impact, circular economy analytics &amp; circularity scoring</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:14px;">
+          <div class="user-badge" id="user-badge"></div>
+          <button class="btn btn-secondary" onclick="logout()">Logout</button>
+        </div>
+      </div>
+
+      <!-- Circular Economy Analytics -->
+      <div class="card mb-16">
+        <div class="section-title">Circular Economy Analytics</div>
+        <div class="impact-grid">
+          <div class="impact-card">
+            <div class="icon">🌍</div>
+            <div class="value" id="stat-co2">—</div>
+            <div class="label">Total CO2e Saved (kg)</div>
+          </div>
+          <div class="impact-card">
+            <div class="icon">💧</div>
+            <div class="value" id="stat-water">—</div>
+            <div class="label">Total Water Saved (L)</div>
+          </div>
+          <div class="impact-card">
+            <div class="icon">🗑️</div>
+            <div class="value" id="stat-landfill">—</div>
+            <div class="label">Landfill Diverted (kg)</div>
+          </div>
+          <div class="impact-card">
+            <div class="icon">♻️</div>
+            <div class="value" id="stat-recovered">—</div>
+            <div class="label">Recoverable Material (kg)</div>
+          </div>
+        </div>
+        <div class="grid grid-2 mt-16">
+          <div>
+            <div class="muted mb-16">Average Circularity Score</div>
+            <div class="score-ring-wrap">
+              <div class="score-ring" id="avg-score-ring"></div>
+              <div>
+                <div class="muted">Based on <span id="stat-count">0</span> assessed items</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="muted mb-16">Items by Circularity Category</div>
+            <div id="category-breakdown"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assess a recent analysis -->
+      <div class="card mb-16">
+        <div class="section-title">Run a Sustainability Assessment</div>
+        <div class="muted mb-16">Pick a recent image analysis (from Milestone 2) and enter the real batch weight to compute its environmental impact and circularity score.</div>
+        <div class="assess-picker">
+          <div class="form-group">
+            <label>Analysis result</label>
+            <select id="result-picker"></select>
+          </div>
+          <div class="form-group" style="max-width:160px;">
+            <label>Quantity (kg)</label>
+            <input type="number" id="quantity-input" min="0.1" step="0.1" value="1" />
+          </div>
+          <button class="btn btn-primary" id="run-assess-btn">🌱 Assess</button>
+        </div>
+      </div>
+
+      <div class="card" id="result-card" style="display:none;">
+        <div class="flex-between mb-16">
+          <div class="section-title" style="margin:0;">Assessment Result</div>
+          <span class="badge gray" id="result-material-badge"></span>
+        </div>
+
+        <div class="grid grid-2 mb-16">
+          <div class="result-panel">
+            <h4>9. Waste Scoring Engine — Overall Circularity Score</h4>
+            <div class="score-ring-wrap">
+              <div class="score-ring" id="score-ring"></div>
+              <div>
+                <div id="circ-pill-wrap"></div>
+                <div class="muted mt-16" id="benchmark-line"></div>
+              </div>
+            </div>
+            <div class="mt-16">
+              <div class="weight-bar-row">
+                <div class="head"><span>Material Recyclability</span><span class="w">35% · <b id="w-recyclability"></b></span></div>
+                <div class="weight-bar-track"><div class="weight-bar-fill" id="bar-recyclability"></div></div>
+              </div>
+              <div class="weight-bar-row">
+                <div class="head"><span>Material Condition</span><span class="w">20% · <b id="w-condition"></b></span></div>
+                <div class="weight-bar-track"><div class="weight-bar-fill" id="bar-condition"></div></div>
+              </div>
+              <div class="weight-bar-row">
+                <div class="head"><span>Reuse Potential</span><span class="w">20% · <b id="w-reuse"></b></span></div>
+                <div class="weight-bar-track"><div class="weight-bar-fill" id="bar-reuse"></div></div>
+              </div>
+              <div class="weight-bar-row">
+                <div class="head"><span>Environmental Benefit</span><span class="w">15% · <b id="w-env"></b></span></div>
+                <div class="weight-bar-track"><div class="weight-bar-fill" id="bar-env"></div></div>
+              </div>
+              <div class="weight-bar-row">
+                <div class="head"><span>Processing Feasibility</span><span class="w">10% · <b id="w-processing"></b></span></div>
+                <div class="weight-bar-track"><div class="weight-bar-fill" id="bar-processing"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="result-panel">
+            <h4>8. Environmental Impact Assessment</h4>
+            <div class="impact-grid" style="grid-template-columns: repeat(2, 1fr);">
+              <div class="impact-card"><div class="icon">🌍</div><div class="value" id="a-co2"></div><div class="label">CO2e Saved (kg)</div></div>
+              <div class="impact-card"><div class="icon">💧</div><div class="value" id="a-water"></div><div class="label">Water Saved (L)</div></div>
+              <div class="impact-card"><div class="icon">🗑️</div><div class="value" id="a-landfill"></div><div class="label">Landfill Diverted (kg)</div></div>
+              <div class="impact-card"><div class="icon">⚡</div><div class="value" id="a-energy"></div><div class="label">Energy Conserved (kWh)</div></div>
+            </div>
+            <div class="kv-row mt-16"><span class="k">Diversion level</span><span class="v" id="a-diversion-level"></span></div>
+            <div class="kv-row"><span class="k">Raw material conserved</span><span class="v" id="a-raw-material"></span></div>
+            <div class="kv-row"><span class="k">Circular loop stage</span><span class="v" id="a-loop-stage"></span></div>
+            <div class="kv-row"><span class="k">Recoverable material</span><span class="v" id="a-recoverable"></span></div>
+            <div class="kv-row"><span class="k">Recovery efficiency</span><span class="v" id="a-recovery-eff"></span></div>
+            <div class="mt-16">
+              <div class="muted mb-16">7. Sustainability Report</div>
+              <div class="report-box" id="a-report-text"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="result-panel mt-16">
+          <div class="flex-between">
+            <h4>♻️ Recycling Recommendation Workflow</h4>
+            <span class="badge" id="rec-priority-badge"></span>
+          </div>
+          <div class="kv-row"><span class="k">Recommended pathway</span><span class="v" id="rec-pathway"></span></div>
+          <div class="kv-row"><span class="k">Suggested partner type</span><span class="v" id="rec-partner"></span></div>
+          <div class="mt-16" id="rec-steps"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+  <script>
+    requireAuth();
+    renderUserBadge("user-badge");
+
+    const CIRC_PILL_CLASS = {
+      "Excellent Recovery Potential": "excellent",
+      "High Recovery Potential": "high",
+      "Moderate Recovery Potential": "moderate",
+      "Limited Recovery Potential": "limited",
+      "Disposal Recommended": "disposal",
+    };
+
+    function ringColorClass(score) {
+      if (score >= 70) return "";
+      if (score >= 50) return "warn";
+      return "danger";
+    }
+
+    function renderScoreRing(containerId, score, categoryLabel) {
+      const el = document.getElementById(containerId);
+      const radius = 52;
+      const circumference = 2 * Math.PI * radius;
+      const offset = circumference * (1 - (score || 0) / 100);
+      const cls = ringColorClass(score || 0);
+      el.innerHTML = `
+        <svg width="130" height="130" viewBox="0 0 130 130">
+          <circle class="track" cx="65" cy="65" r="${radius}"></circle>
+          <circle class="fill ${cls}" cx="65" cy="65" r="${radius}"
+            stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"></circle>
+        </svg>
+        <div class="label">
+          <div class="num">${score ?? "—"}</div>
+          <div class="cat">${categoryLabel || ""}</div>
+        </div>
+      `;
+    }
+
+    function circPill(category) {
+      const cls = CIRC_PILL_CLASS[category] || "moderate";
+      return `<span class="circ-pill ${cls}">${category}</span>`;
+    }
+
+    function renderCategoryBreakdown(byCategory) {
+      const container = document.getElementById("category-breakdown");
+      const entries = Object.entries(byCategory || {});
+      if (!entries.length) {
+        container.innerHTML = '<div class="empty-state">No assessments yet</div>';
+        return;
+      }
+      const max = Math.max(...entries.map(([, v]) => v));
+      container.innerHTML = entries.map(([label, value]) => `
+        <div style="margin-bottom:10px;">
+          <div class="flex-between" style="font-size:0.82rem; margin-bottom:4px;">
+            <span>${label}</span><span class="muted">${value}</span>
+          </div>
+          <div style="background:var(--tan-100); border-radius:6px; height:8px; overflow:hidden;">
+            <div style="background:var(--green-500); height:100%; width:${max ? (value / max * 100) : 0}%;"></div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    async function loadDashboard() {
+      try {
+        const d = await apiFetch("/sustainability/dashboard");
+        document.getElementById("stat-co2").textContent = d.total_co2_saved_kg;
+        document.getElementById("stat-water").textContent = d.total_water_saved_liters.toLocaleString();
+        document.getElementById("stat-landfill").textContent = d.total_landfill_diverted_kg;
+        document.getElementById("stat-recovered").textContent = d.total_recoverable_material_kg;
+        document.getElementById("stat-count").textContent = d.total_assessments;
+        renderScoreRing("avg-score-ring", d.avg_circularity_score, "");
+        renderCategoryBreakdown(d.by_circularity_category);
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    async function loadResultPicker() {
+      try {
+        const data = await apiFetch("/analysis/history?limit=30");
+        const select = document.getElementById("result-picker");
+        if (!data.results.length) {
+          select.innerHTML = '<option value="">No analyses yet — run one on the Image Analysis page</option>';
+          return;
+        }
+        select.innerHTML = data.results.map(r => `
+          <option value="${r.id}">#${r.id} — ${r.predicted_material} (${r.waste_category})</option>
+        `).join("");
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    function renderAssessment(a) {
+      document.getElementById("result-card").style.display = "block";
+      document.getElementById("result-material-badge").textContent = `${a.material} · ${a.quantity_kg} kg`;
+
+      renderScoreRing("score-ring", a.circularity_score, a.circularity_category);
+      document.getElementById("circ-pill-wrap").innerHTML = circPill(a.circularity_category);
+      const deltaSign = a.benchmark_delta > 0 ? "+" : "";
+      document.getElementById("benchmark-line").textContent =
+        `${a.benchmark_label} (baseline ${a.benchmark_baseline_score}, ${deltaSign}${a.benchmark_delta})`;
+
+      const bars = [
+        ["recyclability", a.recyclability_score],
+        ["condition", a.material_condition_score],
+        ["reuse", a.reuse_score],
+        ["env", a.environmental_benefit_score],
+        ["processing", a.processing_feasibility_score],
+      ];
+      bars.forEach(([key, value]) => {
+        document.getElementById(`w-${key}`).textContent = `${value}/100`;
+        document.getElementById(`bar-${key}`).style.width = `${Math.max(0, Math.min(100, value))}%`;
+      });
+
+      document.getElementById("a-co2").textContent = a.co2_saved_kg;
+      document.getElementById("a-water").textContent = a.water_saved_liters.toLocaleString();
+      document.getElementById("a-landfill").textContent = a.landfill_diverted_kg;
+      document.getElementById("a-energy").textContent = a.energy_conserved_kwh;
+      document.getElementById("a-diversion-level").textContent = `${a.diversion_level} (${a.diversion_rate_pct}%)`;
+      document.getElementById("a-raw-material").textContent = `${a.raw_material_conserved_kg} kg`;
+      document.getElementById("a-loop-stage").textContent = a.circular_loop_stage;
+      document.getElementById("a-recoverable").textContent = `${a.recoverable_material_kg} kg`;
+      document.getElementById("a-recovery-eff").textContent = `${a.recovery_efficiency_pct}%`;
+      document.getElementById("a-report-text").textContent = a.report_text;
+
+      document.getElementById("rec-pathway").textContent = a.recommended_pathway;
+      document.getElementById("rec-partner").textContent = a.suggested_partner_type;
+      const prioBadge = document.getElementById("rec-priority-badge");
+      prioBadge.textContent = `${a.recommendation_priority} priority`;
+      prioBadge.className = "badge " + (a.recommendation_priority === "High" ? "danger" : a.recommendation_priority === "Medium" ? "warn" : "green");
+      document.getElementById("rec-steps").innerHTML = (a.recommendation_steps || []).map(s => `
+        <div style="display:flex; gap:12px; margin-bottom:12px;">
+          <div style="flex-shrink:0; width:26px; height:26px; border-radius:50%; background:var(--green-500); color:#fff; display:flex; align-items:center; justify-content:center; font-size:0.78rem; font-weight:700;">${s.step}</div>
+          <div>
+            <div style="font-weight:600;">${s.title}</div>
+            <div class="muted" style="font-size:0.82rem;">${s.detail}</div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    document.getElementById("run-assess-btn").addEventListener("click", async () => {
+      const resultId = document.getElementById("result-picker").value;
+      if (!resultId) {
+        showToast("Choose an analysis result first", true);
+        return;
+      }
+      const quantityKg = parseFloat(document.getElementById("quantity-input").value) || 1;
+      const btn = document.getElementById("run-assess-btn");
+      btn.disabled = true;
+      btn.textContent = "Assessing...";
+      try {
+        const data = await apiFetch(`/sustainability/assess/${resultId}`, {
+          method: "POST",
+          body: JSON.stringify({ quantity_kg: quantityKg }),
+        });
+        renderAssessment(data.assessment);
+        loadDashboard();
+        showToast("Sustainability assessment complete");
+      } catch (err) {
+        showToast(err.message, true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "🌱 Assess";
+      }
+    });
+
+    loadDashboard();
+    loadResultPicker();
+  </script>
+</body>
+</html>

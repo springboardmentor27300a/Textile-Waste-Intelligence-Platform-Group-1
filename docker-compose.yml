@@ -1,41 +1,31 @@
-version: '3.8'
+version: "3.9"
 
 services:
-  db:
-    image: postgres:15-alpine
-    container_name: twip_db
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password123
-      POSTGRES_DB: textile_db
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: textile-waste-platform:milestone4
+    container_name: textile-waste-platform
     ports:
-      - "5432:5432"
+      - "5000:5000"
+    environment:
+      # Override these in production (e.g. via a cloud provider's
+      # secrets manager or an `.env` file that is NOT committed).
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-change-me-in-production}
+      DATABASE_URL: ${DATABASE_URL:-sqlite:////app/backend/instance/textile_waste.db}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-  backend:
-    build: ./backend
-    container_name: twip_backend
-    restart: always
-    ports:
-      - "8000:8000"
-    environment:
-      - DATABASE_URL=postgresql://postgres:password123@db:5432/textile_db
-      - SECRET_KEY=09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7
-    depends_on:
-      - db
-
-  frontend:
-    build: ./frontend
-    container_name: twip_frontend
-    restart: always
-    ports:
-      - "8080:80"
-    environment:
-      - VITE_API_URL=http://localhost:8000
-    depends_on:
-      - backend
+      # Persist the SQLite database + any generated artifacts across
+      # container restarts/redeploys.
+      - textile-waste-data:/app/backend/instance
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/api/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
 
 volumes:
-  postgres_data:
+  textile-waste-data:

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inventory — Textile Waste Intelligence Platform</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <div class="app-shell">
+    {% include "_sidebar.html" %}
+
+    <div class="main">
+      <div class="topbar">
+        <div>
+          <h2>Inventory Management</h2>
+          <div class="sub">Track textile waste from intake through recycling</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:14px;">
+          <div class="user-badge" id="user-badge"></div>
+          <button class="btn btn-secondary" onclick="logout()">Logout</button>
+        </div>
+      </div>
+
+      <div class="card mb-16">
+        <div class="flex-between mb-16">
+          <div style="display:flex; gap:10px;">
+            <select id="filter-category">
+              <option value="">All Categories</option>
+              <option>Pre-consumer</option>
+              <option>Post-consumer</option>
+              <option>Industrial</option>
+              <option>Other</option>
+            </select>
+            <select id="filter-status">
+              <option value="">All Statuses</option>
+              <option>Pending</option>
+              <option>In Process</option>
+              <option>Recycled</option>
+              <option>Rejected</option>
+              <option>Disposed</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" id="new-item-btn" data-roles="admin,staff">+ New Item</button>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th><th>Fabric</th><th>Category</th><th>Qty (kg)</th>
+              <th>Condition</th><th>Status</th><th>Location</th><th data-roles="admin,staff">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="inventory-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create/Edit modal -->
+  <div class="modal-overlay" id="item-modal">
+    <div class="modal-box">
+      <h3 id="modal-title">New Inventory Item</h3>
+      <input type="hidden" id="item-id" />
+      <div class="form-group">
+        <label>Item Name</label>
+        <input type="text" id="item-name" placeholder="e.g. Cotton Offcuts - Batch B" />
+      </div>
+      <div class="form-group">
+        <label>Fabric Type</label>
+        <input type="text" id="fabric-type" placeholder="e.g. Cotton, Polyester, Denim" />
+      </div>
+      <div class="grid grid-2">
+        <div class="form-group">
+          <label>Waste Category</label>
+          <select id="waste-category">
+            <option>Pre-consumer</option>
+            <option>Post-consumer</option>
+            <option>Industrial</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Quantity (kg)</label>
+          <input type="number" step="0.01" id="quantity-kg" placeholder="0.0" />
+        </div>
+      </div>
+      <div class="grid grid-2">
+        <div class="form-group">
+          <label>Condition</label>
+          <select id="condition">
+            <option>Reusable</option>
+            <option>Degraded</option>
+            <option>Contaminated</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Recycling Status</label>
+          <select id="recycling-status">
+            <option>Pending</option>
+            <option>In Process</option>
+            <option>Recycled</option>
+            <option>Rejected</option>
+            <option>Disposed</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Source Location</label>
+        <input type="text" id="source-location" placeholder="e.g. Bengaluru Unit 1" />
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="notes" rows="2"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="cancel-item">Cancel</button>
+        <button class="btn btn-primary" id="save-item">Save Item</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+  <script>
+    requireAuth();
+    renderUserBadge("user-badge");
+
+    const modal = document.getElementById("item-modal");
+    const user = getUser();
+
+    function statusBadge(status) {
+      const map = { "Recycled": "green", "Pending": "warn", "Rejected": "danger", "In Process": "gray", "Disposed": "gray" };
+      return `<span class="badge ${map[status] || "gray"}">${status}</span>`;
+    }
+
+    function canEdit() {
+      return user && (user.role === "admin" || user.role === "staff");
+    }
+
+    async function loadInventory() {
+      const category = document.getElementById("filter-category").value;
+      const status = document.getElementById("filter-status").value;
+      const params = new URLSearchParams();
+      if (category) params.set("category", category);
+      if (status) params.set("status", status);
+
+      try {
+        const data = await apiFetch("/inventory/?" + params.toString());
+        const tbody = document.getElementById("inventory-tbody");
+        if (data.items.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="8" class="empty-state">No inventory items match these filters</td></tr>`;
+          return;
+        }
+        tbody.innerHTML = data.items.map(i => `
+          <tr>
+            <td>${i.item_name}</td>
+            <td>${i.fabric_type}</td>
+            <td>${i.waste_category}</td>
+            <td>${i.quantity_kg}</td>
+            <td>${i.condition}</td>
+            <td>${statusBadge(i.recycling_status)}</td>
+            <td>${i.source_location || "—"}</td>
+            <td>
+              ${canEdit() ? `
+                <button class="btn btn-secondary" style="padding:5px 10px;" onclick="editItem(${i.id})">Edit</button>
+                ${user.role === "admin" ? `<button class="btn btn-danger" style="padding:5px 10px;" onclick="deleteItem(${i.id})">Delete</button>` : ""}
+              ` : ""}
+            </td>
+          </tr>
+        `).join("");
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    let currentItems = {};
+
+    function openModal(item = null) {
+      document.getElementById("modal-title").textContent = item ? "Edit Inventory Item" : "New Inventory Item";
+      document.getElementById("item-id").value = item ? item.id : "";
+      document.getElementById("item-name").value = item ? item.item_name : "";
+      document.getElementById("fabric-type").value = item ? item.fabric_type : "";
+      document.getElementById("waste-category").value = item ? item.waste_category : "Pre-consumer";
+      document.getElementById("quantity-kg").value = item ? item.quantity_kg : "";
+      document.getElementById("condition").value = item ? item.condition : "Reusable";
+      document.getElementById("recycling-status").value = item ? item.recycling_status : "Pending";
+      document.getElementById("source-location").value = item ? (item.source_location || "") : "";
+      document.getElementById("notes").value = item ? (item.notes || "") : "";
+      modal.classList.add("show");
+    }
+
+    async function editItem(id) {
+      try {
+        const data = await apiFetch(`/inventory/${id}`);
+        openModal(data.item);
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    async function deleteItem(id) {
+      if (!confirm("Delete this inventory item? This cannot be undone.")) return;
+      try {
+        await apiFetch(`/inventory/${id}`, { method: "DELETE" });
+        showToast("Item deleted");
+        loadInventory();
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    document.getElementById("new-item-btn").addEventListener("click", () => openModal());
+    document.getElementById("cancel-item").addEventListener("click", () => modal.classList.remove("show"));
+    document.getElementById("filter-category").addEventListener("change", loadInventory);
+    document.getElementById("filter-status").addEventListener("change", loadInventory);
+
+    document.getElementById("save-item").addEventListener("click", async () => {
+      const id = document.getElementById("item-id").value;
+      const payload = {
+        item_name: document.getElementById("item-name").value.trim(),
+        fabric_type: document.getElementById("fabric-type").value.trim(),
+        waste_category: document.getElementById("waste-category").value,
+        quantity_kg: parseFloat(document.getElementById("quantity-kg").value || 0),
+        condition: document.getElementById("condition").value,
+        recycling_status: document.getElementById("recycling-status").value,
+        source_location: document.getElementById("source-location").value.trim(),
+        notes: document.getElementById("notes").value.trim(),
+      };
+
+      if (!payload.item_name || !payload.fabric_type) {
+        showToast("Item name and fabric type are required", true);
+        return;
+      }
+
+      try {
+        if (id) {
+          await apiFetch(`/inventory/${id}`, { method: "PUT", body: JSON.stringify(payload) });
+          showToast("Item updated");
+        } else {
+          await apiFetch("/inventory/", { method: "POST", body: JSON.stringify(payload) });
+          showToast("Item created");
+        }
+        modal.classList.remove("show");
+        loadInventory();
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    });
+
+    loadInventory();
+  </script>
+</body>
+</html>

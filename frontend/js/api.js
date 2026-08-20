@@ -1,7 +1,7 @@
 /**
  * api.js — Centralized fetch wrapper for the Textile Waste API
  */
-const API_BASE = "";
+const API_BASE = "https://ai-textile-waste-intelligence-platform.onrender.com";
 
 function getToken() {
   return localStorage.getItem("twi_token");

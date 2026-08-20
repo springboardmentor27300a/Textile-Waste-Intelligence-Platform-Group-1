@@ -10,7 +10,7 @@
 //     />
 //   );
 // }
-
+import { getAnalysis } from "../services/analysisService";
 
 import { useEffect, useState } from "react";
 import {
@@ -25,23 +25,53 @@ export default function Sustainability() {
     useState(null);
 
 
-  useEffect(() => {
-    const saved =
+  // useEffect(() => {
+  //   const saved =
+  //     localStorage.getItem(
+  //       "latestAnalysis"
+  //     );
+
+  //   if (saved) {
+  //     try {
+  //       setAnalysis(
+  //         JSON.parse(saved)
+  //       );
+  //     } catch {
+  //       setAnalysis(null);
+  //     }
+  //   }
+  // }, []);
+useEffect(() => {
+  async function loadAnalysis() {
+    const batchId =
       localStorage.getItem(
-        "latestAnalysis"
+        "latestAnalysisBatchId"
       );
 
-    if (saved) {
-      try {
-        setAnalysis(
-          JSON.parse(saved)
-        );
-      } catch {
-        setAnalysis(null);
-      }
+    if (!batchId) {
+      setAnalysis(null);
+      return;
     }
-  }, []);
 
+    try {
+      const result =
+        await getAnalysis(
+          Number(batchId)
+        );
+
+      setAnalysis(result);
+    } catch (error) {
+      console.error(
+        "Unable to load analysis:",
+        error
+      );
+
+      setAnalysis(null);
+    }
+  }
+
+  loadAnalysis();
+}, []);
 
   if (!analysis) {
     return (

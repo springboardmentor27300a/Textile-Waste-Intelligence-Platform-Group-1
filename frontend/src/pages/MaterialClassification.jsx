@@ -240,7 +240,7 @@
 //   );
 // }
 
-
+import { getAnalysis } from "../services/analysisService";
 
 import { useEffect, useState } from "react";
 import {
@@ -255,21 +255,53 @@ export default function MaterialClassification() {
   const [analysis, setAnalysis] =
     useState(null);
 
-  useEffect(() => {
-    const saved =
-      localStorage.getItem(
-        "latestAnalysis"
-      );
+  // useEffect(() => {
+  //   const saved =
+  //     localStorage.getItem(
+  //       "latestAnalysis"
+  //     );
 
-    if (saved) {
-      try {
-        setAnalysis(
-          JSON.parse(saved)
+  //   if (saved) {
+  //     try {
+  //       setAnalysis(
+  //         JSON.parse(saved)
+  //       );
+  //     } catch {
+  //       setAnalysis(null);
+  //     }
+  //   }
+  // }, []);
+
+  useEffect(() => {
+    async function loadAnalysis() {
+      const batchId =
+        localStorage.getItem(
+          "latestAnalysisBatchId"
         );
-      } catch {
+
+      if (!batchId) {
+        setAnalysis(null);
+        return;
+      }
+
+      try {
+        const result =
+          await getAnalysis(
+            Number(batchId)
+          );
+
+        setAnalysis(result);
+      } catch (error) {
+        console.error(
+          "Unable to load analysis:",
+          error
+        );
+
         setAnalysis(null);
       }
     }
+
+    loadAnalysis();
   }, []);
 
 
@@ -497,13 +529,20 @@ export default function MaterialClassification() {
         </h3>
 
         <p>
-          Model: Demo Predictor
+          Model: Textile Material Classification
+        </p>
+
+        <p>
+          Type: Fine-Tuned Deep Learning Model
+        </p>
+
+        <p>
+          Classes: 7
         </p>
 
         <p>
           Version: 1.0
         </p>
-
       </div>
 
     </div>

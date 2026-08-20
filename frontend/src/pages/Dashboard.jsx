@@ -267,6 +267,37 @@
 //   );
 // }
 
+// import { useEffect, useState } from "react";
+
+// import {
+//   ArrowRight,
+//   BrainCircuit,
+//   ClipboardPlus,
+//   Factory,
+//   Leaf,
+//   PackageSearch,
+//   Recycle,
+//   ScanLine,
+//   TrendingUp,
+// } from "lucide-react";
+
+// import { Link } from "react-router-dom";
+
+// import { useAuth } from "../context/AuthContext";
+
+// // import {
+// //   getWasteBatches,
+// // } from "../services/wasteBatchService";
+
+// // import {
+// //   getFacilities,
+// // } from "../services/facilityService";
+
+// import {
+//   getDashboardAnalytics,
+// } from "../services/dashboardService";
+
+
 import { useEffect, useState } from "react";
 
 import {
@@ -286,12 +317,8 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 import {
-  getWasteBatches,
-} from "../services/wasteBatchService";
-
-import {
-  getFacilities,
-} from "../services/facilityService";
+  getDashboardAnalytics,
+} from "../services/dashboardService";
 
 
 export default function Dashboard() {
@@ -299,109 +326,158 @@ export default function Dashboard() {
     useAuth();
 
 
-  const [stats, setStats] =
-    useState({
-      batches: 0,
-      facilities: 0,
-      analysed: 0,
-      recovery: null,
-    });
+  // const [stats, setStats] =
+  //   useState({
+  //     batches: 0,
+  //     facilities: 0,
+  //     analysed: 0,
+  //     recovery: null,
+  //   });
+
+  const [stats, setStats] = useState({
+    batches: 0,
+    facilities: 0,
+    analysed: 0,
+    pending: 0,
+    recovery: null,
+    recyclability: null,
+  });
 
 
   const [loading, setLoading] =
     useState(true);
 
 
+  // useEffect(() => {
+  //   async function loadDashboard() {
+  //     try {
+
+  //       const [
+  //         batchData,
+  //         facilitiesData,
+  //       ] = await Promise.all([
+  //         getWasteBatches({
+  //           page: 1,
+  //           page_size: 100,
+  //         }),
+
+  //         getFacilities(),
+  //       ]);
+
+
+  //       const batches =
+  //         batchData.items || [];
+
+
+  //       const analysed =
+  //         batches.filter(
+  //           (batch) =>
+  //             batch.processing_status ===
+  //             "ANALYZED"
+  //         );
+
+
+  //       const saved =
+  //         localStorage.getItem(
+  //           "latestAnalysis"
+  //         );
+
+
+  //       let recovery = null;
+
+
+  //       if (saved) {
+  //         try {
+
+  //           const analysis =
+  //             JSON.parse(saved);
+
+  //           recovery =
+  //             analysis?.waste_score
+  //               ?.circularity_score ??
+  //             null;
+
+  //         } catch {
+  //           recovery = null;
+  //         }
+  //       }
+
+
+  //       setStats({
+  //         batches:
+  //           batchData.pagination
+  //             ?.total_items ??
+  //           batches.length,
+
+  //         facilities:
+  //           facilitiesData.filter(
+  //             (facility) =>
+  //               facility.is_active
+  //           ).length,
+
+  //         analysed:
+  //           analysed.length,
+
+  //         recovery,
+  //       });
+
+  //     } catch (error) {
+
+  //       console.error(
+  //         "Dashboard loading error:",
+  //         error
+  //       );
+
+  //     } finally {
+
+  //       setLoading(false);
+
+  //     }
+  //   }
+
+
+  //   loadDashboard();
+
+  // }, []);
+
   useEffect(() => {
     async function loadDashboard() {
       try {
-
-        const [
-          batchData,
-          facilitiesData,
-        ] = await Promise.all([
-          getWasteBatches({
-            page: 1,
-            page_size: 100,
-          }),
-
-          getFacilities(),
-        ]);
-
-
-        const batches =
-          batchData.items || [];
-
-
-        const analysed =
-          batches.filter(
-            (batch) =>
-              batch.processing_status ===
-              "ANALYZED"
-          );
-
-
-        const saved =
-          localStorage.getItem(
-            "latestAnalysis"
-          );
-
-
-        let recovery = null;
-
-
-        if (saved) {
-          try {
-
-            const analysis =
-              JSON.parse(saved);
-
-            recovery =
-              analysis?.waste_score
-                ?.circularity_score ??
-              null;
-
-          } catch {
-            recovery = null;
-          }
-        }
-
+        const data =
+          await getDashboardAnalytics();
 
         setStats({
           batches:
-            batchData.pagination
-              ?.total_items ??
-            batches.length,
+            data?.batches?.total ?? 0,
 
           facilities:
-            facilitiesData.filter(
-              (facility) =>
-                facility.is_active
-            ).length,
+            data?.facilities?.active ?? 0,
 
           analysed:
-            analysed.length,
+            data?.batches?.analyzed ?? 0,
 
-          recovery,
+          pending:
+            data?.batches?.pending ?? 0,
+
+          recovery:
+            data?.recovery
+              ?.average_circularity ?? null,
+
+          recyclability:
+            data?.recovery
+              ?.average_recyclability ?? null,
         });
-
       } catch (error) {
-
         console.error(
           "Dashboard loading error:",
           error
         );
-
       } finally {
-
         setLoading(false);
-
       }
     }
 
-
     loadDashboard();
-
   }, []);
 
 
@@ -552,7 +628,7 @@ export default function Dashboard() {
               Recovery Potential
             </span>
 
-            <strong>
+            {/* <strong>
               {stats.recovery !== null
                 ? `${stats.recovery}%`
                 : "--"}
@@ -560,6 +636,15 @@ export default function Dashboard() {
 
             <small>
               Latest circularity score
+            </small> */}
+            <strong>
+              {stats.recovery !== null
+                ? `${stats.recovery}%`
+                : "--"}
+            </strong>
+
+            <small>
+              Average circularity score
             </small>
 
           </div>

@@ -703,10 +703,10 @@ export default function ImageAnalysis() {
        * Save complete analysis so that
        * Milestone 2 and 3 pages can use it.
        */
-      localStorage.setItem(
-        "latestAnalysis",
-        JSON.stringify(result)
-      );
+      // localStorage.setItem(
+      //   "latestAnalysis",
+      //   JSON.stringify(result)
+      // );
 
       localStorage.setItem(
         "latestAnalysisBatchId",

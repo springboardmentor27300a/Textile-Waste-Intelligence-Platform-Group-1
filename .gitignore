@@ -54,7 +54,7 @@ ml_training/experiments/*
 !ml_training/experiments/.gitkeep
 
 # Trained model files
-*.pth
+
 *.pt
 *.onnx
 *.h5
@@ -62,3 +62,10 @@ ml_training/experiments/*
 # Temporary files
 *.tmp
 *.temp
+# Keep the production textile classification model
+!backend/app/ml/models/
+!backend/app/ml/models/*.pth
+
+# Keep the production textile classification model
+!backend/app/ml/models/
+!backend/app/ml/models/*.pth

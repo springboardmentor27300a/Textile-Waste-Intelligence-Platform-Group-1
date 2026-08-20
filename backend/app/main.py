@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+﻿from fastapi import FastAPI
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -14,7 +14,10 @@ from app.routers.waste_images import router as waste_images_router
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers.analysis import router as analysis_router
 
-
+from app.routers.dashboard import router as dashboard_router
+from app.routers.reports import router as reports_router
+from app.routers.notifications import router as notifications_router
+from app.routers.users import router as users_router
 
 app = FastAPI(
     title=f"{settings.app_name} API",
@@ -27,10 +30,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-    ],
+    allow_origins=[origin.strip() for origin in settings.cors_origins.split(",") if origin.strip()],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -43,6 +43,13 @@ app.include_router(facilities_router)
 app.include_router(waste_batches_router)
 app.include_router(waste_images_router)
 app.include_router(analysis_router)
+app.include_router(reports_router)
+app.include_router(notifications_router)
+app.include_router(users_router)
+
+app.include_router(
+    dashboard_router
+)
 
 @app.get("/")
 def root():
@@ -79,4 +86,6 @@ def database_health_check():
             "database": settings.db_name,
             "connection": "failed",
         }
+
+
 

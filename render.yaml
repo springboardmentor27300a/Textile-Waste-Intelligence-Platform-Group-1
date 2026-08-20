@@ -1,0 +1,106 @@
+﻿services:
+
+  - type: web
+    name: textile-waste-api-arpan
+    runtime: python
+    region: singapore
+    plan: free
+
+    branch: Arpan-Nandi
+    rootDir: backend
+
+    buildCommand: pip install -r requirements.txt
+
+    startCommand: >
+      python -c "from app.database import Base, engine; import app.models;
+      Base.metadata.create_all(bind=engine)" &&
+      uvicorn app.main:app --host 0.0.0.0 --port $PORT
+
+    healthCheckPath: /api/health
+
+    autoDeployTrigger: off
+
+    envVars:
+
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+
+      - key: APP_NAME
+        value: "Textile Waste Intelligence Platform"
+
+      - key: APP_VERSION
+        value: "1.0.0"
+
+      - key: APP_ENV
+        value: "production"
+
+      - key: DB_HOST
+        fromDatabase:
+          name: textile-waste-db-arpan
+          property: host
+
+      - key: DB_PORT
+        fromDatabase:
+          name: textile-waste-db-arpan
+          property: port
+
+      - key: DB_NAME
+        fromDatabase:
+          name: textile-waste-db-arpan
+          property: database
+
+      - key: DB_USER
+        fromDatabase:
+          name: textile-waste-db-arpan
+          property: user
+
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: textile-waste-db-arpan
+          property: password
+
+      - key: JWT_SECRET_KEY
+        generateValue: true
+
+      - key: JWT_ALGORITHM
+        value: "HS256"
+
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "30"
+
+      - key: CORS_ORIGINS
+        sync: false
+
+
+  - type: web
+    runtime: static
+    name: textile-waste-frontend-arpan
+
+    branch: Arpan-Nandi
+    rootDir: frontend
+
+    buildCommand: npm install && npm run build
+
+    staticPublishPath: dist
+
+    autoDeployTrigger: off
+
+    envVars:
+
+      - key: VITE_API_BASE_URL
+        sync: false
+
+    routes:
+
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+
+databases:
+
+  - name: textile-waste-db-arpan
+    plan: free
+    region: singapore
+    databaseName: textile_waste_db
+    user: textile_user

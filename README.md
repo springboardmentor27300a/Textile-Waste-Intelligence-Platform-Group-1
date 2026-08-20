@@ -6,7 +6,7 @@
 [![PyTorch](https://img.shields.io/badge/Deep%20Learning-PyTorch%20%7C%20EfficientNet--B0-EE4C2C?style=for-the-badge&logo=pytorch)](https://pytorch.org/)
 [![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL%2016-336791?style=for-the-badge&logo=postgresql)](https://www.postgresql.org/)
 [![Docker](https://img.shields.io/badge/Containerization-Docker%20Compose-2496ED?style=for-the-badge&logo=docker)](https://www.docker.com/)
-[![Azure](https://img.shields.io/badge/Cloud%20Host-Microsoft%20Azure%20VM-0078D4?style=for-the-badge&logo=microsoftazure)](http://texwaste-ai.centralindia.cloudapp.azure.com)
+[![Azure](https://img.shields.io/badge/Cloud%20Host-Microsoft%20Azure%20VM-0078D4?style=for-the-badge&logo=microsoftazure)](https://texwaste-ai.centralindia.cloudapp.azure.com)
 
 > **Infosys Springboard Industry Project — Group 1**  
 > An enterprise-grade, end-to-end cloud platform for automated industrial textile waste identification, multi-spectral damage assessment, 5-factor circularity scoring, and closed-loop material recycling routing.
@@ -14,7 +14,7 @@
 ---
 
 ## 📌 Live Cloud Deployment
-* **Live Web Application**: [http://texwaste-ai.centralindia.cloudapp.azure.com](http://texwaste-ai.centralindia.cloudapp.azure.com)
+* **Live Web Application (Secure HTTPS)**: [https://texwaste-ai.centralindia.cloudapp.azure.com](https://texwaste-ai.centralindia.cloudapp.azure.com)
 
 ---
 

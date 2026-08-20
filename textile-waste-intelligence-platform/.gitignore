@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Build files
+dist/
+build/
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+# AI / ML Dataset
+backend/fabric_ai/dataset/
+# Large AI model files

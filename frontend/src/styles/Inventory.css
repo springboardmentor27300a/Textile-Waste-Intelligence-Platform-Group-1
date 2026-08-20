@@ -1,0 +1,136 @@
+.inventory-container{
+    max-width:1200px;
+    margin:30px auto;
+    padding:20px;
+}
+
+.inventory-title{
+    text-align:center;
+    font-size:38px;
+    color:#1e3a8a;
+    margin-bottom:30px;
+}
+
+.summary-cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+    margin-bottom:30px;
+}
+
+.summary-card{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    text-align:center;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.summary-card:hover{
+    transform:translateY(-6px);
+}
+
+.summary-card h2{
+    color:#2563eb;
+    font-size:34px;
+    margin-bottom:10px;
+}
+
+.summary-card p{
+    color:#555;
+    font-weight:600;
+}
+
+.form-card{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+    margin-bottom:30px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:15px;
+}
+
+.form-card input{
+    flex:1;
+    min-width:220px;
+    padding:14px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    font-size:15px;
+}
+
+.add-btn{
+    background:#2563eb;
+    color:white;
+    border:none;
+    padding:14px 30px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:bold;
+    transition:.3s;
+}
+
+.add-btn:hover{
+    background:#1d4ed8;
+}
+
+.search-box{
+    width:100%;
+    padding:14px;
+    border-radius:10px;
+    border:1px solid #ddd;
+    margin-bottom:20px;
+    font-size:15px;
+}
+
+.table-card{
+    background:white;
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+}
+
+.inventory-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.inventory-table th{
+    background:#2563eb;
+    color:white;
+    padding:16px;
+}
+
+.inventory-table td{
+    padding:15px;
+    text-align:center;
+    border-bottom:1px solid #eee;
+}
+
+.inventory-table tr:hover{
+    background:#f8fafc;
+}
+
+.status-badge{
+    display:inline-block;
+    padding:6px 14px;
+    border-radius:20px;
+    color:white;
+    font-size:13px;
+    font-weight:bold;
+}
+
+.status-active{
+    background:#16a34a;
+}
+
+.status-pending{
+    background:#f59e0b;
+}
+
+.status-low{
+    background:#dc2626;
+}

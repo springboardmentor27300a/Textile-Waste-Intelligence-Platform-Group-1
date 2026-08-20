@@ -115,8 +115,6 @@ JWT_SECRET_KEY=your-secret-key-here
 VITE_API_BASE_URL=http://localhost:8000
 ```
 
-> ⚠️ In production (Render), set `VITE_API_BASE_URL` to your deployed backend URL, and ensure `JWT_SECRET_KEY` is set as a secure environment variable — never hardcoded.
-
 ---
 
 ## 🧪 Running Tests

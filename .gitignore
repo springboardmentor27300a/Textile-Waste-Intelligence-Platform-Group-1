@@ -1,0 +1,10 @@
+# Heavy archive files (>100MB) that exceed GitHub limits
+*.tar.gz
+*.zip
+
+# Node & Python dependencies
+node_modules/
+__pycache__/
+*.pyc
+.env
+.env.local

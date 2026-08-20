@@ -77,7 +77,7 @@ export default function PredictionHistory() {
   };
 
   const API_BASE = 'http://localhost:8000';
-
+cd
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);

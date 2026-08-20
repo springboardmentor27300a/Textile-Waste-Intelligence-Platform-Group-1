@@ -1,0 +1,23 @@
+# Large datasets
+backend/datasets/
+backend/app/AI/processed_dataset/
+
+# Backend runtime/generated files
+logs/
+uploads/
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Environment files
+.env
+.env.*
+

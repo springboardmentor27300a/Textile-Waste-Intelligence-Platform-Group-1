@@ -1,0 +1,128 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------ */
+/* Base */
+/* ------------------------------ */
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background: #F8FAFC;
+  color: #334155;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ------------------------------ */
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* ------------------------------ */
+/* Scrollbar */
+/* ------------------------------ */
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* ------------------------------ */
+/* Reusable Components */
+/* ------------------------------ */
+
+@layer components {
+
+  .page-title {
+    @apply text-3xl font-bold text-heading;
+  }
+
+  .section-title {
+    @apply text-xl font-semibold text-heading;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl shadow-card border border-border;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-hover;
+  }
+
+  .input {
+    @apply w-full rounded-xl border border-border bg-white px-4 py-3 outline-none transition focus:border-accent focus:ring-4 focus:ring-blue-100;
+  }
+
+  .btn-primary {
+    @apply rounded-xl bg-primary px-5 py-3 font-semibold text-white transition hover:opacity-90;
+  }
+
+  .btn-secondary {
+    @apply rounded-xl border border-border bg-white px-5 py-3 font-semibold transition hover:bg-gray-50;
+  }
+
+  .metric-card {
+    @apply card p-6;
+  }
+
+}
+
+/* ------------------------------ */
+/* Selection */
+/* ------------------------------ */
+
+::selection {
+  background: #3B82F6;
+  color: white;
+}

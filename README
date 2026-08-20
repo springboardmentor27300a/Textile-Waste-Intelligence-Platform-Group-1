@@ -1,0 +1,71 @@
+# Textile Waste Intelligence Platform (TWIP)
+
+An AI-powered platform for analyzing textile waste using **computer vision, material classification, recyclability assessment, and sustainability intelligence**. The system helps organizations identify textile materials, classify waste, evaluate recovery potential, and receive recycling or reuse recommendations.
+
+## 🚀 Features
+
+* 🔐 JWT Authentication & Role-Based Access
+* 📦 Textile Waste & Inventory Management
+* 🖼️ AI-based Textile Image Analysis
+* 🧵 Fabric & Material Classification
+* ♻️ Waste Classification & Recyclability Assessment
+* 🔄 Recycling, Reuse & Upcycling Recommendations
+* 🌱 Sustainability & Environmental Impact Analysis
+* 📊 Role-based Dashboards & Analytics
+* 🔔 Notifications & Alerts
+* 📄 PDF & Excel Reports
+
+## 👥 User Roles
+
+* Recycling Facility Operator
+* Sustainability Manager
+* Textile Manufacturer
+* Administrator
+
+## 🛠️ Tech Stack
+
+**Frontend:** React.js, JavaScript, Tailwind CSS
+**Backend:** Python, FastAPI
+**Database:** PostgreSQL
+**AI/ML:** TensorFlow, EfficientNet, OpenCV, Scikit-learn
+**Deployment:** Vercel
+**Tools:** Git, GitHub, Postman
+
+## 🔄 Workflow
+
+```text
+Upload Textile Image
+        ↓
+Image Analysis
+        ↓
+Material Classification
+        ↓
+Waste Classification
+        ↓
+Recyclability Assessment
+        ↓
+Sustainability Scoring
+        ↓
+Recycling / Reuse Recommendation
+        ↓
+Dashboard & Reports
+```
+
+## 📊 Circularity Scoring
+
+The platform calculates an overall circularity score using:
+
+* Material Recyclability — 35%
+* Material Condition — 20%
+* Reuse Potential — 20%
+* Environmental Benefit — 15%
+* Processing Feasibility — 10%
+
+## 🎯 Goal
+
+To reduce textile waste, improve material recovery, minimize landfill disposal, and support **sustainable and circular textile management**.
+
+## 📌 Project
+
+**Textile Waste Intelligence Platform (TWIP)**
+AI • Computer Vision • Sustainability • Circular Economy

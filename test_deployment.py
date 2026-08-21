@@ -1,7 +1,8 @@
+import os
 import requests
 import json
 
-API_BASE = "https://ai-textile-waste-intelligence-platform.onrender.com"
+API_BASE = os.getenv("API_BASE", "http://localhost:8000")
 
 def test_deployment():
     print("--- STARTING PRODUCTION DEPLOYMENT VERIFICATION ---")

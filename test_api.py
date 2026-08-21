@@ -1,6 +1,7 @@
+import os
 import requests
 
-API_BASE = "https://ai-textile-waste-intelligence-platform.onrender.com"
+API_BASE = os.getenv("API_BASE", "http://localhost:8000")
 
 # Login
 res = requests.post(f"{API_BASE}/api/auth/login", json={"email": "admin@texwaste.com", "password": "admin123"})

@@ -357,7 +357,7 @@
         'circular-economy':     'Circular_Economy_Report',
       };
 
-      const url = `/api/export/${category}/${format}?t=${Date.now()}`;
+      const url = `${API_BASE}/api/export/${category}/${format}?t=${Date.now()}`;
       const res = await fetch(url, {
         method: 'GET',
         headers: { 

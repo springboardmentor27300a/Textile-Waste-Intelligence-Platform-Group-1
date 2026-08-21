@@ -15,7 +15,8 @@ bearer_scheme = HTTPBearer()
 # ── Password Utilities ────────────────────────────────────────────────────────
 
 def hash_password(plain: str) -> str:
-    salt = bcrypt.gensalt()
+    # Use 4 rounds (minimum) instead of default 12 for much faster hashing on free tier
+    salt = bcrypt.gensalt(rounds=4)
     return bcrypt.hashpw(plain.encode('utf-8'), salt).decode('utf-8')
 
 

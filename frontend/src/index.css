@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { -webkit-font-smoothing: antialiased; }
+  body {
+    @apply bg-ground text-ink font-body;
+    background-image:
+      radial-gradient(900px 500px at 12% -8%, rgba(16, 185, 129, 0.10), transparent 60%),
+      radial-gradient(700px 420px at 100% 0%, rgba(96, 165, 250, 0.07), transparent 55%);
+    background-attachment: fixed;
+  }
+  :focus-visible { @apply outline-none ring-2 ring-brand ring-offset-2 ring-offset-ground; }
+  .tnum { font-variant-numeric: tabular-nums; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { @apply bg-line rounded-full; }
+  ::-webkit-scrollbar-track { background: transparent; }
+}
+
+@layer components {
+  .eyebrow { @apply text-[11px] font-semibold uppercase tracking-[0.10em] text-muted; }
+  .card { @apply bg-panel border border-line rounded-card shadow-card; }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg
+           font-display font-semibold text-sm transition-colors disabled:opacity-50
+           disabled:cursor-not-allowed;
+  }
+  .btn-primary { @apply btn bg-brand text-[#04140E] hover:bg-brand-dark hover:text-white; }
+  .btn-quiet { @apply btn border border-line bg-panel-2 text-ink hover:border-brand/50; }
+  .btn-ghost { @apply btn text-muted hover:text-ink hover:bg-panel-2; }
+  .field {
+    @apply w-full bg-panel-2 border border-line rounded-lg px-3.5 py-2.5 text-sm text-ink
+           placeholder:text-muted/70 focus:border-brand;
+  }
+  .field-icon { @apply pl-10; }
+  .label { @apply block text-[11px] font-semibold uppercase tracking-[0.08em] text-muted mb-1.5; }
+  .chip {
+    @apply inline-flex items-center rounded-full border border-line bg-panel-2
+           px-2.5 py-0.5 text-[11px] font-medium text-muted;
+  }
+  .th { @apply px-4 py-3 text-left eyebrow font-semibold; }
+  .td { @apply px-4 py-3 text-sm border-t border-line; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

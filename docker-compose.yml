@@ -1,0 +1,41 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: twip
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-twip}
+      POSTGRES_DB: twip
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U twip"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    image: jyothsnasunkara12/twip-backend:latest
+    environment:
+      DATABASE_URL: postgresql+psycopg2://twip:${POSTGRES_PASSWORD:-twip}@db:5432/twip
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      CORS_ORIGINS: ${CORS_ORIGINS:-https://seminar-eat-seller-accuracy.trycloudflare.com,http://localhost:3000,http://localhost:5173} 
+      UPLOAD_DIR: /data/uploads 
+      MODEL_DIR: /data/models 
+    volumes: 
+      - backend-data:/data 
+    depends_on: 
+      db: 
+        condition: service_healthy 
+    ports: 
+      - "8000:8000" 
+ 
+  frontend: 
+    image: twip-frontend:public 
+    depends_on: 
+      - backend 
+    ports: 
+      - "3000:80" 
+ 
+volumes: 
+  db-data: 
+  backend-data: 

@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+node_modules/
+dist/
+storage/
+*.db
+.env
+backend/data/
+data/
+
+frontend/.env.production

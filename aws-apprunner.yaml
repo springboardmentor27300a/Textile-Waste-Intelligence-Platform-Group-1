@@ -5,7 +5,7 @@ build:
     build:
       - pip install -r backend/requirements.txt
 run:
-  command: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+  command: cd backend && python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT
   network:
     port: 8000
     env:

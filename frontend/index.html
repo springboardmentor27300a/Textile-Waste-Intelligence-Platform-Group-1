@@ -290,10 +290,10 @@
         <div class="role-demo">
           <div class="role-demo-title">One-Click Demo Access</div>
           <div class="role-pills">
-            <button type="button" class="role-pill" data-role="auditor" onclick="loginDemo('auditor@test.com')">Recycling Operator</button>
-            <button type="button" class="role-pill" data-role="analyst" onclick="loginDemo('analyst@test.com')">Sustainability Manager</button>
-            <button type="button" class="role-pill" data-role="supplier" onclick="loginDemo('supplier@test.com')">Textile Manufacturer</button>
-            <button type="button" class="role-pill" data-role="admin" onclick="loginDemo('admin@test.com')">Admin</button>
+            <button type="button" class="role-pill" data-role="auditor" onclick="loginDemo('auditor@texwaste.com', 'auditor123')">Recycling Operator</button>
+            <button type="button" class="role-pill" data-role="analyst" onclick="loginDemo('analyst@texwaste.com', 'analyst123')">Sustainability Manager</button>
+            <button type="button" class="role-pill" data-role="supplier" onclick="loginDemo('supplier@texwaste.com', 'supplier123')">Textile Manufacturer</button>
+            <button type="button" class="role-pill" data-role="admin" onclick="loginDemo('admin@texwaste.com', 'admin123')">Admin</button>
           </div>
         </div>
 
@@ -336,9 +336,9 @@
   <script src="js/auth.js"></script>
   <script>
     // Demo Login Helper
-    function loginDemo(email) {
+    function loginDemo(email, password) {
       document.getElementById('email').value = email;
-      document.getElementById('password').value = 'password';
+      document.getElementById('password').value = password || 'password';
       document.getElementById('login-btn').click();
     }
 

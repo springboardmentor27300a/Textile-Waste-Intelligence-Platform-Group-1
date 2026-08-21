@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.git/
+.gitignore
+backend/instance/
+backend/tests/
+backend/requirements-dev.txt
+*.md
+.venv/
+venv/
+.DS_Store
+htmlcov/
+.coverage

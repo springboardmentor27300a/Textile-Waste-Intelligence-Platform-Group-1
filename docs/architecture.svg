@@ -1,0 +1,101 @@
+<svg viewBox="0 0 960 620" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#5B6B60" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="620" fill="#EEF1EA" />
+
+  <text x="30" y="36" font-size="20" font-weight="600" fill="#1B2420">Reloom — System Architecture (Milestone 1)</text>
+
+  <!-- Browser -->
+  <rect x="60" y="70" width="280" height="90" rx="8" fill="#FFFFFF" stroke="#D8DED2" stroke-width="1.5" />
+  <text x="80" y="100" font-size="14" font-weight="600" fill="#1B2420">Browser</text>
+  <text x="80" y="122" font-size="12" fill="#5B6B60">React + Vite + Tailwind SPA</text>
+  <text x="80" y="140" font-size="12" fill="#5B6B60">localhost:5173</text>
+
+  <!-- API arrow -->
+  <line x1="200" y1="160" x2="200" y2="220" stroke="#5B6B60" stroke-width="1.5" marker-end="url(#arrow)" />
+  <text x="210" y="195" font-size="11" fill="#5B6B60">HTTPS / JSON, JWT bearer token</text>
+
+  <!-- Backend -->
+  <rect x="60" y="220" width="560" height="150" rx="8" fill="#FFFFFF" stroke="#1F6F52" stroke-width="2" />
+  <text x="80" y="250" font-size="14" font-weight="600" fill="#1B2420">FastAPI backend</text>
+  <text x="80" y="270" font-size="12" fill="#5B6B60">localhost:8000</text>
+
+  <rect x="80" y="285" width="130" height="60" rx="6" fill="#E6F0EB" />
+  <text x="92" y="308" font-size="11" fill="#124132" font-weight="600">Auth</text>
+  <text x="92" y="324" font-size="10" fill="#124132">JWT + bcrypt</text>
+  <text x="92" y="338" font-size="10" fill="#124132">register / login</text>
+
+  <rect x="225" y="285" width="130" height="60" rx="6" fill="#E6F0EB" />
+  <text x="237" y="308" font-size="11" fill="#124132" font-weight="600">RBAC</text>
+  <text x="237" y="324" font-size="10" fill="#124132">role dependency</text>
+  <text x="237" y="338" font-size="10" fill="#124132">guards per route</text>
+
+  <rect x="370" y="285" width="130" height="60" rx="6" fill="#E6F0EB" />
+  <text x="382" y="308" font-size="11" fill="#124132" font-weight="600">Inventory</text>
+  <text x="382" y="324" font-size="10" fill="#124132">batch CRUD</text>
+  <text x="382" y="338" font-size="10" fill="#124132">search / summary</text>
+
+  <rect x="80" y="345" width="420" height="16" fill="none" />
+  <rect x="80" y="285" width="0" height="0" />
+
+  <!-- Datasets + material insights row -->
+  <rect x="370" y="220" width="0" height="0" />
+
+  <!-- DB arrow -->
+  <line x1="340" y1="370" x2="340" y2="430" stroke="#5B6B60" stroke-width="1.5" marker-end="url(#arrow)" />
+  <text x="350" y="405" font-size="11" fill="#5B6B60">SQLAlchemy ORM</text>
+
+  <!-- Database -->
+  <rect x="60" y="430" width="560" height="140" rx="8" fill="#FFFFFF" stroke="#D8DED2" stroke-width="1.5" />
+  <text x="80" y="458" font-size="14" font-weight="600" fill="#1B2420">Database (PostgreSQL primary, SQLite fallback for quick local testing)</text>
+
+  <rect x="80" y="472" width="120" height="80" rx="6" fill="#F7F8F5" stroke="#D8DED2" />
+  <text x="92" y="494" font-size="11" font-weight="600" fill="#1B2420">User</text>
+  <text x="92" y="510" font-size="10" fill="#5B6B60">role, org,</text>
+  <text x="92" y="524" font-size="10" fill="#5B6B60">credentials</text>
+
+  <rect x="215" y="472" width="120" height="80" rx="6" fill="#F7F8F5" stroke="#D8DED2" />
+  <text x="227" y="494" font-size="11" font-weight="600" fill="#1B2420">WasteBatch</text>
+  <text x="227" y="510" font-size="10" fill="#5B6B60">fabric, source,</text>
+  <text x="227" y="524" font-size="10" fill="#5B6B60">status, category</text>
+
+  <rect x="350" y="472" width="120" height="80" rx="6" fill="#F7F8F5" stroke="#D8DED2" />
+  <text x="362" y="494" font-size="11" font-weight="600" fill="#1B2420">Dataset</text>
+  <text x="362" y="510" font-size="10" fill="#5B6B60">registry: name,</text>
+  <text x="362" y="524" font-size="10" fill="#5B6B60">source, status</text>
+
+  <rect x="485" y="472" width="120" height="80" rx="6" fill="#F7F8F5" stroke="#D8DED2" />
+  <text x="497" y="494" font-size="11" font-weight="600" fill="#1B2420">MaterialInsight</text>
+  <text x="497" y="510" font-size="10" fill="#5B6B60">avg score per</text>
+  <text x="497" y="524" font-size="10" fill="#5B6B60">material, real</text>
+  <text x="497" y="538" font-size="10" fill="#5B6B60">CSV aggregate</text>
+
+  <!-- External sources -->
+  <rect x="680" y="70" width="240" height="300" rx="8" fill="#FFFFFF" stroke="#A6461F" stroke-width="1.5" stroke-dasharray="4 3" />
+  <text x="700" y="98" font-size="13" font-weight="600" fill="#7A3316">External dataset sources</text>
+  <text x="700" y="120" font-size="11" fill="#5B6B60">(not called at runtime —</text>
+  <text x="700" y="135" font-size="11" fill="#5B6B60">downloaded once, then</text>
+  <text x="700" y="150" font-size="11" fill="#5B6B60">ingested by scripts below)</text>
+
+  <rect x="700" y="165" width="200" height="34" rx="5" fill="#F5E7DF" />
+  <text x="712" y="186" font-size="11" fill="#7A3316">Kaggle — Sustainable Fashion CSV</text>
+
+  <rect x="700" y="207" width="200" height="34" rx="5" fill="#F5E7DF" />
+  <text x="712" y="228" font-size="11" fill="#7A3316">Kaggle — Fabric Image Dataset</text>
+
+  <rect x="700" y="249" width="200" height="34" rx="5" fill="#F5E7DF" />
+  <text x="712" y="270" font-size="11" fill="#7A3316">GitHub — Fashion-MNIST</text>
+
+  <rect x="700" y="291" width="200" height="34" rx="5" fill="#F5E7DF" />
+  <text x="712" y="312" font-size="11" fill="#7A3316">DeepFashion (reference only)</text>
+
+  <line x1="680" y1="220" x2="620" y2="290" stroke="#A6461F" stroke-width="1.3" marker-end="url(#arrow)" stroke-dasharray="4 3" />
+  <text x="640" y="255" font-size="10" fill="#7A3316">ingest_datasets.py</text>
+  <text x="640" y="267" font-size="10" fill="#7A3316">ingest_sustainability_data.py</text>
+
+  <text x="60" y="600" font-size="11" fill="#5B6B60">Dashed box = offline, one-time step. Solid arrows = live request path used every time the app runs.</text>
+</svg>

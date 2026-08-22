@@ -1,0 +1,29 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=reloom_user
+      - POSTGRES_PASSWORD=reloom_pass
+      - POSTGRES_DB=reloom_db
+    ports: ["5432:5432"]
+    volumes: ["reloom_pgdata:/var/lib/postgresql/data"]
+
+  backend:
+    build: ./backend
+    ports: ["8000:8000"]
+    depends_on: [db]
+    environment:
+      - DATABASE_URL=postgresql+psycopg2://reloom_user:reloom_pass@db:5432/reloom_db
+      - SECRET_KEY=change-this-to-a-long-random-string
+      - CORS_ORIGINS=http://localhost:5173
+    volumes: ["./backend:/app"]
+
+  frontend:
+    build: ./frontend
+    ports: ["5173:5173"]
+    depends_on: [backend]
+
+volumes:
+  reloom_pgdata:

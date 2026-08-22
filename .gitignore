@@ -1,16 +1,18 @@
 # Python / Virtual Environments
-backend/venv/
 venv/
 env/
+backend/venv/
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
+.Python
 
 # Environment Variables
 .env
 .env.*
 backend/.env
+frontend/.env
 
 # Databases
 *.db
@@ -26,8 +28,10 @@ htmlcov/
 
 # Node / JS
 node_modules/
+frontend/node_modules/
 dist/
 build/
+.npm/
 
 # Temporary / OS / Build Files
 .DS_Store
@@ -36,8 +40,16 @@ Thumbs.db
 *.swp
 *.tmp
 *~
+*.zip
+*.tar.gz
+*.rar
 
-# Temporary session scratch scripts
+# IDEs
+.idea/
+.vscode/
+*.swp
+
+# Temporary session scratch scripts and build archives
 backend/check_images.py
 backend/check_suppliers.py
 backend/check_users.py
@@ -48,3 +60,7 @@ backend/test_apis.py
 backend/test_endpoints.py
 backend/test_notifications.py
 frontend/restore_auth.py
+test_api.py
+test_notif.py
+test_deployment.py
+backend.zip
